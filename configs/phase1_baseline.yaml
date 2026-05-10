@@ -1,0 +1,47 @@
+# Phase 1 — 1PL Baseline calibration config
+#
+# Pipeline: read items from compliance_bank.db (read-only) → run a 45-cell grid
+# (Models × Temperatures × Strictness) of ZeroShotAgent + GroqClient through
+# /arena/runner → write jsonl → /evaluator/ fits Rasch (1PL) → anchor baseline
+# examinee at θ = 0 → emit per-item b estimates.
+
+run_id: phase1_baseline
+log_dir: logs/arena_runs
+
+# ---- Item source -----------------------------------------------------------
+items:
+  db_path: compliance_bank.db
+  source_types: [synthetic, real]
+  # null = use full bank; integer = stratified sample size (Phase 1 dry run).
+  sample_size: null
+  sample_seed: 42
+
+# ---- Virtual examinee grid (Critical Rule 1: N >= 200 effective trials) ----
+grid:
+  models:
+    - llama-3.3-70b-versatile   # SOTA
+    - openai/gpt-oss-20b        # Mid
+    - llama-3.1-8b-instant      # Base
+  temperatures: [0.1, 0.4, 0.7, 1.0, 1.2]
+  strictness_levels: [none, neutral, strict]
+  # Single seed shared across the grid; per-cell seeds derive from this.
+  seed: 7
+
+# ---- Baseline anchor (θ ≡ 0 by definition) ---------------------------------
+# Phase 1 mandate: the naked baseline = (Base model, lowest temp, no system prompt)
+baseline:
+  model: llama-3.1-8b-instant
+  temperature: 0.1
+  strictness: none
+
+# ---- Judge (lives in /harness/, used by /arena/) ---------------------------
+judge:
+  model: llama-3.3-70b-versatile
+  strict: true
+  use_lenient_for_easy_domains: true
+
+# ---- Runtime settings ------------------------------------------------------
+runtime:
+  parallelism: 8
+  request_timeout_seconds: 60
+  max_retries: 3
