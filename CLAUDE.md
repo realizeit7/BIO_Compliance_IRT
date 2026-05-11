@@ -50,8 +50,11 @@ autoresearch_irt/                 ← repo root
   build_bank.sh / build_real.sh   ← background builders
   compliance_bank.db              ← shared SQLite bank (read by both pipelines)
 
-  # --- Phase 1 calibration pipeline ------------------------------------
-  run_phase1.py                   ← Phase 1 entry point (yaml-driven)
+  # --- Phase 1 / 2 / 3 calibration pipeline ----------------------------
+  run_phase1.py                   ← Phase 1 entry point (yaml-driven Arena → Rasch fit + anchor)
+  run_phase2.py                   ← Phase 2 entry point (Rasch refit + classical QC → frozen bank)
+  run_phase3.py                   ← Phase 3a entry point (offline Δθ on frozen bank, dual-judge)
+  run_phase3_rejudge_lenient.py   ← Phase 3a helper: re-grade Phase 1 responses with lenient judge
   configs/phase1_baseline.yaml    ← 45-cell grid + baseline examinee config
   agents/                         ← ZeroShotAgent (single-call, system-prompt-driven)
   arena/                          ← grid generator, item loader, resumable runner, jsonl schema
@@ -59,6 +62,8 @@ autoresearch_irt/                 ← repo root
   harness/                        ← GroqClient (with reasoning-model handling) + Judge + errors
   logs/arena_runs/<run_id>/responses.jsonl  ← raw audit log (one row per examinee×item)
   evaluator/output/<run_id>_phase1_b.jsonl  ← anchored b estimates
+  evaluator/output/phase2_frozen_bank.jsonl ← Phase 2 healthy items (b + pb + infit + outfit)
+  evaluator/output/phase3a_strictness_deltatheta.json  ← Phase 3a Δθ tables (strict + lenient)
 
   venv/                           ← Python virtualenv (gitignored)
   .env                            ← GROQ_API_KEY (gitignored)
@@ -99,6 +104,20 @@ run_phase1.py
         ├── rasch.py              (1PL MML fit + anchor_baseline_to_zero)
         ├── rasch_qc.py           (Phase 2 QC: point-biserial + infit/outfit)
         └── twopl.py + qc.py      (DORMANT 2PL path, kept for future re-evaluation)
+```
+
+Phase 3a analysis (offline — no new API calls for the strict pass; lenient pass re-grades existing responses):
+```
+run_phase3.py                          (offline analysis — reads Phase 1 responses + frozen bank)
+  ├── evaluator/output/phase2_frozen_bank.jsonl   (1284 anchored b values)
+  ├── logs/arena_runs/phase1_baseline/responses.jsonl   (strict-judge verdicts)
+  ├── [optional] logs/arena_runs/phase3a_lenient/responses.jsonl   (lenient-judge verdicts)
+  └── girth.ability_mle  (per-examinee θ on frozen subset, anchored so baseline θ=0)
+
+run_phase3_rejudge_lenient.py          (only API-calling helper — re-grades existing raw_response with lenient judge)
+  ├── arena/loader.py          (compliance_bank.db → question + gold_standard lookup)
+  ├── harness/judge.py         (Judge with strict=False)
+  └── arena/schema.py          (writes ArenaLogEntry-compatible jsonl for run_phase3.py)
 ```
 
 ---
@@ -267,6 +286,15 @@ In the 15-profile architecture, θ MLE is still computed for the layperson (prof
 - **Examinee θ for fit stats**: MLE (matches Linacre/WINSTEPS practice). Non-finite θ examinees would be dropped from the residual computation; on the 45-cell grid all 45 are finite.
 - **2PL machinery is dormant, not deleted**: `evaluator/twopl.py` and `evaluator/qc.py` are kept as a future path. They use `girth.twopl_jml` with `a_threshold=0.3` and were the active path 2026-05-10 morning before being demoted in favor of Rasch+classical-QC for the reasons above.
 
+### Phase 3a Δθ from prompt strictness (offline + lenient rejudge)
+`run_phase3.py` measures how much system-prompt strictness moves a model's θ on the frozen Phase 2 bank. Pure offline analysis on Phase 1's existing `responses.jsonl` — no new solver calls. Output: `evaluator/output/phase3a_strictness_deltatheta.json`.
+
+- **Examinee scope**: 3 models (llama-3.3-70b-versatile, openai/gpt-oss-20b, llama-3.1-8b-instant) × 1 temperature (default 0.4) × 3 strictness levels (none / neutral / strict) = 9 cells, plus the Phase 1 baseline (llama-3.1-8b @ t=0.1, none) as a θ=0 sanity anchor.
+- **Subset re-anchor**: the Phase 2 bank's `b` was anchored on the *full* 1,823-item Phase 1 set; restricting to the 1,284 healthy items shifts the baseline's MLE θ by ≈ −0.72. `run_phase3.py` re-anchors *inside the script* (subtract baseline θ from every `b`) so absolute θ values are honest. Δθ comparisons within a model are invariant to this shift.
+- **Format-vs-reasoning decomposition**: `run_phase3_rejudge_lenient.py` re-grades all 9 subject cells × 1,284 items with the lenient judge (no citation requirement) — 11,556 judge calls, resumable. Then `run_phase3.py` computes a parallel lenient Δθ table and the *format-unlock* component = strict Δθ − lenient Δθ.
+  - **Why this matters**: the strict judge requires section-level CFR/ICH citations. A "system-prompt effect" can mean two very different things — (a) the prompt taught the model to *cite* (format unlock), or (b) the prompt taught the model to *reason* better (genuine compliance gain). The lenient pass strips (a) and reveals only (b).
+- **2026-05-10 result** (see §7): the 70b's headline +5.41-logit prompt swing decomposes into ~+2.5 reasoning + ~+2.9 format. gpt-oss-20b's prompt effect is essentially all format (lenient Δθ ≈ 0). Honest takeaway: system-prompt strictness primarily teaches *citation format*, not regulatory reasoning.
+
 ### Reasoning-model handling in `harness/groq_client.py`
 Two flavours of reasoning model on Groq, handled differently:
 
@@ -321,6 +349,18 @@ Pre-refactor DB rows have `b` values sampled from Uniform bands. Post-refactor r
 - Pre-history (2026-05-10 morning, now superseded): a 2PL-JML pass kept 1,374 items with a/b. Switched to Rasch+classical QC because 2PL on 45 examinees is methodologically strained (see Phase 2 section in §5).
 - **2026-05-09 fix verified**: gpt-oss-20b @ strict empties dropped 1820 / 9115 (20%) → **0 / 9115 (0%)** after the `reasoning_effort="low"` + reasoning-fallback fix in `harness/groq_client.py`. The cell's mean P rose 0.334 → 0.424 (+0.09) once the fake failures were removed; non-reasoning cells unchanged. Baseline raw θ shifted from −0.513 to −0.626 because the corrected gpt-oss-20b strict cell is genuinely stronger than baseline.
 - Phase 1 infra is resumable; partial runs are safe.
+
+### Phase 3a Δθ from prompt strictness (frozen bank, t=0.4, dual-judge)
+- Examinees: 9 subject cells (3 models × t=0.4 × 3 strictness) + Phase 1 baseline (8b @ t=0.1, none) re-anchored to θ=0 on the 1,284-item subset.
+- Lenient rejudge: 11,556 lenient-judge calls on the same `raw_response` text already saved in Phase 1's log; `~4.3%` judge errors (gracefully mapped to FAIL per Rule 3). Output: `logs/arena_runs/phase3a_lenient/responses.jsonl` (gitignored).
+
+| Model                       | strict-judge Δθ (none→strict) | lenient-judge Δθ | format-unlock | reasoning gain |
+|-----------------------------|------------------------------:|----------------:|--------------:|----------------:|
+| llama-3.3-70b-versatile     | **+5.41**                     | +2.52           | +2.89         | +2.52           |
+| openai/gpt-oss-20b          | +0.66                         | −0.23           | +0.89         | ≈ 0             |
+| llama-3.1-8b-instant        | +1.69                         | +0.18           | +1.52         | ≈ 0             |
+
+Headline: under the strict (citation-requiring) judge, prompt strictness moves all three models. But the lenient judge — which scores conclusion + reasoning only — flattens that effect for everything except 70b. Implication: **system-prompt strictness primarily teaches the model to satisfy the citation-format requirement, not to reason better about compliance.** Only the 70b shows a non-trivial reasoning gain (≈ +2.5 logits) on top of the format-unlock effect.
 
 ### Legacy bank pipeline (still produces items)
 - generate → calibrate (15 profiles) → filter by pass rate → logit b → persist
@@ -397,8 +437,9 @@ This section documents an objective, critical evaluation of what has been built 
 ### Phase 1 → Phase 2 → Phase 3 roadmap
 1. ~~**Finish Phase 1 rerun**~~ ✓ Done (2026-05-09) — gpt-oss-20b @ strict re-run with reasoning fix; baseline raw θ now −0.626 (anchored to 0).
 2. ~~**Phase 2: Rasch + classical QC**~~ ✓ Done (2026-05-10) — `run_phase2.py` wired in. Rasch + (zero-variance, point-biserial, infit, outfit) QC on 1,823 items → 1,284 frozen items in `evaluator/output/phase2_frozen_bank.jsonl`. 2PL machinery preserved as dormant path for future re-evaluation when bank/examinee count grows.
-3. **Phase 3: Δθ from prompt engineering** — measure how much system-prompt strictness moves a model's θ on the frozen Phase 2 bank. The 70B's none→strict swing of +0.36 in mean P at Phase 1 is the central effect this is designed to quantify. Rasch's specific objectivity makes this comparison theoretically clean (Δθ between two prompts is invariant to which item subset is used).
-4. **Future: revisit 2PL** — once the bank is bigger and examinee count grows beyond the 45-cell grid, refit 2PL via `evaluator/twopl.py` (already implemented) and compare against Rasch.
+3. ~~**Phase 3a: Δθ from prompt strictness (offline + dual-judge)**~~ ✓ Done (2026-05-10) — `run_phase3.py` + `run_phase3_rejudge_lenient.py`. Strict-judge Δθ shows large prompt effects (70b: +5.4 logits); lenient-judge re-grade reveals the format-unlock vs. reasoning decomposition: only the 70b shows non-trivial reasoning gain (~+2.5), while gpt-oss-20b and llama-3.1-8b have ≈ 0 lenient Δθ — i.e., system prompts mostly buy citation format, not regulatory reasoning. See §5 / §7.
+4. **Phase 3b: agentic / harness changes (deferred)** — optional next round, beyond pure prompt tweaks: a `RetrievalAgent` that pulls relevant CFR sections before answering, a `CriticAgent` that self-reviews, or a step-decomposition pipeline. These are interventions in the *agent* and *harness*, not the system prompt — and would test whether the bank can detect Δθ from architecture changes.
+5. **Future: revisit 2PL** — once the bank is bigger and examinee count grows beyond the 45-cell grid, refit 2PL via `evaluator/twopl.py` (already implemented) and compare against Rasch.
 
 ### To make academic contribution credible
 - ~~**Add solver profiles**~~ ✓ Done — 15 synthetic profiles spanning layperson → senior FDA auditor (legacy pipeline); 45-cell grid spans 3 base models × 5 temps × 3 strictness levels (Phase 1 pipeline)
