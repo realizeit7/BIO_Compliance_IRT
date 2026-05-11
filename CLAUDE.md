@@ -97,7 +97,8 @@ run_phase1.py
   └── evaluator/
         ├── response_matrix.py    (jsonl → ResponseMatrix)
         ├── rasch.py              (1PL MML fit + anchor_baseline_to_zero)
-        └── twopl.py + qc.py      (Phase 2: 2PL fit + a≤0 drop, not yet wired in)
+        ├── rasch_qc.py           (Phase 2 QC: point-biserial + infit/outfit)
+        └── twopl.py + qc.py      (DORMANT 2PL path, kept for future re-evaluation)
 ```
 
 ---
@@ -254,6 +255,18 @@ In the 15-profile architecture, θ MLE is still computed for the layperson (prof
 - **Resumability**: the runner skips pairs whose `(examinee_id, task_id)` already appears in `responses.jsonl`. To re-run a single cell after a bug fix, delete its rows from the jsonl and rerun — the runner picks up only the missing pairs.
 - **Outputs**: per-row jsonl in `logs/arena_runs/{run_id}/responses.jsonl`; per-item b in `evaluator/output/{run_id}_phase1_b.jsonl`.
 
+### Phase 2 Rasch + classical QC (the official path)
+`run_phase2.py` reads the Phase 1 `responses.jsonl`, refits Rasch via `girth.rasch_mml`, and applies three classical QC signals computed on the response matrix. Output: `evaluator/output/phase2_qc_report.json` and `evaluator/output/phase2_frozen_bank.jsonl` (schema: `{task_id, b, point_biserial, infit, outfit}`).
+
+- **Why Rasch, not 2PL**: 2PL is not identifiable on our 45-cell grid. `twopl_mml` (marginal MLE) pinned every item at a=5.0 (girth's upper bound); `twopl_jml` (joint MLE) gave a real spread but JML is statistically inconsistent as n_items→∞ with n_examinees fixed, which is exactly our regime. Rasch is identifiable, gives specific objectivity for Δθ comparisons in Phase 3, and matches the model used in Phase 1.
+- **QC signals** (see `evaluator/rasch_qc.py`):
+  1. **Zero-variance**: items with P=0 or P=1 have undefined Rasch b at the bound. Drop unconditionally.
+  2. **Point-biserial** (corrected: item vs total − item): negative pb means the item is inverted (smarter examinees fail more) — same broken-ground-truth signal that 2PL `a ≤ 0` was meant to catch. Default threshold `pb ≤ 0.0`.
+  3. **Infit / Outfit** (Rasch fit MSRs computed using MLE θ): caught noisy items where the model doesn't fit. Asymmetric defaults (upper bound only): infit ≤ 1.5, outfit ≤ 2.0. Linacre's standard symmetric [0.5, 1.5] is calibrated for thousands of examinees — on 45 cells, "too deterministic" items (low MSR) are clean separators we want to keep, not defects.
+- **Why outfit gets a looser upper bound (2.0 vs infit's 1.5)**: outfit is unweighted, so a single anomalous cell at extreme θ blows it up disproportionately on a small grid.
+- **Examinee θ for fit stats**: MLE (matches Linacre/WINSTEPS practice). Non-finite θ examinees would be dropped from the residual computation; on the 45-cell grid all 45 are finite.
+- **2PL machinery is dormant, not deleted**: `evaluator/twopl.py` and `evaluator/qc.py` are kept as a future path. They use `girth.twopl_jml` with `a_threshold=0.3` and were the active path 2026-05-10 morning before being demoted in favor of Rasch+classical-QC for the reasons above.
+
 ### Reasoning-model handling in `harness/groq_client.py`
 Two flavours of reasoning model on Groq, handled differently:
 
@@ -297,7 +310,15 @@ Pre-refactor DB rows have `b` values sampled from Uniform bands. Post-refactor r
 - Baseline raw θ = **−0.626** → anchored to 0; b shifted by +0.626  (post-fix; was −0.513 pre-fix)
 - b summary: min=−5.374, median=+2.442, max=+6.626
 - Real-vs-synthetic b gap = **+0.49** (real n=105 mean +2.73; synthetic n=1718 mean +2.25). Real items still skew harder.
-- Item bands: 294 at P=0 (16%), 240 at 0<P<0.05 (13%), 1241 informative 0.05–0.95 (68%), 34 at 0.95<P<1 (2%), 14 at P=1 (1%). Phase 2 2PL QC will flag the floor automatically.
+- Item bands: 294 at P=0 (16%), 240 at 0<P<0.05 (13%), 1241 informative 0.05–0.95 (68%), 34 at 0.95<P<1 (2%), 14 at P=1 (1%). Phase 2 2PL QC drops the floor automatically.
+
+### Phase 2 frozen bank (Rasch + classical QC)
+- 1,823 items in → **1,284 items frozen** (70.4% retention) in `evaluator/output/phase2_frozen_bank.jsonl`
+- Dropped: 308 zero-variance + 155 low-point-biserial (≤ 0, inverted) + 14 infit > 1.5 + 62 outfit > 2.0
+- Healthy median: b=+1.65, point_biserial=+0.42, infit=0.87, outfit=0.66
+- Bank schema: `{task_id, b, point_biserial, infit, outfit}` per item
+- QC report: `evaluator/output/phase2_qc_report.json`
+- Pre-history (2026-05-10 morning, now superseded): a 2PL-JML pass kept 1,374 items with a/b. Switched to Rasch+classical QC because 2PL on 45 examinees is methodologically strained (see Phase 2 section in §5).
 - **2026-05-09 fix verified**: gpt-oss-20b @ strict empties dropped 1820 / 9115 (20%) → **0 / 9115 (0%)** after the `reasoning_effort="low"` + reasoning-fallback fix in `harness/groq_client.py`. The cell's mean P rose 0.334 → 0.424 (+0.09) once the fake failures were removed; non-reasoning cells unchanged. Baseline raw θ shifted from −0.513 to −0.626 because the corrected gpt-oss-20b strict cell is genuinely stronger than baseline.
 - Phase 1 infra is resumable; partial runs are safe.
 
@@ -374,9 +395,10 @@ This section documents an objective, critical evaluation of what has been built 
 ## 9. Next Steps (priority-ordered)
 
 ### Phase 1 → Phase 2 → Phase 3 roadmap
-1. **Finish Phase 1 rerun** (in flight) — gpt-oss-20b @ strict cell with the reasoning fix; re-fit Rasch and re-anchor.
-2. **Phase 2: 2PL QC** — `evaluator/twopl.py` + `evaluator/qc.py` exist; not yet wired into a runner. Fit 2PL on the 1,823 items, drop items where a ≤ 0, persist a frozen healthy-item (a, b) file. Decide treatment for items with P=0 (~17% of bank).
-3. **Phase 3: Δθ from prompt engineering** — measure how much system-prompt strictness moves a model's θ on the frozen Phase 2 bank. The 70B's none→strict swing of +0.36 in mean P at Phase 1 is the central effect this is designed to quantify.
+1. ~~**Finish Phase 1 rerun**~~ ✓ Done (2026-05-09) — gpt-oss-20b @ strict re-run with reasoning fix; baseline raw θ now −0.626 (anchored to 0).
+2. ~~**Phase 2: Rasch + classical QC**~~ ✓ Done (2026-05-10) — `run_phase2.py` wired in. Rasch + (zero-variance, point-biserial, infit, outfit) QC on 1,823 items → 1,284 frozen items in `evaluator/output/phase2_frozen_bank.jsonl`. 2PL machinery preserved as dormant path for future re-evaluation when bank/examinee count grows.
+3. **Phase 3: Δθ from prompt engineering** — measure how much system-prompt strictness moves a model's θ on the frozen Phase 2 bank. The 70B's none→strict swing of +0.36 in mean P at Phase 1 is the central effect this is designed to quantify. Rasch's specific objectivity makes this comparison theoretically clean (Δθ between two prompts is invariant to which item subset is used).
+4. **Future: revisit 2PL** — once the bank is bigger and examinee count grows beyond the 45-cell grid, refit 2PL via `evaluator/twopl.py` (already implemented) and compare against Rasch.
 
 ### To make academic contribution credible
 - ~~**Add solver profiles**~~ ✓ Done — 15 synthetic profiles spanning layperson → senior FDA auditor (legacy pipeline); 45-cell grid spans 3 base models × 5 temps × 3 strictness levels (Phase 1 pipeline)
