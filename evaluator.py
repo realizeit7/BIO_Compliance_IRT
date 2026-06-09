@@ -147,35 +147,45 @@ class Evaluator:
             response=response,
         )
 
-        try:
-            msg = self.client.chat.completions.create(
-                model=self.model,
-                max_tokens=256,
-                messages=[
-                    {"role": "system", "content": self._system},
-                    {"role": "user", "content": prompt},
-                ],
-            )
-            raw = msg.choices[0].message.content.strip()
-            passed, reason = self._parse_verdict(raw)
-
-            # Attempt to extract soft P(correct) from token logprobs if available.
-            # Many inference backends (including Groq llama-3.3-70b-versatile) do not
-            # support logprobs; we fall back to 0.5 (uninformative prior) gracefully.
-            # In the 15-profile architecture, b is derived from the population pass
-            # rate rather than from individual logprobs, so 0.5 is acceptable here.
-            lp_content = None
+        import time
+        max_retries = 3
+        for attempt in range(max_retries + 1):
             try:
-                lp_content = getattr(msg.choices[0].logprobs, "content", None)
-            except Exception:
-                pass
-            p_correct = self._extract_soft_score(lp_content) if lp_content else 0.5
+                msg = self.client.chat.completions.create(
+                    model=self.model,
+                    max_tokens=256,
+                    messages=[
+                        {"role": "system", "content": self._system},
+                        {"role": "user", "content": prompt},
+                    ],
+                )
+                raw = msg.choices[0].message.content.strip()
+                passed, reason = self._parse_verdict(raw)
 
-            return passed, reason, p_correct
+                # Attempt to extract soft P(correct) from token logprobs if available.
+                # Many inference backends (including Groq llama-3.3-70b-versatile) do not
+                # support logprobs; we fall back to 0.5 (uninformative prior) gracefully.
+                # In the 15-profile architecture, b is derived from the population pass
+                # rate rather than from individual logprobs, so 0.5 is acceptable here.
+                lp_content = None
+                try:
+                    lp_content = getattr(msg.choices[0].logprobs, "content", None)
+                except Exception:
+                    pass
+                p_correct = self._extract_soft_score(lp_content) if lp_content else 0.5
 
-        except Exception as exc:
-            # Fail-safe: treat judge errors as FAIL to avoid false positives
-            return False, f"Judge error: {exc}", 0.0
+                return passed, reason, p_correct
+
+            except (openai.RateLimitError, openai.APITimeoutError, openai.APIConnectionError) as exc:
+                if attempt < max_retries:
+                    wait = 2 ** attempt
+                    time.sleep(wait)
+                    continue
+                # Exhausted retries — fail-safe FAIL with error type recorded
+                return False, f"Judge transient_error [{type(exc).__name__}]: {exc}", 0.0
+            except Exception as exc:
+                # Non-retryable: fail-safe FAIL to avoid false positives
+                return False, f"Judge error [{type(exc).__name__}]: {exc}", 0.0
 
     # ------------------------------------------------------------------
     # Internal
@@ -216,10 +226,9 @@ class Evaluator:
                 ep = math.exp(lp_pass - m)
                 ef = math.exp(lp_fail - m)
                 return ep / (ep + ef)
-            elif lp_pass is not None:
-                return max(0.01, min(0.99, math.exp(lp_pass)))
-            elif lp_fail is not None:
-                return max(0.01, min(0.99, 1.0 - math.exp(lp_fail)))
+            # Single-token case: exp(lp_pass) underestimates P(PASS) because
+            # it ignores mass on non-PASS non-FAIL tokens, while 1-exp(lp_fail)
+            # overestimates it. The biases are opposite, so return 0.5 (neutral).
             return 0.5  # verdict token found but no usable logprob pair
 
         return 0.5  # no verdict token in logprob stream

@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /Users/awesomedasom/Desktop/autoresearch_irt
+cd "$(dirname "$0")"
 source venv/bin/activate
 export $(cat .env | xargs)
 

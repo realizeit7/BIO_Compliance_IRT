@@ -1,10 +1,10 @@
 #!/bin/bash
-cd /Users/awesomedasom/Desktop/autoresearch_irt
+cd "$(dirname "$0")"
 source venv/bin/activate
 export $(cat .env | xargs)
 
 claude --dangerously-skip-permissions --max-turns 80 -p "
-Working directory: /Users/awesomedasom/Desktop/autoresearch_irt
+Working directory: $(pwd)
 The venv is already activated and GROQ_API_KEY is set.
 
 Your job is to build up the real FDA warning letter item bank. Do all steps below.

@@ -11,7 +11,7 @@ This project builds an **automated bio-compliance Item Response Theory (IRT) que
 
 The core loop:
 1. An LLM **generates** compliance scenarios across 5 regulatory domains (FDA 21 CFR Part 11, GCP deviations, promotional review, GMP, informed consent)
-2. **15 synthetic AI solver profiles** attempt each scenario — spanning a spectrum from "general layperson" (temp 0.1–0.7) to "senior FDA auditor" (temp 0.1–0.7) across 5 expertise tiers
+2. **15 synthetic AI solver profiles** attempt each scenario — spanning a spectrum from "general layperson" (temp 0.1–0.8) to "senior FDA auditor" (temp 0.1–0.8) across 5 expertise tiers
 3. An LLM **judge** grades each response PASS or FAIL
 4. Item difficulty `b` is estimated directly from the empirical **pass rate P** using `b = ln((1−P)/P)` (logit formula, P clipped to [0.01, 0.99])
 5. Items are classified by pass-rate thresholds: P < 0.05 → too hard, P > 0.95 → easy, else retained (widened 2026-04-14)
@@ -20,11 +20,11 @@ The core loop:
 
 A parallel **real-world track** ingests actual FDA warning letters and converts them into calibration items, tagged `source_type="real"`. This grounds the synthetic bank in actual regulatory enforcement findings.
 
-**Current bank size (as of last build):**
-- Synthetic retained: 78 items (pre-recalibration count; High-Subtlety recalibration pending)
-- Real-world retained: 54 items (from 19 FDA warning letters)
-- Total calibrated: 139+ items with known b values
-- +50 targeted 21 CFR Part 11 items (Hybrid Systems + Legacy Validation) in generation as of 2026-04-14
+**Current bank size (Phase 2 frozen bank, 2026-05-10):**
+- Synthetic frozen: 1,191 items
+- Real-world frozen: 93 items (from FDA warning letters)
+- Total frozen (healthy): 1,284 items in `evaluator/output/phase2_frozen_bank.jsonl`
+- Input to Phase 2: 1,823 items (539 dropped by QC)
 
 ---
 
@@ -140,7 +140,7 @@ run_phase3_rejudge_lenient.py          (only API-calling helper — re-grades ex
 
 ### Running the pipelines
 ```bash
-cd /Users/awesomedasom/Desktop/autoresearch_irt
+cd /path/to/BIO_Compliance_IRT
 source venv/bin/activate
 export $(cat .env | xargs)
 

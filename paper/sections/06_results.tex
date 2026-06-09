@@ -2,7 +2,7 @@
 \label{sec:results}
 
 \subsection{Bank composition and quality}
-Quality control reduces the \todo{N\_in} input items to a frozen healthy
+Quality control reduces the $1{,}823$ input items to a frozen healthy
 bank of \textbf{1{,}284} items (Table~\ref{tab:qc}). The four drop
 reasons account for 539 removed items; zero-variance and non-positive
 point-biserial dominate, with relatively few items failing the fit
@@ -15,7 +15,7 @@ bounds.
 \toprule
 stage / reason & items \\
 \midrule
-input items                 & \todo{1{,}823} \\
+input items                 & $1{,}823$ \\
 \quad dropped: zero-variance        & 308 \\
 \quad dropped: point-biserial $\le 0$ & 155 \\
 \quad dropped: infit $> 1.5$        & 14 \\
@@ -79,10 +79,12 @@ the ideal Rasch value of $1.0$.}
 
 \subsection{Real-vs-synthetic difficulty gap}
 Items extracted from FDA warning letters are systematically harder than
-synthetic items: mean $b = +2.73$ for real items versus $+2.25$ for
-synthetic, a gap of $+0.49$ logits. No real item falls below $b = 0$,
-consistent with the intuition that enforcement does not produce easy
-questions. This is a descriptive comparison; a formal test (e.g.\
-Mann--Whitney~$U$) is left to future work
+synthetic items. These statistics are computed on the full Phase~1 input
+set before QC ($n = 105$ real, $n = 1{,}718$ synthetic): mean $b = +2.73$
+for real items versus $+2.25$ for synthetic, a gap of $+0.49$ logits; the
+frozen bank retains 93 real items with qualitatively similar ordering. No
+real item falls below $b = 0$, consistent with the intuition that
+enforcement does not produce easy questions. This is a descriptive
+comparison; a formal test (e.g.\ Mann--Whitney~$U$) is left to future work
 (Section~\ref{sec:discussion}). \todo{Run Mann--Whitney U and report the
-p-value; confirm the final real/synthetic $n$ and means for this build.}
+p-value; recompute gap on the frozen bank (93 real) and report both.}
