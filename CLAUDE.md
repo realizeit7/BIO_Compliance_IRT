@@ -64,6 +64,14 @@ autoresearch_irt/                 ← repo root
   evaluator/output/<run_id>_phase1_b.jsonl  ← anchored b estimates
   evaluator/output/phase2_frozen_bank.jsonl ← Phase 2 healthy items (b + pb + infit + outfit)
   evaluator/output/phase3a_strictness_deltatheta.json  ← Phase 3a Δθ tables (strict + lenient)
+  evaluator/pyirt_fit.py          ← py-irt 1PL fit with posterior SD (b_se) — uncertainty path
+
+  # --- arXiv paper scaffold (offline; reads existing outputs only) -----
+  paper/main.tex                  ← document root (article class)
+  paper/sections/00..09_*.tex     ← per-section .tex (Part 1 instrument, Part 2 Δθ)
+  paper/references.bib            ← BibTeX stubs (verify before submission)
+  paper/figures/gen_fig1..4_*.py  ← matplotlib scripts → fig{1..4}.pdf/png (no API calls)
+  paper/figures/_common.py        ← shared loaders + analytic SE = 1/√(N·P(1−P))
 
   venv/                           ← Python virtualenv (gitignored)
   .env                            ← GROQ_API_KEY (gitignored)
@@ -285,6 +293,12 @@ In the 15-profile architecture, θ MLE is still computed for the layperson (prof
 - **Why outfit gets a looser upper bound (2.0 vs infit's 1.5)**: outfit is unweighted, so a single anomalous cell at extreme θ blows it up disproportionately on a small grid.
 - **Examinee θ for fit stats**: MLE (matches Linacre/WINSTEPS practice). Non-finite θ examinees would be dropped from the residual computation; on the 45-cell grid all 45 are finite.
 - **2PL machinery is dormant, not deleted**: `evaluator/twopl.py` and `evaluator/qc.py` are kept as a future path. They use `girth.twopl_jml` with `a_threshold=0.3` and were the active path 2026-05-10 morning before being demoted in favor of Rasch+classical-QC for the reasons above.
+
+### Parameter uncertainty: analytic SE now, py-irt posterior SD later (2026-06-09)
+`girth.rasch_mml` returns **point estimates only** — no standard errors. Two uncertainty paths exist:
+
+- **Analytic SE (interim, zero API calls)**: `SE(b) = 1/√(N·P(1−P))` with N=45 and `P = σ(−b)` recovered from each frozen-bank b. Standard delta-method SE for a one-item logit difficulty. Implemented in `paper/figures/_common.py::analytic_se_b`; this is what the paper reports today.
+- **py-irt posterior SD (intended final)**: `evaluator/pyirt_fit.py` fits the same 1PL via py-irt (Pyro BBVI) and exposes `loc_diff → b_mean`, `scale_diff → b_se` (per-item posterior SD). Baseline anchoring mirrors `evaluator/rasch.py` exactly (shift b by −θ_baseline; b_se invariant). **Blocked on data**: needs the raw `logs/arena_runs/phase1_baseline/responses.jsonl`, which is gitignored and absent in fresh clones — regenerate via `run_phase1.py` (~164k Groq calls) before py-irt can run on the real bank. Recovery verified on synthetic data (r≈0.93). py-irt b has a wider scale than girth (vague priors, 45 examinees) — wider posterior SDs are the honest uncertainty, not a defect.
 
 ### Phase 3a Δθ from prompt strictness (offline + lenient rejudge)
 `run_phase3.py` measures how much system-prompt strictness moves a model's θ on the frozen Phase 2 bank. Pure offline analysis on Phase 1's existing `responses.jsonl` — no new solver calls. Output: `evaluator/output/phase3a_strictness_deltatheta.json`.
