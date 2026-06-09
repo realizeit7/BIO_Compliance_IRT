@@ -153,21 +153,32 @@ def _run_pipeline_solver(
             prev_output=prev_output,
         )
 
-        try:
-            msg = client.chat.completions.create(
-                model=model,
-                max_tokens=max_tokens,
-                temperature=temperature,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user",   "content": user_msg},
-                ],
-            )
-            raw = msg.choices[0].message.content.strip()
-            stripped = _re.sub(r"<think>.*?</think>", "", raw, flags=_re.DOTALL).strip()
-            step_output = stripped if len(stripped) >= 40 else raw
-        except Exception as exc:
-            step_output = f"[Step {i} error: {exc}]"
+        import time as _time
+        _max_retries = 3
+        step_output = ""
+        for _attempt in range(_max_retries + 1):
+            try:
+                msg = client.chat.completions.create(
+                    model=model,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user",   "content": user_msg},
+                    ],
+                )
+                raw = msg.choices[0].message.content.strip()
+                stripped = _re.sub(r"<think>.*?</think>", "", raw, flags=_re.DOTALL).strip()
+                step_output = stripped if len(stripped) >= 40 else raw
+                break
+            except (openai.RateLimitError, openai.APITimeoutError, openai.APIConnectionError) as exc:
+                if _attempt < _max_retries:
+                    _time.sleep(2 ** _attempt)
+                    continue
+                step_output = f"[Step {i} transient_error [{type(exc).__name__}]: {exc}]"
+            except Exception as exc:
+                step_output = f"[Step {i} error [{type(exc).__name__}]: {exc}]"
+                break
 
         if verbose:
             step_name = step.get("name", f"step{i}")

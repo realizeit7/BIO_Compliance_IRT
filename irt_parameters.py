@@ -299,7 +299,7 @@ def estimate_theta_mle(
             p   = p_correct(theta, RASCH_A, b)
             f  += (1.0 if r else 0.0) - p
             df -= p * (1.0 - p)
-        if abs(df) < 1e-12:
+        if abs(df) < 1e-6:
             break
         step  = f / df
         theta -= step

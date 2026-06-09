@@ -135,8 +135,10 @@ class GroqClient:
                 }
                 if seed is not None:
                     kwargs["seed"] = seed
+                reasoning_effort_used: str | None = None
                 if _uses_separate_reasoning_channel(model):
                     kwargs["reasoning_effort"] = "low"
+                    reasoning_effort_used = "low"
 
                 msg = self._client.chat.completions.create(**kwargs)
                 choice = msg.choices[0]
@@ -165,6 +167,7 @@ class GroqClient:
                         else None,
                         "had_reasoning_block": content != text and not used_reasoning_fallback,
                         "used_reasoning_fallback": used_reasoning_fallback,
+                        "reasoning_effort": reasoning_effort_used,
                     },
                 )
 

@@ -122,6 +122,14 @@ def run_rasch_qc(
         outfit is more outlier-sensitive on small examinee samples)
     """
     mat = rm.matrix.copy()
+    n_missing = int((mat < 0).sum())
+    if n_missing > 0:
+        import warnings
+        warnings.warn(
+            f"ResponseMatrix has {n_missing} missing cells (sentinel -1) mapped to FAIL. "
+            "This is only valid for a complete grid. Check for incomplete runs.",
+            stacklevel=2,
+        )
     mat[mat < 0] = 0
     mat = mat.astype(np.float64)
     n_examinees = mat.shape[1]

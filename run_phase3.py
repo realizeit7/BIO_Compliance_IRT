@@ -48,9 +48,17 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+import yaml
 from girth import ability_mle
 
 from arena.grid import _make_examinee_id
+
+_CONFIG_PATH = Path(__file__).parent / "configs" / "phase1_baseline.yaml"
+
+
+def _load_phase1_config() -> dict:
+    with _CONFIG_PATH.open("r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
 
 
 @dataclass(frozen=True)
@@ -255,27 +263,28 @@ def main(argv: list[str]) -> int:
     bank_b = load_frozen_bank(bank_path)
     print(f"[phase3a] frozen bank: {len(bank_b)} items  ← {bank_path}")
 
-    models = [
-        "llama-3.3-70b-versatile",
-        "openai/gpt-oss-20b",
-        "llama-3.1-8b-instant",
-    ]
-    strictness_levels = ["none", "neutral", "strict"]
+    cfg = _load_phase1_config()
+    models: list[str] = cfg["grid"]["models"]
+    strictness_levels: list[str] = cfg["grid"]["strictness_levels"]
+    _baseline_cfg = cfg["baseline"]
+    baseline_key = ExamineeKey(
+        model=_baseline_cfg["model"],
+        temperature=float(_baseline_cfg["temperature"]),
+        strictness=_baseline_cfg["strictness"],
+    )
 
     subject_keys = [
         ExamineeKey(model=m, temperature=args.temperature, strictness=s)
         for m in models
         for s in strictness_levels
     ]
-    baseline_key = ExamineeKey(
-        model="llama-3.1-8b-instant", temperature=0.1, strictness="none"
-    )
     all_keys = subject_keys + [baseline_key]
 
     print(
         f"[phase3a] examinees: {len(subject_keys)} subject cells "
         f"({len(models)} models × t={args.temperature} × {len(strictness_levels)} strictness) "
-        f"+ 1 baseline (llama-3.1-8b @ t=0.1, none)"
+        f"+ 1 baseline ({baseline_key.model} @ t={baseline_key.temperature}, {baseline_key.strictness})"
+        f"  [config: {_CONFIG_PATH}]"
     )
 
     # --- Strict judge pass --------------------------------------------------

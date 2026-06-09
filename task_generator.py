@@ -518,7 +518,7 @@ class TaskGenerator:
     # ------------------------------------------------------------------
 
     def _generate_one(self, domain: dict, attempt: int, easy: bool = False) -> Optional[dict]:
-        """Generate a single task, retrying on parse errors."""
+        """Generate a single task, retrying on parse errors and transient API errors."""
         task_id = f"TASK-{domain['key'].upper()}-{uuid.uuid4().hex[:8].upper()}"
         template = _USER_TEMPLATE_EASY if easy else _USER_TEMPLATE
         prompt = template.format(
@@ -544,11 +544,27 @@ class TaskGenerator:
 
         except (json.JSONDecodeError, KeyError, ValueError) as exc:
             if attempt < self.max_retries:
-                print(
-                    f"  [TaskGenerator] Parse error on attempt {attempt + 1}: {exc} "
-                    f"— retrying…"
-                )
+                print(f"  [TaskGenerator] Parse error on attempt {attempt + 1}: {exc} — retrying…")
                 return self._generate_one(domain, attempt + 1, easy=easy)
+            print(f"  [TaskGenerator] Skipping task after {attempt + 1} parse-error attempts: {exc}")
+            return None
+        except openai.RateLimitError as exc:
+            if attempt < self.max_retries:
+                import time
+                wait = 2 ** attempt
+                print(f"  [TaskGenerator] Rate limit on attempt {attempt + 1}, waiting {wait}s: {exc}")
+                time.sleep(wait)
+                return self._generate_one(domain, attempt + 1, easy=easy)
+            print(f"  [TaskGenerator] Skipping task after {attempt + 1} rate-limit attempts: {exc}")
+            return None
+        except (openai.APITimeoutError, openai.APIConnectionError) as exc:
+            if attempt < self.max_retries:
+                import time
+                wait = 2 ** attempt
+                print(f"  [TaskGenerator] API error on attempt {attempt + 1}, waiting {wait}s: {exc}")
+                time.sleep(wait)
+                return self._generate_one(domain, attempt + 1, easy=easy)
+            print(f"  [TaskGenerator] Skipping task after {attempt + 1} API-error attempts: {exc}")
             return None
 
     @staticmethod

@@ -273,16 +273,24 @@ def print_comparison(db: Database) -> None:
     print(bar)
 
     print(f"\n  SYNTHETIC  (N={len(synth)} retained items)")
-    if synth:
-        print(f"  mean={_mean(synth):.3f}  sd={_stdev(synth):.3f}"
+    if not synth:
+        print("  (no items)")
+    else:
+        sd = _stdev(synth)
+        sd_str = f"{sd:.3f}" if not (sd != sd) else "n/a"  # nan check
+        print(f"  mean={_mean(synth):.3f}  sd={sd_str}"
               f"  min={min(synth):.3f}  max={max(synth):.3f}")
-    print(histogram(synth))
+        print(histogram(synth))
 
     print(f"\n  REAL-WORLD (N={len(real)} retained items)")
-    if real:
-        print(f"  mean={_mean(real):.3f}  sd={_stdev(real):.3f}"
+    if not real:
+        print("  (no items)")
+    else:
+        sd = _stdev(real)
+        sd_str = f"{sd:.3f}" if not (sd != sd) else "n/a"
+        print(f"  mean={_mean(real):.3f}  sd={sd_str}"
               f"  min={min(real):.3f}  max={max(real):.3f}")
-    print(histogram(real))
+        print(histogram(real))
 
     if synth and real:
         delta = _mean(real) - _mean(synth)

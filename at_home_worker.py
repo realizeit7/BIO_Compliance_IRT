@@ -10,7 +10,7 @@ REPO = "autoresearch_IRT"
 ISSUE_NUMBER = 1
 POLLING_INTERVAL = 30 
 
-REPO_PATH = "/Users/awesomedasom/Desktop/autoresearch_irt"
+REPO_PATH = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR = os.path.join(REPO_PATH, "jobs/logs")
 LAST_COMMENT_ID_FILE = os.path.join(REPO_PATH, ".last_run_comment_id")
 
