@@ -60,7 +60,7 @@ def run_2pl_qc(fit: TwoPLFit, *, a_threshold: float = 0.0) -> QCReport:
     for tid, a, b in zip(fit.item_ids, fit.a, fit.b):
         if not np.isfinite(a) or not np.isfinite(b):
             dropped_ids.append(tid)
-            reasons[tid] = f"non_finite_params (a={a}, b={b})"
+            reasons[tid] = "zero_variance (all-pass or all-fail item, undefined 2PL)"
             continue
         if a <= a_threshold:
             dropped_ids.append(tid)

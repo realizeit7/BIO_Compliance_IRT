@@ -1,0 +1,284 @@
+{
+  "frozen_bank": "evaluator/output/phase2_frozen_bank.jsonl",
+  "responses_source_strict": "logs/arena_runs/phase1_baseline/responses.jsonl",
+  "responses_source_lenient": "logs/arena_runs/phase3a_lenient/responses.jsonl",
+  "n_frozen_items": 1284,
+  "subject_temperature": 0.4,
+  "strictness_levels": [
+    "none",
+    "neutral",
+    "strict"
+  ],
+  "models": [
+    "llama-3.3-70b-versatile",
+    "openai/gpt-oss-20b",
+    "llama-3.1-8b-instant"
+  ],
+  "subset_anchor_strict": {
+    "baseline_theta_raw_on_subset": -0.7159449300425968,
+    "baseline_n_items": 1284,
+    "baseline_raw_pass_rate": 0.26791277258566976,
+    "shift_applied": 0.7159449300425968
+  },
+  "subset_anchor_lenient": {
+    "baseline_theta_raw_on_subset": -0.7159449300425968,
+    "baseline_n_items": 1284,
+    "baseline_raw_pass_rate": 0.26791277258566976,
+    "shift_applied": 0.7159449300425968
+  },
+  "rows_strict": [
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_4ed89267",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.056074766355140186,
+      "theta": -2.8603299448291946,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sneutral_623a0d20",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "neutral",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.24376947040498442,
+      "theta": -0.2612801089735518,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_018e8c2f",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.5693146417445483,
+      "theta": 2.551999680180582,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "openai_gpt_oss_20b_t0.40_snone_9f9709d4",
+      "model": "openai/gpt-oss-20b",
+      "temperature": 0.4,
+      "strictness": "none",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.39330218068535827,
+      "theta": 1.2085947124609524,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "openai_gpt_oss_20b_t0.40_sneutral_6649c103",
+      "model": "openai/gpt-oss-20b",
+      "temperature": 0.4,
+      "strictness": "neutral",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3855140186915888,
+      "theta": 1.141162714911061,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "openai_gpt_oss_20b_t0.40_sstrict_c9878907",
+      "model": "openai/gpt-oss-20b",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.47585669781931467,
+      "theta": 1.8730833578807262,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_ae9c8988",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.2749221183800623,
+      "theta": 0.0743390349250202,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sneutral_33c16c4c",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "neutral",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.2881619937694704,
+      "theta": 0.21276550176316553,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_a06a5f63",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.4618380062305296,
+      "theta": 1.7658130550415754,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.10_snone_22d9a700",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.1,
+      "strictness": "none",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.26791277258566976,
+      "theta": -4.1136120000501513e-07,
+      "is_baseline": true
+    }
+  ],
+  "rows_lenient": [
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_4ed89267",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.49065420560747663,
+      "theta": 1.9843697056590848,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sneutral_623a0d20",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "neutral",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.7538940809968847,
+      "theta": 3.882710492907625,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_018e8c2f",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.8271028037383178,
+      "theta": 4.505539401631535,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "openai_gpt_oss_20b_t0.40_snone_9f9709d4",
+      "model": "openai/gpt-oss-20b",
+      "temperature": 0.4,
+      "strictness": "none",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.807632398753894,
+      "theta": 4.328374744892281,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "openai_gpt_oss_20b_t0.40_sneutral_6649c103",
+      "model": "openai/gpt-oss-20b",
+      "temperature": 0.4,
+      "strictness": "neutral",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.8099688473520249,
+      "theta": 4.3490950232735495,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "openai_gpt_oss_20b_t0.40_sstrict_c9878907",
+      "model": "openai/gpt-oss-20b",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.7811526479750779,
+      "theta": 4.102148372127512,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_ae9c8988",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.7383177570093458,
+      "theta": 3.7620423865306334,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sneutral_33c16c4c",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "neutral",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.7305295950155763,
+      "theta": 3.7027732893670158,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_a06a5f63",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.7609034267912772,
+      "theta": 3.9380454024718827,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.10_snone_22d9a700",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.1,
+      "strictness": "none",
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.26791277258566976,
+      "theta": -4.1136120000501513e-07,
+      "is_baseline": true
+    }
+  ],
+  "delta_theta_vs_none_strict": {
+    "llama-3.3-70b-versatile": {
+      "none": 0.0,
+      "neutral": 2.599049835855643,
+      "strict": 5.412329625009777
+    },
+    "openai/gpt-oss-20b": {
+      "none": 0.0,
+      "neutral": -0.06743199754989138,
+      "strict": 0.6644886454197738
+    },
+    "llama-3.1-8b-instant": {
+      "none": 0.0,
+      "neutral": 0.13842646683814533,
+      "strict": 1.6914740201165552
+    }
+  },
+  "delta_theta_vs_none_lenient": {
+    "llama-3.3-70b-versatile": {
+      "none": 0.0,
+      "neutral": 1.89834078724854,
+      "strict": 2.52116969597245
+    },
+    "openai/gpt-oss-20b": {
+      "none": 0.0,
+      "neutral": 0.02072027838126811,
+      "strict": -0.22622637276476976
+    },
+    "llama-3.1-8b-instant": {
+      "none": 0.0,
+      "neutral": -0.05926909716361761,
+      "strict": 0.17600301594124934
+    }
+  },
+  "format_unlock_delta": {
+    "llama-3.3-70b-versatile": {
+      "none": 0.0,
+      "neutral": 0.7007090486071028,
+      "strict": 2.891159929037327
+    },
+    "openai/gpt-oss-20b": {
+      "none": 0.0,
+      "neutral": -0.08815227593115949,
+      "strict": 0.8907150181845436
+    },
+    "llama-3.1-8b-instant": {
+      "none": 0.0,
+      "neutral": 0.19769556400176294,
+      "strict": 1.515471004175306
+    }
+  }
+}
