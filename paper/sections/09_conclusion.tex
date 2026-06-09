@@ -1,0 +1,26 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented an end-to-end pipeline that builds and IRT-calibrates a
+difficulty-graded question bank for biopharma regulatory compliance, and
+then uses that bank as a measuring instrument. The instrument
+(Part~1) generates hard items under a Red Herring + subtle-violation
+mandate, administers them to a synthetic examinee population, and freezes
+a healthy bank of 1{,}284 Rasch-calibrated items spanning roughly $\pm 4$
+logits, with a real-FDA track confirming that enforced violations are
+harder than synthetic ones. The experiment (Part~2) treats the calibrated
+ability $\theta$ as an optimization metric and, via a strict/lenient
+dual-judge decomposition, shows that system-prompt strictness primarily
+unlocks citation \emph{format} rather than compliance \emph{reasoning}---
+with only the largest model showing a genuine reasoning gain.
+
+The natural next steps follow the limitations: replace the analytic
+difficulty SE with \texttt{py-irt} posterior standard deviations, add
+human expert validation of a stratified subset, formally test the
+real-vs-synthetic difficulty gap, and expand the examinee population
+across model families to reduce correlation. Beyond measurement, the
+calibrated bank enables adaptive item selection (choosing the item whose
+difficulty best matches a system's current $\theta$) and a principled way
+to track whether agentic or retrieval interventions---not just prompt
+edits---move regulatory \emph{reasoning} on a stable scale.
+\todo{Finalize the closing once Part~2 ``evolution'' experiments land.}

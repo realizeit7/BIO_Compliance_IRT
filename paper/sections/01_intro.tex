@@ -1,0 +1,64 @@
+\section{Introduction}
+\label{sec:intro}
+
+% Motivation: why calibrated difficulty (not accuracy %) matters in GxP.
+Large language models are increasingly proposed as assistants in
+GxP-regulated environments---drug manufacturing, clinical trials, and
+regulatory submissions---where an incorrect compliance determination
+carries legal and patient-safety consequences. Yet the dominant way we
+measure LLM competence, a single accuracy percentage on a fixed test set,
+is poorly suited to this setting. Accuracy conflates easy and hard items,
+gives no per-item difficulty, and cannot place a new system on a stable
+scale for comparison across time or across interventions.
+
+% Gap.
+Educational measurement solved an analogous problem decades ago with
+\emph{item-response theory} (IRT), which separates item difficulty
+($b$) from examinee ability ($\theta$) on a common latent scale
+\citep{lord1980,rasch1960}. IRT is standard for human high-stakes
+testing but is rarely applied to LLM evaluation, and---where it is---the
+items are typically repurposed human exams rather than instruments built
+for, and calibrated on, machine examinees. In a specialized regulatory
+domain there is no large pool of human test-takers to calibrate against,
+and crowd-sourced items lack the domain subtlety that makes compliance
+hard.
+
+% Contributions.
+This paper builds a difficulty-calibrated compliance item bank
+\emph{end to end} and then uses it as a measuring instrument. Our
+contributions are:
+
+\begin{enumerate}[leftmargin=1.4em]
+  \item \textbf{Automated item generation with a difficulty mandate.}
+  We generate compliance scenarios under an explicit ``Red Herring +
+  subtle violation'' construction (Section~\ref{sec:itemgen}): every hard
+  item must contain a compliant-but-suspicious element designed to
+  mislead, and the true violation must be a procedural or data-integrity
+  subtlety rather than an obvious lapse. A parallel track converts real
+  FDA warning letters into items to ground the synthetic bank in actual
+  enforcement.
+
+  \item \textbf{IRT calibration with a synthetic examinee population.}
+  Lacking human test-takers, we administer each item to a population of
+  synthetic AI examinees and estimate difficulty from their response
+  pattern (Sections~\ref{sec:calibration}--\ref{sec:pipeline}). We fit a
+  Rasch (1PL) model, anchor it to a fixed baseline examinee, and apply
+  classical item-fit quality control to freeze a healthy bank of
+  \textbf{1{,}284} items.
+
+  \item \textbf{$\theta$ as an optimization metric, with a
+  format-vs-reasoning decomposition.} Treating the calibrated bank as a
+  fixed instrument, we measure how much a system-prompt intervention
+  moves a model's ability $\theta$ (Section~\ref{sec:deltatheta}). A
+  strict/lenient dual-judge design separates the portion of the gain
+  attributable to \emph{citation format} from the portion reflecting
+  genuine \emph{compliance reasoning}.
+\end{enumerate}
+
+We frame the work in two parts. Part~1
+(Sections~\ref{sec:itemgen}--\ref{sec:results}) is about the
+\emph{instrument}: how the calibrated bank is built and what it looks
+like. Part~2 (Section~\ref{sec:deltatheta}) is an \emph{experiment} run
+on that instrument. We are deliberately explicit about the limitations of
+a closed loop in which the same model family generates, answers, and
+judges (Section~\ref{sec:discussion}).

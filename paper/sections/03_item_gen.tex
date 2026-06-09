@@ -1,0 +1,73 @@
+\section{Item Generation}
+\label{sec:itemgen}
+
+% Part 1 begins: the instrument.
+The bank is built from two sources: LLM-generated synthetic scenarios and
+items extracted from real FDA warning letters. Both share a common schema
+and are calibrated identically.
+
+\subsection{Item schema}
+Each item is a JSON record with the fields in Table~\ref{tab:schema}.
+The \texttt{gold\_standard} is the reference answer used by the judge; for
+hard items it must name the controlling regulation at the section level
+and, where a Red Herring is present, briefly explain why it is
+\emph{not} the violation.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+field & description \\
+\midrule
+\texttt{task\_id}      & stable identifier, e.g. \texttt{TASK-21CFR11-A1B2C3D4} \\
+\texttt{domain}        & regulatory domain key (see \S\ref{sec:domains}) \\
+\texttt{context}       & 4--6 sentence scenario, named fictional company \\
+\texttt{question}      & single-answer compliance question \\
+\texttt{gold\_standard}& reference answer + section-level citation \\
+\texttt{source\_type}  & \texttt{synthetic} or \texttt{real} \\
+\texttt{source\_ref}   & URL of the FDA letter (real items only) \\
+\bottomrule
+\end{tabular}
+\caption{Item schema. \texttt{source\_type} tags the provenance track.}
+\label{tab:schema}
+\end{table}
+
+\subsection{Domains}
+\label{sec:domains}
+Hard synthetic items cover five regulatory domains---21~CFR~Part~11
+\citep{fda21cfr11} (electronic records and signatures), GCP protocol deviations,
+promotional-material review, GMP manufacturing deviations, and informed
+consent---plus ten \emph{targeted} 21~CFR~Part~11 sub-domains
+(hybrid paper/electronic systems, legacy-system validation, audit-trail
+completeness, electronic-signature components, and predicate-rule
+interplay). Five parallel ``easy'' domains generate deliberately
+unambiguous items used to anchor the low-difficulty end of the scale.
+
+\subsection{The Red Herring + subtle violation mandate}
+The central design decision is that hard items must be \emph{genuinely}
+hard, not merely confusing. The generation prompt enforces two
+constraints:
+\begin{enumerate}[leftmargin=1.4em,topsep=2pt]
+  \item \textbf{Red Herring.} At least one process or element that
+  \emph{appears} non-compliant but is in fact fully compliant (e.g.\ a
+  legacy system correctly operating read-only, a delayed-but-permissible
+  timestamp). It is meant to pull the solver toward flagging a
+  non-violation.
+  \item \textbf{Subtle violation.} The actual gap must be a procedural
+  lapse, a signature-timing issue, or a system-to-system data-integrity
+  gap---never a blatant non-compliance. The common-sense answer must be
+  \emph{wrong}.
+\end{enumerate}
+Easy items use a separate template with no Red Herring and a routine,
+unambiguous violation. \todo{Add one worked hard-item example (context,
+question, gold standard, and the Red Herring) as a boxed figure.}
+
+\subsection{Real-world grounding: FDA warning letters}
+A separate importer ingests FDA warning letters, extracts compliance
+findings, assigns a domain, and emits items tagged
+\texttt{source\_type=real}. Because these encode \emph{actual}
+enforcement actions, they serve as an external check on whether the
+synthetic difficulty scale is realistic; we return to this in
+Section~\ref{sec:results}. \todo{State the final count of real letters
+and items in this build.}
