@@ -21,7 +21,7 @@ What never changes automatically:
 
 Usage:
   source venv/bin/activate
-  export $(cat .env | xargs)
+  export GROQ_API_KEY=<your_key>
   python3 autoevolve.py --iterations 10 --test-items 15 --min-delta 0.05
 """
 
@@ -662,7 +662,7 @@ def evolve(
 
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        sys.exit("GROQ_API_KEY not set. Run: export $(cat .env | xargs)")
+        sys.exit("GROQ_API_KEY not set. Run: export GROQ_API_KEY=<your_key>")
 
     client = openai.OpenAI(
         api_key=api_key,

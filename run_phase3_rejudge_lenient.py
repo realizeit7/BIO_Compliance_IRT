@@ -23,7 +23,7 @@ already in the output log are skipped, so an interrupted run can be
 restarted.
 
 Usage:
-    source venv/bin/activate && export $(cat .env | xargs)
+    source venv/bin/activate && export GROQ_API_KEY=<your_key>
     python3 run_phase3_rejudge_lenient.py
     python3 run_phase3_rejudge_lenient.py --temperature 0.1
 """

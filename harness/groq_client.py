@@ -93,7 +93,7 @@ class GroqClient:
         key = api_key or os.environ.get("GROQ_API_KEY")
         if not key:
             raise RuntimeError(
-                "GROQ_API_KEY not set. Source .env before running the Arena."
+                "GROQ_API_KEY not set. Set it via: export GROQ_API_KEY=<your_key>"
             )
         self._client = openai.OpenAI(
             api_key=key,
