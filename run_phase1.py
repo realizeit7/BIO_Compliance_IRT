@@ -9,7 +9,7 @@ This is a thin glue script — all real logic lives under /harness/,
 /agents/, /arena/, /evaluator/.
 
 Usage:
-    source venv/bin/activate && export $(cat .env | xargs)
+    source venv/bin/activate && export GROQ_API_KEY=<your_key>
     python3 run_phase1.py                       # full Phase 1 from config
     python3 run_phase1.py --smoke               # 3 items × 3 examinees, sanity check
     python3 run_phase1.py --config <path>       # alternate config
