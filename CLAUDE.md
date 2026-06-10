@@ -55,20 +55,26 @@ autoresearch_irt/                 ← repo root
   run_phase2.py                   ← Phase 2 entry point (Rasch refit + classical QC → frozen bank)
   run_phase3.py                   ← Phase 3a entry point (offline Δθ on frozen bank, dual-judge)
   run_phase3_rejudge_lenient.py   ← Phase 3a helper: re-grade Phase 1 responses with lenient judge
+  run_phase3b.py                  ← Phase 3b entry point (agent-variant grid → Rasch θ + Δθ vs zero_shot)
   configs/phase1_baseline.yaml    ← 45-cell grid + baseline examinee config
-  agents/                         ← ZeroShotAgent (single-call, system-prompt-driven)
+  configs/phase3b_variants.yaml   ← Phase 3b 16-cell grid (2 models × t=0.4 × 2 strictness × 4 agent_types)
+  agents/                         ← ZeroShotAgent + RetrievalAgent + CriticAgent + StepDecompositionAgent
   arena/                          ← grid generator, item loader, resumable runner, jsonl schema
   evaluator/                      ← Rasch (1PL) MML fit + 2PL QC + response matrix builder
-  harness/                        ← GroqClient (with reasoning-model handling) + Judge + errors
+  harness/                        ← GroqClient (reasoning-model handling) + Judge + CFRStore + errors
+  scripts/build_cfr_index.py      ← one-time eCFR download + all-MiniLM-L6-v2 embedding index
+  data/cfr_index/                 ← gitignored CFR embedding index (embeddings.npy + sections.jsonl)
   logs/arena_runs/<run_id>/responses.jsonl  ← raw audit log (one row per examinee×item)
   evaluator/output/<run_id>_phase1_b.jsonl  ← anchored b estimates
   evaluator/output/phase2_frozen_bank.jsonl ← Phase 2 healthy items (b + pb + infit + outfit)
   evaluator/output/phase3a_strictness_deltatheta.json  ← Phase 3a Δθ tables (strict + lenient)
+  evaluator/output/phase3b_agent_deltatheta.json       ← Phase 3b Δθ per agent type (after run)
   evaluator/pyirt_fit.py          ← py-irt 1PL fit with posterior SD (b_se) — uncertainty path
 
   # --- arXiv paper scaffold (offline; reads existing outputs only) -----
   paper/main.tex                  ← document root (article class)
   paper/sections/00..09_*.tex     ← per-section .tex (Part 1 instrument, Part 2 Δθ)
+  paper/sections/07b_phase3b.tex  ← Phase 3b agent-variant section (Table 2 pending run)
   paper/references.bib            ← BibTeX stubs (verify before submission)
   paper/figures/gen_fig1..4_*.py  ← matplotlib scripts → fig{1..4}.pdf/png (no API calls)
   paper/figures/_common.py        ← shared loaders + analytic SE = 1/√(N·P(1−P))
@@ -128,6 +134,19 @@ run_phase3_rejudge_lenient.py          (only API-calling helper — re-grades ex
   └── arena/schema.py          (writes ArenaLogEntry-compatible jsonl for run_phase3.py)
 ```
 
+Phase 3b agent-variant pipeline (live arena run on the frozen bank):
+```
+run_phase3b.py
+  ├── configs/phase3b_variants.yaml
+  ├── arena/grid.py            (agent_type is now a 4th grid axis; zero_shot IDs unchanged)
+  ├── arena/runner.py          (optional agent_factory dispatches on examinee.agent_type)
+  ├── agents/retrieval.py      (RetrievalAgent: top-k CFR sections → system prompt)
+  │     └── harness/cfr_store.py   (CFRStore: numpy cosine sim, index from scripts/build_cfr_index.py)
+  ├── agents/critic.py         (CriticAgent: answer → critique → synthesis, 3 calls/item)
+  ├── agents/step_decomp.py    (StepDecompositionAgent: 4 sequential scaffolded calls)
+  └── girth.ability_mle        (θ per cell on frozen bank, anchored to Phase 1 baseline)
+```
+
 ---
 
 ## 3. Tech Stack
@@ -136,6 +155,7 @@ run_phase3_rejudge_lenient.py          (only API-calling helper — re-grades ex
 - **openai SDK** — pointed at Groq's OpenAI-compatible endpoint, not OpenAI directly
 - **Groq API** (`https://api.groq.com/openai/v1`) — model: `llama-3.3-70b-versatile`
 - **SQLite** (stdlib `sqlite3`) — no ORM, raw SQL, single persistent connection per `Database` instance
+- **sentence-transformers** (`all-MiniLM-L6-v2`, ~22 MB, local) — CFR embedding for RetrievalAgent; no API calls
 - **venv** at `./venv/` — activate before running anything
 
 ### Running the pipelines
@@ -152,6 +172,13 @@ python3 fda_importer.py --url <url> --max-items 4
 python3 run_phase1.py                  # full run from configs/phase1_baseline.yaml
 python3 run_phase1.py --smoke          # 3 items × 45 examinees sanity check
 python3 run_phase1.py --calibrate-only # skip arena, refit IRT on existing log
+
+# Phase 3b agent-variant pipeline (needs the CFR index first)
+python3 scripts/build_cfr_index.py --smoke  # Part 11 only + retrieval test queries
+python3 scripts/build_cfr_index.py          # full index (21 CFR 11/50/58/211 + 45 CFR 46)
+python3 run_phase3b.py --smoke              # 3 items × 16 cells, all 4 agent types
+python3 run_phase3b.py                      # full run (~41k solver + ~20k judge calls)
+python3 run_phase3b.py --calibrate-only     # skip arena, refit θ on existing log
 ```
 
 ### Background build scripts
@@ -309,6 +336,22 @@ In the 15-profile architecture, θ MLE is still computed for the layperson (prof
   - **Why this matters**: the strict judge requires section-level CFR/ICH citations. A "system-prompt effect" can mean two very different things — (a) the prompt taught the model to *cite* (format unlock), or (b) the prompt taught the model to *reason* better (genuine compliance gain). The lenient pass strips (a) and reveals only (b).
 - **2026-05-10 result** (see §7): the 70b's headline +5.41-logit prompt swing decomposes into ~+2.5 reasoning + ~+2.9 format. gpt-oss-20b's prompt effect is essentially all format (lenient Δθ ≈ 0). Honest takeaway: system-prompt strictness primarily teaches *citation format*, not regulatory reasoning.
 
+### Phase 3b agent variants (2026-06-10)
+`run_phase3b.py` tests whether *architectural* interventions — not prompt edits — move θ on the frozen Phase 2 bank. Three new agents in `agents/`, each a drop-in for ZeroShotAgent and each isolating one mechanism:
+
+- **RetrievalAgent** (`agents/retrieval.py`): embeds `context + question`, retrieves top-k (default 3) CFR sections via `harness/cfr_store.py`, prepends them as a "Relevant Regulations" system-prompt block, then makes the same single solver call as zero-shot. Isolates *in-context regulatory grounding*.
+- **CriticAgent** (`agents/critic.py`): initial answer → n_rounds self-critique ("review for citation accuracy and compliance determination") → final synthesis. 2 + n_rounds calls/item (default 3). Isolates *self-review*.
+- **StepDecompositionAgent** (`agents/step_decomp.py`): 4 sequential calls — identify activity/parties → identify governing provision → assess compliance → final determination with citation. Isolates *explicit CoT scaffolding*.
+
+**Backward compatibility (load-bearing):**
+- `arena/grid.py::_make_examinee_id` omits `|a=zero_shot` from the hash string when `agent_type="zero_shot"`, so every Phase 1/3a examinee ID — and therefore every existing `responses.jsonl` row — is unchanged. Non-zero_shot agents get `|a={agent_type}` appended.
+- `arena/schema.py::ArenaLogEntry.agent_type` defaults to `"zero_shot"`; old log rows parse without it.
+- `arena/runner.py::ArenaRunner` takes an optional `agent_factory: Callable[[ExamineeConfig], Agent]`; when `None` it constructs ZeroShotAgent exactly as before, so Phase 1/2/3a entry points are untouched.
+
+**CFR vector store**: `scripts/build_cfr_index.py` downloads eCFR XML (21 CFR Parts 11, 50, 58, 211 + 45 CFR 46), extracts section-level text, embeds with `all-MiniLM-L6-v2`, writes `data/cfr_index/{embeddings.npy, sections.jsonl}` (gitignored — rebuild after fresh clone). `CFRStore.retrieve()` uses pure-numpy cosine similarity (dot product of unit vectors); no FAISS dependency, <1 ms over ~1k sections.
+
+**Grid & budget**: `configs/phase3b_variants.yaml` — 2 models (70b, 8b) × t=0.4 × 2 strictness (none/strict) × 4 agent_types = 16 cells × 1,284 frozen items. ~41k solver + ~20k judge Groq calls (critic 3×/item, step_decomp 4×/item). Resumable via the standard runner skip logic. Output: `evaluator/output/phase3b_agent_deltatheta.json` with per-cell θ and Δθ vs the same-(model, strictness) zero_shot cell.
+
 ### Reasoning-model handling in `harness/groq_client.py`
 Two flavours of reasoning model on Groq, handled differently:
 
@@ -375,6 +418,16 @@ Pre-refactor DB rows have `b` values sampled from Uniform bands. Post-refactor r
 | llama-3.1-8b-instant        | +1.69                         | +0.18           | +1.52         | ≈ 0             |
 
 Headline: under the strict (citation-requiring) judge, prompt strictness moves all three models. But the lenient judge — which scores conclusion + reasoning only — flattens that effect for everything except 70b. Implication: **system-prompt strictness primarily teaches the model to satisfy the citation-format requirement, not to reason better about compliance.** Only the 70b shows a non-trivial reasoning gain (≈ +2.5 logits) on top of the format-unlock effect.
+
+### Phase 3b agent variants (code complete 2026-06-10, run pending)
+- All infrastructure implemented and pushed on branch `phase3b-agent-variants` (commit ffe6b97): three agents (`agents/retrieval.py`, `agents/critic.py`, `agents/step_decomp.py`), `harness/cfr_store.py`, `scripts/build_cfr_index.py`, `configs/phase3b_variants.yaml`, `run_phase3b.py`, paper section `paper/sections/07b_phase3b.tex` (Table 2 placeholder).
+- Arena plumbing extended backward-compatibly (see §5 "Phase 3b agent variants"); Phase 1/2/3a unaffected.
+- **Not yet run.** Remaining steps, in order:
+  1. `pip install sentence-transformers` in the venv
+  2. `python3 scripts/build_cfr_index.py --smoke` then full build (writes gitignored `data/cfr_index/`)
+  3. `python3 run_phase3b.py --smoke` (3 items × 16 cells — verifies all 4 agent types end-to-end)
+  4. `python3 run_phase3b.py` full run (~41k solver + ~20k judge calls, resumable)
+  5. Fill Table 2 + interpretation in `paper/sections/07b_phase3b.tex` from `evaluator/output/phase3b_agent_deltatheta.json`
 
 ### Legacy bank pipeline (still produces items)
 - generate → calibrate (15 profiles) → filter by pass rate → logit b → persist
@@ -452,7 +505,7 @@ This section documents an objective, critical evaluation of what has been built 
 1. ~~**Finish Phase 1 rerun**~~ ✓ Done (2026-05-09) — gpt-oss-20b @ strict re-run with reasoning fix; baseline raw θ now −0.626 (anchored to 0).
 2. ~~**Phase 2: Rasch + classical QC**~~ ✓ Done (2026-05-10) — `run_phase2.py` wired in. Rasch + (zero-variance, point-biserial, infit, outfit) QC on 1,823 items → 1,284 frozen items in `evaluator/output/phase2_frozen_bank.jsonl`. 2PL machinery preserved as dormant path for future re-evaluation when bank/examinee count grows.
 3. ~~**Phase 3a: Δθ from prompt strictness (offline + dual-judge)**~~ ✓ Done (2026-05-10) — `run_phase3.py` + `run_phase3_rejudge_lenient.py`. Strict-judge Δθ shows large prompt effects (70b: +5.4 logits); lenient-judge re-grade reveals the format-unlock vs. reasoning decomposition: only the 70b shows non-trivial reasoning gain (~+2.5), while gpt-oss-20b and llama-3.1-8b have ≈ 0 lenient Δθ — i.e., system prompts mostly buy citation format, not regulatory reasoning. See §5 / §7.
-4. **Phase 3b: agentic / harness changes (deferred)** — optional next round, beyond pure prompt tweaks: a `RetrievalAgent` that pulls relevant CFR sections before answering, a `CriticAgent` that self-reviews, or a step-decomposition pipeline. These are interventions in the *agent* and *harness*, not the system prompt — and would test whether the bank can detect Δθ from architecture changes.
+4. **Phase 3b: agentic / harness changes — code complete (2026-06-10), run pending** — `RetrievalAgent` (CFR vector retrieval), `CriticAgent` (self-review), and `StepDecompositionAgent` (4-step scaffold) implemented on branch `phase3b-agent-variants` with backward-compatible arena plumbing; entry point `run_phase3b.py`. Remaining: build CFR index, smoke test, full 16-cell run (~41k solver calls), fill paper Table 2. See §5 / §7 "Phase 3b agent variants".
 5. **Future: revisit 2PL** — once the bank is bigger and examinee count grows beyond the 45-cell grid, refit 2PL via `evaluator/twopl.py` (already implemented) and compare against Rasch.
 
 ### To make academic contribution credible
