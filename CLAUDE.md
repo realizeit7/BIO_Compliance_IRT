@@ -43,7 +43,8 @@ autoresearch_irt/                 ← repo root
   main.py                         ← CLI entry point for legacy pipeline
   task_generator.py               ← Stage 1: LLM generates compliance tasks
   calibrator.py                   ← Stage 2: 15 solver profiles + judge → pass rate → logit b
-  evaluator.py                    ← LLM-as-judge (strict and lenient modes)
+  legacy_evaluator.py             ← LLM-as-judge (strict and lenient modes); renamed from evaluator.py to avoid clash with evaluator/ package
+  autoevolve.py                   ← Iterative solver evolution loop (IRT fitness via frozen bank)
   irt_parameters.py               ← Rasch math, outcome classification, theta MLE
   database.py                     ← SQLite persistence
   fda_importer.py                 ← Real-world FDA warning letter ingestion
@@ -94,7 +95,7 @@ Legacy bank pipeline:
 main.py
   ├── task_generator.py   (generates hard + easy tasks)
   ├── calibrator.py
-  │     ├── evaluator.py  (strict or lenient judge)
+  │     ├── legacy_evaluator.py  (strict or lenient judge; renamed from evaluator.py)
   │     └── irt_parameters.py
   ├── database.py
   └── fda_importer.py     (print_comparison)
@@ -419,15 +420,29 @@ Pre-refactor DB rows have `b` values sampled from Uniform bands. Post-refactor r
 
 Headline: under the strict (citation-requiring) judge, prompt strictness moves all three models. But the lenient judge — which scores conclusion + reasoning only — flattens that effect for everything except 70b. Implication: **system-prompt strictness primarily teaches the model to satisfy the citation-format requirement, not to reason better about compliance.** Only the 70b shows a non-trivial reasoning gain (≈ +2.5 logits) on top of the format-unlock effect.
 
-### Phase 3b agent variants (code complete 2026-06-10, run pending)
-- All infrastructure implemented and pushed on branch `phase3b-agent-variants` (commit ffe6b97): three agents (`agents/retrieval.py`, `agents/critic.py`, `agents/step_decomp.py`), `harness/cfr_store.py`, `scripts/build_cfr_index.py`, `configs/phase3b_variants.yaml`, `run_phase3b.py`, paper section `paper/sections/07b_phase3b.tex` (Table 2 placeholder).
-- Arena plumbing extended backward-compatibly (see §5 "Phase 3b agent variants"); Phase 1/2/3a unaffected.
-- **Not yet run.** Remaining steps, in order:
-  1. `pip install sentence-transformers` in the venv
-  2. `python3 scripts/build_cfr_index.py --smoke` then full build (writes gitignored `data/cfr_index/`)
-  3. `python3 run_phase3b.py --smoke` (3 items × 16 cells — verifies all 4 agent types end-to-end)
-  4. `python3 run_phase3b.py` full run (~41k solver + ~20k judge calls, resumable)
-  5. Fill Table 2 + interpretation in `paper/sections/07b_phase3b.tex` from `evaluator/output/phase3b_agent_deltatheta.json`
+### Phase 3b agent variants (complete, merged 2026-06-10)
+- Full 16-cell run done; results in `evaluator/output/phase3b_agent_deltatheta.json`; Table 2 filled in `paper/sections/07b_phase3b.tex`.
+- Key finding: architectural interventions (retrieval +1.07, critic +3.45, step_decomp +4.55) boost 70b θ under lenient scoring, but all three reduce θ under strict citation-requiring scoring — same pattern as Phase 3a.
+
+### autoevolve.py — frozen bank fitness function (2026-06-10)
+`autoevolve.py` now uses the Phase 2 frozen bank (`evaluator/output/phase2_frozen_bank.jsonl`) as its IRT fitness function instead of legacy DB b values.
+
+**Changes made:**
+- `_load_frozen_bank(path)` — loads `{task_id: b}` from frozen bank jsonl (mirrors `run_phase3b.py`)
+- `sample_test_items_from_bank(db, bank_b, n, seed)` — stratified item sampling using frozen bank b values (bands A/B/C/D), item content from DB
+- `build_failure_report(db, bank_b=None)` — when `bank_b` provided, filters to bank items and uses bank b values for band analysis
+- `test_proposal(..., bank_b=None)` — resolves item difficulty from bank first, DB fallback
+- `evolve(..., bank_path=None, dry_run=False)` — loads frozen bank at startup, passes `bank_b` through the loop; `dry_run` prints sampled items + b values without calling Groq
+- History entries now include `bank_path` and `n_bank_items` fields for auditability
+- `legacy_evaluator.py` — renamed from `evaluator.py` to avoid clash with `evaluator/` package; `calibrator.py` updated accordingly
+
+**CLI:**
+```bash
+python3 autoevolve.py --bank evaluator/output/phase2_frozen_bank.jsonl --dry-run --iterations 1 --test-items 5
+python3 autoevolve.py --iterations 10 --test-items 40 --min-delta 0.50  # uses frozen bank by default
+```
+
+**Fallback:** if the frozen bank is not found, legacy DB b values are used with a warning.
 
 ### Legacy bank pipeline (still produces items)
 - generate → calibrate (15 profiles) → filter by pass rate → logit b → persist

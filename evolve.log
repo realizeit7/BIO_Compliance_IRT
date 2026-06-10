@@ -3950,3 +3950,33 @@ ValueError: invalid literal for int() with base 10: 'null'
 [2026-04-29T03:05:42Z]   Adopted 2/141 proposals
 [2026-04-29T03:05:42Z]   θ trajectory: 2.5353 → 0.0716
 [2026-04-29T03:05:42Z] ======================================================================
+[2026-06-10T12:15:09Z] [bank] Loaded frozen bank: 1284 items ← /home/user/BIO_Compliance_IRT/evaluator/output/phase2_frozen_bank.jsonl
+[2026-06-10T12:15:09Z] [bank] Item difficulties sourced from Phase 2 frozen bank (QC-validated, Phase-1-anchored).
+[2026-06-10T12:15:09Z] ======================================================================
+[2026-06-10T12:15:09Z] autoevolve started: 1 iterations, test_items=5, min_delta=0.5 [DRY RUN]
+[2026-06-10T12:15:09Z] ======================================================================
+[2026-06-10T12:15:09Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T12:15:09Z] ITERATION 1/1
+[2026-06-10T12:15:09Z] ────────────────────────────────────────────────────────────
+[2026-06-10T12:15:09Z]   Current θ_augmented = 1.1114
+[2026-06-10T12:15:09Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T12:15:09Z]   Champion domain pass rates (last test): not yet measured
+[2026-06-10T12:15:09Z]   Blacklist size: 0
+[2026-06-10T12:15:09Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T12:15:11Z]   [Proposer] Hypothesis  : The current failures are likely due to the solver's inability to accurately identify and analyze suspicious elements in the context of informed consent and GCP deviation scenarios, resulting in incorrect triage and subsequent analysis
+[2026-06-10T12:15:11Z]   [Proposer] Change type : step_template  step=1
+[2026-06-10T12:15:11Z]   [Proposer] Description : Update the Step 1 user template to include more explicit instructions for citing regulatory sections and obligations, and to require a more detailed explanation of the core obligations and rulings for each suspicious element, particularly in the context of informed consent and GCP deviation scenarios
+[2026-06-10T12:15:11Z]   [Proposer] Self-critique: This proposal assumes that the issue lies in the template and not in the model or prompt, which might not be the case, and additional changes to the model or prompt might be necessary to achieve significant improvements
+[2026-06-10T12:15:11Z]   [DRY RUN] Would test on 5 items (bank_b=frozen):
+[2026-06-10T12:15:11Z]     TASK-EASY_CONSENT-3F0C2C07  b=-2.434  domain=easy_consent
+[2026-06-10T12:15:11Z]     TASK-GCP_DEVIATION-CBD6ACBC  b=0.717  domain=gcp_deviation
+[2026-06-10T12:15:11Z]     TASK-21CFR11-5755BFC7  b=1.999  domain=21cfr11
+[2026-06-10T12:15:11Z]     TASK-GMP_DEVIATION-4806480B  b=2.707  domain=gmp_deviation
+[2026-06-10T12:15:11Z]     TASK-EASY_TRAINING-778D8D61  b=-1.999  domain=easy_training
+[2026-06-10T12:15:11Z] 
+======================================================================
+[2026-06-10T12:15:11Z] autoevolve complete.
+[2026-06-10T12:15:11Z]   Adopted 2/141 proposals
+[2026-06-10T12:15:11Z]   θ trajectory: 2.5353 → 0.0716
+[2026-06-10T12:15:11Z] ======================================================================

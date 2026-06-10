@@ -29,7 +29,7 @@ from pathlib import Path
 
 import openai
 
-from evaluator import Evaluator
+from legacy_evaluator import Evaluator
 from irt_parameters import (
     RetentionOutcome,
     classify_item_from_pass_rate,
