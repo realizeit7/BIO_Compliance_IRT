@@ -1,0 +1,351 @@
+{
+  "run_id": "phase3b_variants",
+  "frozen_bank": "/home/user/BIO_Compliance_IRT/evaluator/output/phase2_frozen_bank.jsonl",
+  "n_frozen_items": 1284,
+  "baseline_examinee_id": "llama_3.1_8b_instant_t0.10_snone_22d9a700",
+  "baseline_theta_raw": NaN,
+  "anchor_shift": 0.0,
+  "grid_config": {
+    "models": [
+      "llama-3.3-70b-versatile",
+      "llama-3.1-8b-instant"
+    ],
+    "temperatures": [
+      0.4
+    ],
+    "strictness_levels": [
+      "none",
+      "strict"
+    ],
+    "agent_types": [
+      "zero_shot",
+      "retrieval",
+      "critic",
+      "step_decomp"
+    ]
+  },
+  "rows": [
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_4ed89267",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "zero_shot",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_589e66a7",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "retrieval",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_e62b0cf8",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "critic",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.6666666666666666,
+      "theta": 1.4990354906844512,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_89bc17a8",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "step_decomp",
+      "n_items_scored": 3,
+      "raw_pass_rate": 1.0,
+      "theta": NaN,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_018e8c2f",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "zero_shot",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.6666666666666666,
+      "theta": 1.499035490684507,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_a0cc4ea4",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "retrieval",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_a5051cb5",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "critic",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.0,
+      "theta": NaN,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_b5a464e5",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "step_decomp",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_ae9c8988",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "zero_shot",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_6d925337",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "retrieval",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273590141,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_52c138aa",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "critic",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_c0585a24",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "step_decomp",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_a06a5f63",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "zero_shot",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.0,
+      "theta": NaN,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_bd1f056f",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "retrieval",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.6666666666666666,
+      "theta": 1.4990354906844512,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_924ff89d",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "critic",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.0,
+      "theta": NaN,
+      "is_baseline": false
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_89e93c91",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "step_decomp",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.0,
+      "theta": NaN,
+      "is_baseline": false
+    }
+  ],
+  "delta_rows": [
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_589e66a7",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "retrieval",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": 0.0
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_e62b0cf8",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "critic",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.6666666666666666,
+      "theta": 1.4990354906844512,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": 2.307465018042093
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_89bc17a8",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "step_decomp",
+      "n_items_scored": 3,
+      "raw_pass_rate": 1.0,
+      "theta": NaN,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": NaN
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_a0cc4ea4",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "retrieval",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": -2.3074650180421488
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_a5051cb5",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "critic",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.0,
+      "theta": NaN,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": NaN
+    },
+    {
+      "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_b5a464e5",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "step_decomp",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": -2.3074650180421488
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_6d925337",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "retrieval",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273590141,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": -1.3722356584366935e-12
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_52c138aa",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "critic",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": 0.0
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_snone_c0585a24",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "none",
+      "agent_type": "step_decomp",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.3333333333333333,
+      "theta": -0.8084295273576418,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": 0.0
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_bd1f056f",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "retrieval",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.6666666666666666,
+      "theta": 1.4990354906844512,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": NaN
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_924ff89d",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "critic",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.0,
+      "theta": NaN,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": NaN
+    },
+    {
+      "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_89e93c91",
+      "model": "llama-3.1-8b-instant",
+      "temperature": 0.4,
+      "strictness": "strict",
+      "agent_type": "step_decomp",
+      "n_items_scored": 3,
+      "raw_pass_rate": 0.0,
+      "theta": NaN,
+      "is_baseline": false,
+      "delta_theta_vs_zero_shot": NaN
+    }
+  ]
+}
