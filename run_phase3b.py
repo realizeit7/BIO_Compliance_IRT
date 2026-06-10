@@ -148,6 +148,12 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--smoke", action="store_true", help="3 items × 16 cells sanity check")
     parser.add_argument("--calibrate-only", action="store_true", help="Skip arena; refit IRT")
     parser.add_argument("--out", default="evaluator/output/phase3b_agent_deltatheta.json")
+    parser.add_argument(
+        "--phase1-log",
+        default="logs/arena_runs/phase1_baseline/responses.jsonl",
+        help="Phase 1 responses jsonl used to load baseline examinee responses for anchoring. "
+             "Only needed if the baseline examinee is not in the Phase 3b grid (the default).",
+    )
     args = parser.parse_args(argv)
 
     cfg = _load_config(Path(args.config))
@@ -222,16 +228,24 @@ def main(argv: list[str]) -> int:
     frozen_task_ids = set(bank_b)
     by_examinee = _collect_responses(log_path, examinee_ids, frozen_task_ids)
 
-    # Compute raw θ for baseline (to re-anchor)
+    # Compute raw θ for baseline (to re-anchor onto the Phase 1 scale where baseline θ=0).
+    # The baseline examinee (t=0.1) is not in the Phase 3b grid (t=0.4), so load its
+    # responses from the Phase 1 log if available.
     baseline_responses = by_examinee.get(baseline_id, {})
     if not baseline_responses:
-        # Fallback: find any zero_shot, none, first model entry
-        print(f"[phase3b] warn: baseline {baseline_id!r} has no responses; anchoring skipped")
-        anchor_shift = 0.0
-        baseline_theta_raw = float("nan")
-    else:
+        phase1_log = _REPO_ROOT / args.phase1_log
+        if phase1_log.exists():
+            print(f"[phase3b] baseline not in grid; loading from Phase 1 log: {phase1_log}")
+            phase1_data = _collect_responses(phase1_log, {baseline_id}, frozen_task_ids)
+            baseline_responses = phase1_data.get(baseline_id, {})
+        if not baseline_responses:
+            print(f"[phase3b] warn: baseline {baseline_id!r} has no responses; anchoring skipped")
+    if baseline_responses:
         baseline_theta_raw, _ = _mle_theta(baseline_responses, bank_b)
         anchor_shift = -baseline_theta_raw if np.isfinite(baseline_theta_raw) else 0.0
+    else:
+        baseline_theta_raw = float("nan")
+        anchor_shift = 0.0
     bank_b_anchored = {tid: b + anchor_shift for tid, b in bank_b.items()}
 
     print(f"\n[phase3b] baseline raw θ = {baseline_theta_raw:+.4f} → anchor shift = {anchor_shift:+.4f}")
