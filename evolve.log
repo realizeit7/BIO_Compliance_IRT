@@ -4512,3 +4512,22 @@ TypeError: '<' not supported between instances of 'NoneType' and 'str'
 [2026-06-10T18:36:42Z]   Adopted 4/154 proposals
 [2026-06-10T18:36:42Z]   θ trajectory: 2.5353 → 1.197
 [2026-06-10T18:36:42Z] ======================================================================
+[2026-06-10T18:37:30Z] [bank] Loaded frozen bank: 1284 items ← /home/user/BIO_Compliance_IRT/evaluator/output/phase2_frozen_bank.jsonl
+[2026-06-10T18:37:30Z] [bank] Item difficulties sourced from Phase 2 frozen bank (QC-validated, Phase-1-anchored).
+[2026-06-10T18:37:30Z] ======================================================================
+[2026-06-10T18:37:30Z] autoevolve started: 20 iterations, test_items=40, min_delta=0.5
+[2026-06-10T18:37:30Z] ======================================================================
+[2026-06-10T18:37:30Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:37:30Z] ITERATION 1/20
+[2026-06-10T18:37:30Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:37:30Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:37:30Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:37:30Z]   Champion domain pass rates (last test): not yet measured
+[2026-06-10T18:37:30Z]   Blacklist size: 0
+[2026-06-10T18:37:30Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:37:32Z]   [Proposer] Hypothesis  : The current failures are largely due to the pipeline's inability to accurately identify and analyze suspicious elements, particularly in the context of GCP deviation scenarios, which is the weakest domain based on the provided failure patterns and domain failure rates.
+[2026-06-10T18:37:32Z]   [Proposer] Change type : step_model  step=1
+[2026-06-10T18:37:32Z]   [Proposer] Description : Update the Step 1 model to qwen-qwq-32b to leverage its strong structured analysis capabilities, which could improve the accuracy of section-level analysis for GCP deviation scenarios.
+[2026-06-10T18:37:32Z]   [Proposer] Self-critique: The assumption that a different model will solve the issue might be flawed if the underlying problem lies in the prompts or templates, which could lead to similar performance issues despite the model change.
+[2026-06-10T18:37:32Z]   [Test] Testing on 40 items…
