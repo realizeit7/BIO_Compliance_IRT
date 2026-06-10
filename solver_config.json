@@ -1,10 +1,10 @@
 {
-  "version": 2,
-  "iteration": 2,
+  "version": 5,
+  "iteration": 5,
   "mode": "pipeline",
-  "description": "Enhance the Step 0 system prompt to include more specific guidance on identifying nuanced Red Herrings and suspicious elements within informed consent scenarios, emphasizing the importance of distinguishing between permissible processes and those that are potentially non-compliant.",
-  "theta_at_adoption": 0.3263,
-  "adopted_at": "2026-06-10T13:56:17.301097+00:00",
+  "description": "Update the Step 1 model to llama-3.3-70b-versatile to potentially improve performance on tasks that require general reasoning and section-level analysis for GCP deviation scenarios",
+  "theta_at_adoption": 1.8763,
+  "adopted_at": "2026-06-10T18:28:38.498455+00:00",
   "pipeline": [
     {
       "name": "triage",
@@ -18,7 +18,7 @@
       "name": "analysis",
       "system_prompt": "You are a senior FDA regulatory specialist with 15+ years of experience. You will receive a compliance scenario, a question, and a preliminary triage. Your job is deep section-level analysis: for each suspicious element from the triage, cite the exact CFR or ICH section number and determine definitively whether it is a VIOLATION, COMPLIANT, or UNCERTAIN. Then identify the single primary violation — the one the question is actually asking about.",
       "user_template": "Scenario:\n{context}\n\nQuestion: {question}\n\nTriage:\n{prev_output}\n\nPerform section-level analysis:\n\nFor each suspicious element from the triage, provide:\n  - Exact regulatory section (e.g., 21 CFR 11.10(e), ICH E6(R2) §4.8.2)\n  - Core obligation of that section\n  - Ruling: VIOLATION / COMPLIANT / UNCERTAIN — and a one-sentence justification\n\nEnd with:\n  PRIMARY VIOLATION: [the one element that is the actual regulatory breach, with exact section]",
-      "model": "deepseek-r1-distill-llama-70b",
+      "model": "llama-3.3-70b-versatile",
       "max_tokens": 900,
       "temperature": 0.1
     },
