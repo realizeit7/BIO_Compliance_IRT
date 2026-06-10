@@ -4567,3 +4567,133 @@ TypeError: '<' not supported between instances of 'NoneType' and 'str'
 [2026-06-10T18:50:25Z]   [Proposer] Description : Update the Step 1 model to deepseek-r1-distill-llama-70b to leverage its strong multi-step analysis capabilities, which could improve the accuracy of section-level analysis for all domains, especially promo_review.
 [2026-06-10T18:50:25Z]   [Proposer] Self-critique: This proposal assumes that the issue lies in the model's analysis capabilities, but it might actually be related to the prompt or template, which could lead to incorrect results if not properly addressed.
 [2026-06-10T18:50:25Z]   [Test] Testing on 40 items…
+[2026-06-10T18:55:55Z]   [Champion] Domain pass rates: {'21cfr11': 0.667, 'gmp_deviation': 0.5, 'gcp_deviation': 0.571, 'promo_review': 1.0, 'informed_consent': 0.6}
+[2026-06-10T18:55:55Z]   [Test] θ_current=2.1149  θ_proposed=0.7928
+[2026-06-10T18:55:55Z]   [Test] Δθ = -1.3221  (threshold: +0.5000)
+[2026-06-10T18:55:55Z]   [Decision] REJECTED (Δθ=-1.3221 < 0.5)
+[2026-06-10T18:55:55Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:55:55Z] ITERATION 4/20
+[2026-06-10T18:55:55Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:55:55Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:55:55Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:55:55Z]   Champion domain pass rates (last test): {'21cfr11': 0.667, 'gmp_deviation': 0.5, 'gcp_deviation': 0.571, 'promo_review': 1.0, 'informed_consent': 0.6}
+[2026-06-10T18:55:55Z]   Blacklist size: 3
+[2026-06-10T18:55:55Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:55:56Z]   [Proposer] Hypothesis  : The current pipeline's weakness in the informed consent domain is likely due to inadequate Red Herring detection and suspicious element identification in the triage step.
+[2026-06-10T18:55:56Z]   [Proposer] Change type : step_template  step=0
+[2026-06-10T18:55:56Z]   [Proposer] Description : Update the Step 0 user template to include more explicit and detailed instructions for identifying Red Herrings and suspicious elements, particularly in the context of informed consent scenarios, to improve the accuracy of the triage output.
+[2026-06-10T18:55:56Z]   [Proposer] Self-critique: This proposal might be wrong if the issue with informed consent is not with triage but rather with the analysis or verdict steps, which could be overlooking specific regulatory requirements or nuances in informed consent.
+[2026-06-10T18:55:56Z]   [Test] Testing on 40 items…
+[2026-06-10T19:03:00Z]   [Champion] Domain pass rates: {'promo_review': 0.143, '21cfr11': 0.9, 'gcp_deviation': 0.455, 'gmp_deviation': 0.5, 'informed_consent': 1.0}
+[2026-06-10T19:03:00Z]   [Test] θ_current=1.4456  θ_proposed=1.4456
+[2026-06-10T19:03:00Z]   [Test] Δθ = +0.0000  (threshold: +0.5000)
+[2026-06-10T19:03:00Z]   [Decision] REJECTED (Δθ=+0.0000 < 0.5)
+[2026-06-10T19:03:00Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T19:03:00Z] ITERATION 5/20
+[2026-06-10T19:03:00Z] ────────────────────────────────────────────────────────────
+[2026-06-10T19:03:00Z]   Current θ_augmented = 1.1114
+[2026-06-10T19:03:00Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T19:03:00Z]   Champion domain pass rates (last test): {'promo_review': 0.143, '21cfr11': 0.9, 'gcp_deviation': 0.455, 'gmp_deviation': 0.5, 'informed_consent': 1.0}
+[2026-06-10T19:03:00Z]   Blacklist size: 4
+[2026-06-10T19:03:00Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T19:03:01Z]   [Proposer] Hypothesis  : The current triage step is not effectively identifying suspicious elements and Red Herrings, particularly in the promo_review domain, which has the lowest pass rate among the champion solver pass rates.
+[2026-06-10T19:03:01Z]   [Proposer] Change type : step_prompt  step=0
+[2026-06-10T19:03:01Z]   [Proposer] Description : Update the Step 0 system prompt to include more explicit guidance on identifying Red Herrings and suspicious elements in the context of promotional review, emphasizing the importance of distinguishing between permissible marketing practices and those that are potentially non-compliant.
+[2026-06-10T19:03:01Z]   [Proposer] Self-critique: The assumption that the triage step is the primary cause of failures in the promo_review domain might be incorrect, and the issue might lie in the analysis or verdict steps instead.
+[2026-06-10T19:03:01Z]   [Test] Testing on 40 items…
+[2026-06-10T19:10:10Z]   [Champion] Domain pass rates: {'promo_review': 1.0, '21cfr11': 0.867, 'gcp_deviation': 0.333, 'informed_consent': 0.5, 'gmp_deviation': 0.333}
+[2026-06-10T19:10:10Z]   [Test] θ_current=2.0237  θ_proposed=1.5911
+[2026-06-10T19:10:10Z]   [Test] Δθ = -0.4326  (threshold: +0.5000)
+[2026-06-10T19:10:10Z]   [Decision] REJECTED (Δθ=-0.4326 < 0.5)
+[2026-06-10T19:10:10Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T19:10:10Z] ITERATION 6/20
+[2026-06-10T19:10:10Z] ────────────────────────────────────────────────────────────
+[2026-06-10T19:10:10Z]   Current θ_augmented = 1.1114
+[2026-06-10T19:10:10Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T19:10:10Z]   Champion domain pass rates (last test): {'promo_review': 1.0, '21cfr11': 0.867, 'gcp_deviation': 0.333, 'informed_consent': 0.5, 'gmp_deviation': 0.333}
+[2026-06-10T19:10:10Z]   Blacklist size: 4
+[2026-06-10T19:10:10Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T19:10:12Z]   [Proposer] Hypothesis  : The current pipeline is failing primarily due to its inability to accurately analyze and apply regulations in the GCP deviation domain, which has the lowest pass rate among the champion domains.
+[2026-06-10T19:10:12Z]   [Proposer] Change type : step_model  step=1
+[2026-06-10T19:10:12Z]   [Proposer] Description : Update the Step 1 model to deepseek-r1-distill-llama-70b to potentially improve performance on tasks that require strong multi-step analysis for GCP deviation scenarios, despite this model being previously rejected for step 1, as the context of improving GCP deviation analysis wasn't specifically targeted in previous attempts
+[2026-06-10T19:10:12Z]   [Proposer] Self-critique: This proposal assumes that the previous rejection of deepseek-r1-distill-llama-70b was due to its application in a broader context rather than specifically targeting GCP deviation scenarios, which might not be accurate
+[2026-06-10T19:10:12Z]   [Test] Testing on 40 items…
+[2026-06-10T19:15:43Z]   [Champion] Domain pass rates: {'21cfr11': 1.0, 'informed_consent': 0.667, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.571}
+[2026-06-10T19:15:43Z]   [Test] θ_current=1.6437  θ_proposed=0.4198
+[2026-06-10T19:15:43Z]   [Test] Δθ = -1.2239  (threshold: +0.5000)
+[2026-06-10T19:15:43Z]   [Decision] REJECTED (Δθ=-1.2239 < 0.5)
+[2026-06-10T19:15:43Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T19:15:43Z] ITERATION 7/20
+[2026-06-10T19:15:43Z] ────────────────────────────────────────────────────────────
+[2026-06-10T19:15:43Z]   Current θ_augmented = 1.1114
+[2026-06-10T19:15:43Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T19:15:43Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.667, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.571}
+[2026-06-10T19:15:43Z]   Blacklist size: 4
+[2026-06-10T19:15:43Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T19:15:44Z]   [Proposer] Hypothesis  : The current pipeline's weakness in the GCP deviation domain is primarily due to failures in the analysis step, where wrong CFR sections are cited or VIOLATION/COMPLIANT rulings are inverted, indicating a need for improvement in step 1's model or prompt/template to better handle section-level analysis for GCP deviation scenarios.
+[2026-06-10T19:15:44Z]   [Proposer] Change type : step_model  step=1
+[2026-06-10T19:15:44Z]   [Proposer] Description : Update the Step 1 model to llama-3.3-70b-versatile, which has been adopted in a previous iteration and shown promise, to potentially improve performance on tasks that require general reasoning and section-level analysis for GCP deviation scenarios, and thus improve the overall pipeline's performance on this weak domain.
+[2026-06-10T19:15:44Z]   [Proposer] Self-critique: The assumption that updating the Step 1 model to llama-3.3-70b-versatile will improve performance might be wrong if the issue lies not with the model's capabilities but with the quality of the input prompts or templates, or if the model's adoption in a previous iteration was not sufficiently impactful due to other limiting factors in the pipeline.
+[2026-06-10T19:15:44Z]   [Test] Testing on 40 items…
+[2026-06-10T19:22:39Z]   [Champion] Domain pass rates: {'21cfr11': 0.938, 'gcp_deviation': 0.286, 'promo_review': 0.0, 'informed_consent': 0.75, 'gmp_deviation': 0.333}
+[2026-06-10T19:22:39Z]   [Test] θ_current=1.8477  θ_proposed=1.5426
+[2026-06-10T19:22:39Z]   [Test] Δθ = -0.3051  (threshold: +0.5000)
+[2026-06-10T19:22:39Z]   [Decision] REJECTED (Δθ=-0.3051 < 0.5)
+[2026-06-10T19:22:39Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T19:22:39Z] ITERATION 8/20
+[2026-06-10T19:22:39Z] ────────────────────────────────────────────────────────────
+[2026-06-10T19:22:39Z]   Current θ_augmented = 1.1114
+[2026-06-10T19:22:39Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T19:22:39Z]   Champion domain pass rates (last test): {'21cfr11': 0.938, 'gcp_deviation': 0.286, 'promo_review': 0.0, 'informed_consent': 0.75, 'gmp_deviation': 0.333}
+[2026-06-10T19:22:39Z]   Blacklist size: 5
+[2026-06-10T19:22:39Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T19:22:41Z]   [Proposer] Hypothesis  : The current pipeline is failing primarily due to inadequate analysis in step 1 for the promo_review domain, which has a 0% pass rate, suggesting that the model is struggling with section-level analysis for promotional review scenarios.
+[2026-06-10T19:22:41Z]   [Proposer] Change type : step_template  step=1
+[2026-06-10T19:22:41Z]   [Proposer] Description : Update the Step 1 user template to include explicit instructions for citing the correct CFR or ICH section number for promotional review scenarios, with a focus on distinguishing between permissible marketing practices and those that are potentially non-compliant.
+[2026-06-10T19:22:41Z]   [Proposer] Self-critique: This proposal assumes that the issue lies in the template and not the model, which might not be the case, and further experimentation with different models might be necessary.
+[2026-06-10T19:22:41Z]   [Test] Testing on 40 items…
+[2026-06-10T19:29:47Z]   [Champion] Domain pass rates: {'promo_review': 0.667, '21cfr11': 0.8, 'gcp_deviation': 0.111, 'informed_consent': 0.667, 'gmp_deviation': 0.2}
+[2026-06-10T19:29:47Z]   [Test] θ_current=0.5650  θ_proposed=1.0160
+[2026-06-10T19:29:47Z]   [Test] Δθ = +0.4510  (threshold: +0.5000)
+[2026-06-10T19:29:47Z]   [Decision] REJECTED (Δθ=+0.4510 < 0.5)
+[2026-06-10T19:29:47Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T19:29:47Z] ITERATION 9/20
+[2026-06-10T19:29:47Z] ────────────────────────────────────────────────────────────
+[2026-06-10T19:29:47Z]   Current θ_augmented = 1.1114
+[2026-06-10T19:29:47Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T19:29:47Z]   Champion domain pass rates (last test): {'promo_review': 0.667, '21cfr11': 0.8, 'gcp_deviation': 0.111, 'informed_consent': 0.667, 'gmp_deviation': 0.2}
+[2026-06-10T19:29:47Z]   Blacklist size: 6
+[2026-06-10T19:29:47Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T19:29:49Z]   [Proposer] Hypothesis  : The current pipeline's failures are rooted in the inadequate handling of GCP deviation scenarios, which could be due to insufficient section-level analysis capabilities in Step 1 of the pipeline.
+[2026-06-10T19:29:49Z]   [Proposer] Change type : step_template  step=1
+[2026-06-10T19:29:49Z]   [Proposer] Description : Update the Step 1 user template to include explicit instructions for citing the correct CFR or ICH section number and determining the core obligation of that section, with a specific focus on GCP deviation scenarios to improve the accuracy of section-level analysis.
+[2026-06-10T19:29:49Z]   [Proposer] Self-critique: This proposal might be flawed if the issue lies not with the template but with the model's ability to understand the context of GCP deviation scenarios, in which case a different change, such as updating the model or the system prompt, might be more effective.
+[2026-06-10T19:29:49Z]   [Test] Testing on 40 items…
+[2026-06-10T19:37:17Z]   [Champion] Domain pass rates: {'gcp_deviation': 0.667, '21cfr11': 0.909, 'gmp_deviation': 0.25, 'promo_review': 0.8, 'informed_consent': 0.5}
+[2026-06-10T19:37:17Z]   [Test] θ_current=2.1530  θ_proposed=1.1291
+[2026-06-10T19:37:17Z]   [Test] Δθ = -1.0239  (threshold: +0.5000)
+[2026-06-10T19:37:17Z]   [Decision] REJECTED (Δθ=-1.0239 < 0.5)
+[2026-06-10T19:37:17Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T19:37:17Z] ITERATION 10/20
+[2026-06-10T19:37:17Z] ────────────────────────────────────────────────────────────
+[2026-06-10T19:37:17Z]   Current θ_augmented = 1.1114
+[2026-06-10T19:37:17Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T19:37:17Z]   Champion domain pass rates (last test): {'gcp_deviation': 0.667, '21cfr11': 0.909, 'gmp_deviation': 0.25, 'promo_review': 0.8, 'informed_consent': 0.5}
+[2026-06-10T19:37:17Z]   Blacklist size: 6
+[2026-06-10T19:37:17Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T19:37:19Z]   [Proposer] Hypothesis  : The current pipeline's failures are primarily due to inadequate section-level analysis for the GMP deviation domain, which is the weakest based on the champion pass rates
+[2026-06-10T19:37:19Z]   [Proposer] Change type : step_template  step=1
+[2026-06-10T19:37:19Z]   [Proposer] Description : Update the Step 1 user template to include more specific instructions for GMP deviation scenarios, emphasizing the importance of accurate section-level analysis and proper citation of CFR or ICH sections
+[2026-06-10T19:37:19Z]   [Proposer] Self-critique: This proposal might be flawed if the issue lies not with the template but with the model's ability to generalize across domains, or if the template changes do not adequately address the nuances of GMP deviation analysis
+[2026-06-10T19:37:19Z]   [Test] Testing on 40 items…
+[2026-06-10T19:44:43Z]   [Champion] Domain pass rates: {'21cfr11': 0.7, 'informed_consent': 0.429, 'promo_review': 0.8, 'gcp_deviation': 0.167, 'gmp_deviation': 0.0}
+[2026-06-10T19:44:43Z]   [Test] θ_current=1.1593  θ_proposed=1.9179
+[2026-06-10T19:44:43Z]   [Test] Δθ = +0.7586  (threshold: +0.5000)
+[2026-06-10T19:44:43Z]   [Decision] ADOPTED (Δθ=+0.7586 ≥ 0.5)
