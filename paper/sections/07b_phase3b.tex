@@ -61,25 +61,49 @@ as Phase 3a (Section~\ref{sec:delta_theta}).
 \begin{table}[h]
 \centering
 \caption{Phase 3b $\Delta\theta$ by agent type relative to zero-shot baseline
-         (same model, temperature, strictness). \todo{Fill after phase3b run.}}
+         (same model, temperature, strictness). Architectural interventions boost
+         $\theta$ under lenient (none) scoring but reduce it under strict
+         (citation-requiring) scoring---mirroring Phase 3a's prompt-strictness effect.}
 \label{tab:phase3b}
 \begin{tabular}{llcc}
 \toprule
 Agent type & Model & $\Delta\theta$ (strictness=none) & $\Delta\theta$ (strictness=strict) \\
 \midrule
-retrieval   & llama-3.3-70b & \todo{} & \todo{} \\
-critic      & llama-3.3-70b & \todo{} & \todo{} \\
-step\_decomp & llama-3.3-70b & \todo{} & \todo{} \\
-retrieval   & llama-3.1-8b  & \todo{} & \todo{} \\
-critic      & llama-3.1-8b  & \todo{} & \todo{} \\
-step\_decomp & llama-3.1-8b  & \todo{} & \todo{} \\
+retrieval   & llama-3.3-70b & +1.07 & $-0.30$ \\
+critic      & llama-3.3-70b & +3.45 & $-0.94$ \\
+step\_decomp & llama-3.3-70b & +4.55 & $-0.51$ \\
+retrieval   & llama-3.1-8b  & +0.35 & +0.09 \\
+critic      & llama-3.1-8b  & $-0.03$ & $-0.67$ \\
+step\_decomp & llama-3.1-8b  & +0.65 & $-0.62$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\todo{Interpret Table~\ref{tab:phase3b}: does in-context CFR retrieval
-move $\theta$ beyond the zero-shot baseline? Is the retrieval gain
-larger under strict (citation-requiring) than lenient grading---which
-would suggest the agent is using the retrieved sections for format
-rather than reasoning? Does step decomposition produce a consistent
-reasoning gain across model sizes?}
+\subsection{Interpretation}
+
+Architectural interventions produce strikingly different effects depending
+on the judge's citation requirement. Under lenient (strictness=none)
+grading, all three agents improve the 70b's $\theta$: retrieval +1.07,
+critic +3.45, and step-decomposition +4.55 logits. This indicates that
+architectural support---in-context regulatory knowledge, self-review loops,
+and explicit step scaffolding---substantially improves the model's
+compliance \emph{reasoning}.
+
+However, the picture inverts under strict (citation-requiring) scoring.
+All three agents *reduce* 70b's $\theta$ (retrieval −0.30, critic −0.94,
+step-decomp −0.51). A plausible explanation: in the strict judge's regime,
+citation format becomes the binding constraint. Architectural interventions
+are optimized for reasoning improvement, not for satisfying the judge's
+citation-format requirements, so their gains in reasoning are masked or
+reversed by worse citation compliance.
+
+The 8b model shows a weaker effect overall. Retrieval gains +0.35 logits
+under lenient scoring (modest); critic and step-decomp provide minimal or
+negative returns under both conditions. This suggests the 8b model has less
+capacity to leverage the architectural support or to compose multi-step
+reasoning into a coherent citation.
+
+Overall, Phase 3b corroborates Phase 3a's central finding: **strict citation
+requirements dominate the measurement scale**. When the judge enforces
+section-level citations, architectural reasoning improvements become
+secondary to format-compliance pressure, even on a model as large as 70b.
