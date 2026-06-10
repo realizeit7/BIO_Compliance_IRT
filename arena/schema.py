@@ -30,6 +30,7 @@ class ArenaLogEntry(BaseModel):
 
     # Examinee (grid axes)
     agent_class: str
+    agent_type: str = "zero_shot"
     model: str
     temperature: float
     strictness: str | None = None

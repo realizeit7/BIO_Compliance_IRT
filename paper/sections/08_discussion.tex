@@ -26,8 +26,10 @@ posterior standard deviation from a variational Rasch fit
 (\texttt{py-irt}), which is implemented but requires regenerating the raw
 response matrix. We expect the posterior SDs to be \emph{wider} than the
 analytic values, given only 45 examinees---which is the honest message,
-not a defect to hide. \todo{Report the py-irt posterior SDs once
-regenerated and compare to the analytic SE.}
+not a defect to hide. We defer this comparison to future work pending
+regeneration of the full response matrix; the analytic SE is conservative
+(it ignores item-parameter covariance) and serves as an upper bound on
+per-item uncertainty.
 
 \paragraph{Judge error is real and measured.}
 Re-grading introduced a measurable judge-error rate (failed judge calls

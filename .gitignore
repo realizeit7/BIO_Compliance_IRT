@@ -76,6 +76,9 @@ evolve_run2.log
 # Phase 1 calibration runtime artefacts
 # (raw responses jsonl is huge and reproducible from bank + grid; b estimates stay)
 logs/
+
+# CFR embedding index (large binary; rebuild with scripts/build_cfr_index.py)
+data/cfr_index/
 phase1_run.log
 phase1_rerun_*.log
 

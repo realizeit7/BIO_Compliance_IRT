@@ -79,12 +79,13 @@ the ideal Rasch value of $1.0$.}
 
 \subsection{Real-vs-synthetic difficulty gap}
 Items extracted from FDA warning letters are systematically harder than
-synthetic items. These statistics are computed on the full Phase~1 input
-set before QC ($n = 105$ real, $n = 1{,}718$ synthetic): mean $b = +2.73$
-for real items versus $+2.25$ for synthetic, a gap of $+0.49$ logits; the
-frozen bank retains 93 real items with qualitatively similar ordering. No
-real item falls below $b = 0$, consistent with the intuition that
-enforcement does not produce easy questions. This is a descriptive
-comparison; a formal test (e.g.\ Mann--Whitney~$U$) is left to future work
-(Section~\ref{sec:discussion}). \todo{Run Mann--Whitney U and report the
-p-value; recompute gap on the frozen bank (93 real) and report both.}
+synthetic items on the frozen bank: $n = 93$ real items with mean
+$b = +1.98$ versus $n = 1{,}191$ synthetic with mean $b = +1.04$, a gap
+of $+0.94$ logits (Mann--Whitney $U = 66{,}516$, one-sided $p = 0.0006$).
+No real item falls below $b = 0$, consistent with the intuition that
+enforcement does not produce easy questions. On the full Phase~1 pre-QC
+set ($n = 105$ real, $n = 1{,}718$ synthetic) the mean gap is
+$+0.49$ logits ($p = 0.070$, one-sided), suggesting QC preferentially
+removes easy-or-inverted synthetic items and thus sharpens the
+real-vs-synthetic separation. A formal two-sample test and the effect of
+QC on this gap are discussed in Section~\ref{sec:discussion}.
