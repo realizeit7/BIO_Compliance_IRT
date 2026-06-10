@@ -50,6 +50,7 @@ from irt_parameters import estimate_theta_mle, THETA_AUGMENTED
 SOLVER_CONFIG_PATH  = Path(__file__).parent / "solver_config.json"
 EVOLVE_LOG_PATH     = Path(__file__).parent / "evolve.log"
 EVOLVE_HISTORY_PATH = Path(__file__).parent / "evolve_history.jsonl"
+_DEFAULT_BANK_PATH  = Path(__file__).parent / "evaluator" / "output" / "phase2_frozen_bank.jsonl"
 
 GROQ_MODELS = [
     "llama-3.3-70b-versatile",
@@ -61,6 +62,79 @@ GROQ_MODELS = [
 
 PROPOSER_MODEL = "llama-3.3-70b-versatile"   # model used to generate proposals
 JUDGE_MODEL    = "llama-3.3-70b-versatile"
+
+
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Frozen bank helpers
+# ---------------------------------------------------------------------------
+
+def _load_frozen_bank(path: Path) -> dict[str, float]:
+    """Return {task_id: b} from the Phase 2 frozen bank jsonl."""
+    bank: dict[str, float] = {}
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                obj = json.loads(line)
+                bank[obj["task_id"]] = float(obj["b"])
+    return bank
+
+
+def sample_test_items_from_bank(
+    db: Database,
+    bank_b: dict[str, float],
+    n: int = 40,
+    seed: int = 42,
+) -> list[dict]:
+    """
+    Sample n items from the frozen bank, stratified across b bands using
+    the QC-validated, Phase-1-anchored b values.
+
+    Mirrors sample_test_items() band logic but sources b from bank_b
+    instead of calibration_results.irt_b. Items with b >= 3.0 are excluded
+    (too far above champion theta to be informative for the A/B test).
+    """
+    all_tasks = db.fetch_all_tasks()
+    task_map = {t["task_id"]: t for t in all_tasks}
+
+    bands: dict[str, list[tuple[str, float]]] = {"A": [], "B": [], "C": [], "D": []}
+    for tid, b in bank_b.items():
+        if b >= 3.0 or tid not in task_map:
+            continue
+        if b < 0:    bands["A"].append((tid, b))
+        elif b < 1:  bands["B"].append((tid, b))
+        elif b < 2:  bands["C"].append((tid, b))
+        else:        bands["D"].append((tid, b))
+
+    rng = random.Random(seed)
+    quota = n // 4
+    result: list[tuple[str, float]] = []
+    leftover = n
+
+    for band_items in bands.values():
+        take = min(len(band_items), quota)
+        result.extend(rng.sample(band_items, take))
+        leftover -= take
+
+    if leftover > 0:
+        result_set = set(t for t, _ in result)
+        remaining = [(tid, b) for tid, b in bank_b.items()
+                     if tid not in result_set and b < 3.0 and tid in task_map]
+        rng.shuffle(remaining)
+        result.extend(remaining[:leftover])
+
+    items = []
+    for tid, b in result:
+        task = task_map.get(tid)
+        if task:
+            task = dict(task)
+            task["is_easy"] = b < 0
+            items.append(task)
+    return items
 
 
 # ---------------------------------------------------------------------------
@@ -79,10 +153,14 @@ def log(msg: str) -> None:
 # Failure analysis
 # ---------------------------------------------------------------------------
 
-def build_failure_report(db: Database) -> dict:
+def build_failure_report(db: Database, bank_b: dict[str, float] | None = None) -> dict:
     """
     Analyse the calibration_results table and return a structured failure
     report for the augmented solver.
+
+    When bank_b is provided, statistics are restricted to the 1,284 QC-validated
+    items in the Phase 2 frozen bank, and bank b values are used for b-band
+    bucketing (instead of the legacy calibration_results.irt_b column).
     """
     with db._connect() as conn:
         rows = conn.execute("""
@@ -91,11 +169,16 @@ def build_failure_report(db: Database) -> dict:
                 c.retention_reason,
                 c.augmented_pass,
                 c.irt_b,
-                c.p_augmented
+                c.p_augmented,
+                c.task_id
             FROM calibration_results c
             JOIN tasks t ON t.task_id = c.task_id
             ORDER BY c.calibrated_at DESC
         """).fetchall()
+
+    # When bank is provided, filter to bank items only
+    if bank_b is not None:
+        rows = [r for r in rows if r["task_id"] in bank_b]
 
     # Per-domain augmented failure rate
     domain_counts: dict = {}
@@ -126,9 +209,11 @@ def build_failure_report(db: Database) -> dict:
         return "[5,inf)"
 
     for r in rows:
-        if r["irt_b"] is None:
+        # Use frozen bank b if available; fall back to legacy DB b
+        b_val = bank_b.get(r["task_id"]) if bank_b is not None else r["irt_b"]
+        if b_val is None:
             continue
-        b = band(r["irt_b"])
+        b = band(b_val)
         bands[b][0] += 1
         if not r["augmented_pass"]:
             bands[b][1] += 1
@@ -142,8 +227,9 @@ def build_failure_report(db: Database) -> dict:
     failure_reasons = []
     for r in rows:
         if not r["augmented_pass"] and r["p_augmented"] is not None:
+            b_val = bank_b.get(r["task_id"]) if bank_b is not None else r["irt_b"]
             failure_reasons.append(
-                f"domain={r['domain']} b={r['irt_b']} p_aug={round(r['p_augmented'], 3)}"
+                f"domain={r['domain']} b={b_val} p_aug={round(r['p_augmented'], 3)}"
             )
             if len(failure_reasons) >= 20:
                 break
@@ -166,13 +252,15 @@ def build_failure_report(db: Database) -> dict:
         ).fetchone()[0]
 
     return {
-        "n_total_items":         n_total,
-        "n_retained":            n_retained,
-        "n_too_hard":            n_too_hard,
-        "augmented_theta":       current_theta,
-        "domain_failure_rates":  domain_failure_rates,
-        "b_band_failure_rates":  b_band_failure_rates,
+        "n_total_items":          n_total,
+        "n_retained":             n_retained,
+        "n_too_hard":             n_too_hard,
+        "augmented_theta":        current_theta,
+        "domain_failure_rates":   domain_failure_rates,
+        "b_band_failure_rates":   b_band_failure_rates,
         "sample_failure_reasons": failure_reasons[:10],
+        "bank_filtered":          bank_b is not None,
+        "n_bank_items":           len(bank_b) if bank_b is not None else None,
     }
 
 
@@ -485,6 +573,7 @@ def test_proposal(
     current_theta: float,
     db:            Database,
     verbose:       bool = True,
+    bank_b:        dict[str, float] | None = None,
 ) -> tuple[float, float, dict]:
     """
     A/B test: run both the current and proposed champion configs on the same
@@ -495,6 +584,9 @@ def test_proposal(
 
     Returns (proposed_theta, delta_theta, champion_domain_rates).
     champion_domain_rates: {domain: pass_rate} for the current config on this sample.
+
+    When bank_b is provided, item difficulties are taken from the Phase 2 frozen
+    bank (QC-validated, Phase-1-anchored) rather than calibration_results.irt_b.
     """
     current_cfg = _load_solver_config()
 
@@ -505,14 +597,20 @@ def test_proposal(
     domain_counts: dict[str, list[int]] = {}   # {domain: [n_pass, n_total]}
 
     for task in test_items:
-        with db._connect() as conn:
-            row = conn.execute(
-                "SELECT irt_b FROM calibration_results WHERE task_id = ? AND irt_b IS NOT NULL",
-                (task["task_id"],),
-            ).fetchone()
-        if not row:
-            continue
-        b = row["irt_b"]
+        # Resolve item difficulty: frozen bank takes priority over legacy DB
+        if bank_b is not None:
+            b = bank_b.get(task["task_id"])
+            if b is None:
+                continue
+        else:
+            with db._connect() as conn:
+                row = conn.execute(
+                    "SELECT irt_b FROM calibration_results WHERE task_id = ? AND irt_b IS NOT NULL",
+                    (task["task_id"],),
+                ).fetchone()
+            if not row:
+                continue
+            b = row["irt_b"]
 
         domain = task.get("domain", "unknown")
         if domain not in domain_counts:
@@ -651,13 +749,15 @@ def git_commit_push(iteration: int, delta_theta: float, description: str) -> boo
 # ---------------------------------------------------------------------------
 
 def evolve(
-    n_iterations:  int   = 10,
-    n_test_items:  int   = 40,
-    min_delta:     float = 0.50,
-    generate_new:  bool  = True,
-    n_generate:    int   = 5,
-    db_path:       str   = "compliance_bank.db",
-    verbose:       bool  = False,
+    n_iterations:  int         = 10,
+    n_test_items:  int         = 40,
+    min_delta:     float       = 0.50,
+    generate_new:  bool        = True,
+    n_generate:    int         = 5,
+    db_path:       str         = "compliance_bank.db",
+    bank_path:     str | None  = None,
+    dry_run:       bool        = False,
+    verbose:       bool        = False,
 ) -> None:
 
     api_key = os.environ.get("GROQ_API_KEY")
@@ -670,8 +770,24 @@ def evolve(
     )
     db = Database(db_path)
 
+    # Load frozen bank if provided (or use default path if it exists)
+    bank_b: dict[str, float] | None = None
+    _bank_path_used: str | None = None
+    _resolved_bank = Path(bank_path) if bank_path else _DEFAULT_BANK_PATH
+    if _resolved_bank.exists():
+        bank_b = _load_frozen_bank(_resolved_bank)
+        _bank_path_used = str(_resolved_bank)
+        log(f"[bank] Loaded frozen bank: {len(bank_b)} items ← {_resolved_bank}")
+        log("[bank] Item difficulties sourced from Phase 2 frozen bank (QC-validated, Phase-1-anchored).")
+    elif bank_path:
+        # User explicitly passed --bank but file not found — warn and fall back
+        log(f"[bank] WARNING: --bank path not found: {_resolved_bank}. Falling back to legacy DB b values.")
+    else:
+        log("[bank] Phase 2 frozen bank not found at default path; using legacy DB b values.")
+
     log("=" * 70)
-    log(f"autoevolve started: {n_iterations} iterations, test_items={n_test_items}, min_delta={min_delta}")
+    log(f"autoevolve started: {n_iterations} iterations, test_items={n_test_items}, min_delta={min_delta}"
+        + (" [DRY RUN]" if dry_run else ""))
     log("=" * 70)
 
     history = load_history()
@@ -689,7 +805,7 @@ def evolve(
         try:
             # ── 1. Current state ─────────────────────────────────────────
             current_config = _load_solver_config()
-            failure_report = build_failure_report(db)
+            failure_report = build_failure_report(db, bank_b=bank_b)
             current_theta  = failure_report["augmented_theta"]
 
             log(f"  Current θ_augmented = {current_theta:.4f}")
@@ -716,15 +832,28 @@ def evolve(
 
             # ── 3. Build and test proposed config ─────────────────────────
             proposed_config = build_test_config(proposal, current_config)
-            test_items      = sample_test_items(db, n=n_test_items, seed=iteration)
+            if bank_b is not None:
+                test_items = sample_test_items_from_bank(db, bank_b, n=n_test_items, seed=iteration)
+            else:
+                test_items = sample_test_items(db, n=n_test_items, seed=iteration)
 
             if not test_items:
                 log("  [Test] No test items available. Run main.py first to build the bank.")
                 continue
 
+            if dry_run:
+                log(f"  [DRY RUN] Would test on {len(test_items)} items (bank_b={'frozen' if bank_b else 'legacy'}):")
+                for it in test_items[:5]:
+                    b_val = bank_b.get(it["task_id"]) if bank_b else None
+                    log(f"    {it['task_id']}  b={b_val:.3f}  domain={it.get('domain', '?')}")
+                if len(test_items) > 5:
+                    log(f"    ... and {len(test_items) - 5} more")
+                continue
+
             log(f"  [Test] Testing on {len(test_items)} items…")
             new_theta, delta_theta, champion_domain_rates = test_proposal(
-                client, proposed_config, test_items, current_theta, db, verbose=verbose
+                client, proposed_config, test_items, current_theta, db, verbose=verbose,
+                bank_b=bank_b,
             )
             log(f"  [Test] Δθ = {delta_theta:+.4f}  (threshold: {min_delta:+.4f})")
 
@@ -762,6 +891,8 @@ def evolve(
                 "delta_theta":  delta_theta,
                 "adopted":      adopted,
                 "n_test_items": len(test_items),
+                "bank_path":    _bank_path_used,
+                "n_bank_items": len(bank_b) if bank_b is not None else None,
             }
             history.append(entry)
             append_history(entry)
@@ -811,6 +942,8 @@ if __name__ == "__main__":
     parser.add_argument("--no-generate",  action="store_true",      help="Skip generating new bank items each iteration")
     parser.add_argument("--n-generate",   type=int,   default=5,    help="New hard items to generate per iteration")
     parser.add_argument("--db",           default="compliance_bank.db")
+    parser.add_argument("--bank",         default=None,             help="Phase 2 frozen bank jsonl for calibrated b values (default: evaluator/output/phase2_frozen_bank.jsonl)")
+    parser.add_argument("--dry-run",      action="store_true",      help="Print sampled items + b values without calling Groq")
     parser.add_argument("--verbose",      action="store_true",      help="Print calibration detail per item")
     args = parser.parse_args()
 
@@ -821,5 +954,7 @@ if __name__ == "__main__":
         generate_new = not args.no_generate,
         n_generate   = args.n_generate,
         db_path      = args.db,
+        bank_path    = args.bank,
+        dry_run      = args.dry_run,
         verbose      = args.verbose,
     )
