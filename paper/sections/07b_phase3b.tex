@@ -1,0 +1,85 @@
+\section{Phase 3b: Architectural Interventions and Agent-Type \texorpdfstring{$\Delta\theta$}{Delta-theta}}
+\label{sec:phase3b}
+
+\subsection{Motivation}
+
+Phase 3a established that system-prompt strictness primarily unlocks
+citation \emph{format} rather than compliance \emph{reasoning}---with
+only the largest model showing a genuine reasoning gain (+2.5 logits
+under the lenient judge). Phase 3b tests whether \emph{structural}
+changes to the agent---knowledge retrieval, self-critique, and step
+decomposition---produce measurable $\Delta\theta$ beyond what prompt
+engineering delivers, using the same frozen 1,284-item bank as the
+measuring instrument.
+
+\subsection{Agent Variants}
+
+We implement three agent architectures, each a drop-in replacement for
+the zero-shot baseline in the Arena runner:
+
+\paragraph{RetrievalAgent.}
+Before the single LLM call, the agent embeds the item's context and
+question with the \texttt{all-MiniLM-L6-v2} sentence-transformer model
+(22\,MB, local, no API call) and retrieves the top-$k$ ($k=3$) CFR
+sections by cosine similarity from a pre-built numpy index covering
+CFR Parts 11, 50, 58, 211 (Title 21) and Part 46 (Title 45).  The
+retrieved sections are prepended to the system prompt as a
+\emph{Relevant Regulations} block; all other parameters are identical
+to the zero-shot baseline (same strictness level, model, temperature).
+This isolates the effect of in-context regulatory grounding without
+changing the agent's reasoning process.
+
+\paragraph{CriticAgent.}
+The agent makes an initial zero-shot answer, then issues a critique
+prompt---``Review your previous answer for citation accuracy and
+compliance determination. Correct any errors.''---and finally a
+synthesis step.  With one critique round this costs three Groq calls
+per item (default).  All turns share the same conversation thread so
+the model has access to its own reasoning history.
+
+\paragraph{StepDecompositionAgent.}
+The agent breaks the compliance analysis into four sequential Groq
+calls, each building on the prior step's output: (1)~identify the
+regulated activity and parties; (2)~identify the governing CFR/ICH
+provision; (3)~assess compliance or violation; (4)~state the final
+determination with section-level citation.  This mirrors a structured
+legal-analysis workflow and tests whether explicit chain-of-thought
+scaffolding improves compliance reasoning.
+
+\subsection{Experimental Grid}
+
+The Phase 3b grid crosses two models (llama-3.3-70b-versatile,
+llama-3.1-8b-instant) $\times$ one temperature (0.4) $\times$ two
+strictness levels (none, strict) $\times$ four agent types (zero\_shot,
+retrieval, critic, step\_decomp), yielding 16 examinee cells.  Every
+cell is administered the full frozen 1,284-item bank, anchored to the
+Phase 1 baseline ($\theta = 0$) using the same re-anchoring procedure
+as Phase 3a (Section~\ref{sec:delta_theta}).
+
+\subsection{Results}
+
+\begin{table}[h]
+\centering
+\caption{Phase 3b $\Delta\theta$ by agent type relative to zero-shot baseline
+         (same model, temperature, strictness). \todo{Fill after phase3b run.}}
+\label{tab:phase3b}
+\begin{tabular}{llcc}
+\toprule
+Agent type & Model & $\Delta\theta$ (strictness=none) & $\Delta\theta$ (strictness=strict) \\
+\midrule
+retrieval   & llama-3.3-70b & \todo{} & \todo{} \\
+critic      & llama-3.3-70b & \todo{} & \todo{} \\
+step\_decomp & llama-3.3-70b & \todo{} & \todo{} \\
+retrieval   & llama-3.1-8b  & \todo{} & \todo{} \\
+critic      & llama-3.1-8b  & \todo{} & \todo{} \\
+step\_decomp & llama-3.1-8b  & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\todo{Interpret Table~\ref{tab:phase3b}: does in-context CFR retrieval
+move $\theta$ beyond the zero-shot baseline? Is the retrieval gain
+larger under strict (citation-requiring) than lenient grading---which
+would suggest the agent is using the retrieved sections for format
+rather than reasoning? Does step decomposition produce a consistent
+reasoning gain across model sizes?}

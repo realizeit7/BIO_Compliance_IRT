@@ -18,7 +18,7 @@ import threading
 import traceback
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Iterable
+from typing import Callable, Iterable
 
 from tqdm import tqdm
 
@@ -56,12 +56,14 @@ class ArenaRunner:
         judge: Judge,
         judge_lenient: Judge | None = None,
         parallelism: int = 8,
+        agent_factory: Callable[[ExamineeConfig], Agent] | None = None,
     ) -> None:
         self.run_id = run_id
         self.client = client
         self.judge_strict = judge
         self.judge_lenient = judge_lenient or judge
         self.parallelism = parallelism
+        self._agent_factory = agent_factory
 
         self.run_dir = Path(log_dir) / run_id
         self.run_dir.mkdir(parents=True, exist_ok=True)
@@ -138,6 +140,7 @@ class ArenaRunner:
                 examinee_id=examinee.examinee_id,
                 task_id=item.task_id,
                 agent_class=type(agent).__name__,
+                agent_type=examinee.agent_type,
                 model=examinee.model,
                 temperature=examinee.temperature,
                 strictness=examinee.strictness,
@@ -164,7 +167,8 @@ class ArenaRunner:
                 run_id=self.run_id,
                 examinee_id=examinee.examinee_id,
                 task_id=item.task_id,
-                agent_class="ZeroShotAgent",
+                agent_class=examinee.agent_type,
+                agent_type=examinee.agent_type,
                 model=examinee.model,
                 temperature=examinee.temperature,
                 strictness=examinee.strictness,
@@ -187,6 +191,8 @@ class ArenaRunner:
             )
 
     def _build_agent(self, examinee: ExamineeConfig) -> Agent:
+        if self._agent_factory is not None:
+            return self._agent_factory(examinee)
         return ZeroShotAgent(
             examinee_id=examinee.examinee_id,
             model=examinee.model,
