@@ -60,14 +60,54 @@ constraints:
   \emph{wrong}.
 \end{enumerate}
 Easy items use a separate template with no Red Herring and a routine,
-unambiguous violation. \todo{Add one worked hard-item example (context,
-question, gold standard, and the Red Herring) as a boxed figure.}
+unambiguous violation. Figure~\ref{fig:example} shows a worked example
+of a hard 21~CFR~Part~11 item.
+
+\begin{figure}[t]
+\centering
+\fbox{%
+\begin{minipage}{0.92\linewidth}
+\small
+\textbf{Domain:} 21~CFR~Part~11 (electronic records / audit trails)
+
+\medskip
+\textbf{Context (abridged):} NovaBio Inc.\ uses a validated ELN system
+(\textit{eLab} v4.2) that generates time-stamped audit trails for all
+user actions. A recent software update added an ``emergency access''
+feature that bypasses username/password; all such accesses are logged in
+a deviation register per SOP. The QA team reviews the deviation register
+monthly but has never scheduled a formal review of the audit trails
+themselves, reasoning that generation equals compliance.
+
+\medskip
+\textbf{Question:} Does NovaBio's practice comply with 21~CFR~Part~11
+regarding audit-trail generation, review, and completeness?
+
+\medskip
+\textbf{Red Herring:} The ``emergency access'' feature looks like an
+unsigned-entry risk. It is \emph{not} the violation: it is fully
+documented in the deviation log per SOP.
+
+\medskip
+\textbf{Gold Standard:} \textbf{Non-compliant.} 21~CFR~11.10(e) requires
+both \emph{generation} and \emph{review} of audit trails. NovaBio
+generates trails but never reviews them, violating the review requirement.
+The emergency-access deviation log satisfies a separate obligation and is
+irrelevant to this gap.
+\end{minipage}%
+}
+\caption{Worked hard-item example. The Red Herring (emergency access)
+draws solvers toward flagging a non-violation; the actual gap is the
+absent audit-trail review mandated by 21~CFR~11.10(e).}
+\label{fig:example}
+\end{figure}
 
 \subsection{Real-world grounding: FDA warning letters}
 A separate importer ingests FDA warning letters, extracts compliance
 findings, assigns a domain, and emits items tagged
-\texttt{source\_type=real}. Because these encode \emph{actual}
-enforcement actions, they serve as an external check on whether the
+\texttt{source\_type=real}. In this build the importer processed
+31~FDA warning letters, yielding 105~real items; 93~of these pass
+Phase~2 QC and enter the frozen bank. Because these encode \emph{actual}
+enforcement actions they serve as an external check on whether the
 synthetic difficulty scale is realistic; we return to this in
-Section~\ref{sec:results}. \todo{State the final count of real letters
-and items in this build.}
+Section~\ref{sec:results}.
