@@ -4221,3 +4221,294 @@ ValueError: invalid literal for int() with base 10: 'null'
 [2026-06-10T18:28:38Z]   [Test] θ_current=0.6068  θ_proposed=1.8763
 [2026-06-10T18:28:38Z]   [Test] Δθ = +1.2695  (threshold: +0.5000)
 [2026-06-10T18:28:38Z]   [Decision] ADOPTED (Δθ=+1.2695 ≥ 0.5)
+[2026-06-10T18:28:40Z]   [Git] Committed and pushed iter 005 → origin/main.
+[2026-06-10T18:28:40Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:28:40Z] ITERATION 6/20
+[2026-06-10T18:28:40Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:28:40Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:28:40Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:28:40Z]   Champion domain pass rates (last test): {'promo_review': 0.333, '21cfr11': 0.467, 'gcp_deviation': 0.111, 'informed_consent': 0.5, 'gmp_deviation': 0.333}
+[2026-06-10T18:28:40Z]   Blacklist size: 3
+[2026-06-10T18:28:40Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:28:41Z]   [Proposer] Hypothesis  : The root cause of current failures is the inability to correctly identify and analyze suspicious elements in the GCP deviation domain, which is the weakest domain according to the champion pass rates.
+[2026-06-10T18:28:41Z]   [Proposer] Change type : step_template  step=0
+[2026-06-10T18:28:41Z]   [Proposer] Description : Update the Step 0 user template to include more explicit instructions for identifying Red Herrings and suspicious elements, particularly in the context of GCP deviation scenarios, to improve the accuracy of the triage output.
+[2026-06-10T18:28:41Z]   [Proposer] Self-critique: This proposal assumes that the issue lies in the triage step, but it's possible that the problem lies in the analysis or verdict steps, and updating the template may not be enough to address the weaknesses in the GCP deviation domain.
+[2026-06-10T18:28:41Z]   [Test] Testing on 40 items…
+[2026-06-10T18:36:42Z]   [Champion] Domain pass rates: {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   [Test] θ_current=1.1970  θ_proposed=1.1970
+[2026-06-10T18:36:42Z]   [Test] Δθ = +0.0000  (threshold: +0.5000)
+[2026-06-10T18:36:42Z]   [Decision] REJECTED (Δθ=+0.0000 < 0.5)
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 7/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 7 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 8/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 8 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 9/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 9 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 10/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 10 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 11/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 11 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 12/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 12 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 13/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 13 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 14/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 14 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 15/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 15 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 16/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 16 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 17/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 17 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 18/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 18 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 19/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 19 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z] ITERATION 20/20
+[2026-06-10T18:36:42Z] ────────────────────────────────────────────────────────────
+[2026-06-10T18:36:42Z]   Current θ_augmented = 1.1114
+[2026-06-10T18:36:42Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T18:36:42Z]   Champion domain pass rates (last test): {'21cfr11': 1.0, 'informed_consent': 0.0, 'promo_review': 0.429, 'gcp_deviation': 0.0, 'gmp_deviation': 0.429}
+[2026-06-10T18:36:42Z]   Blacklist size: 4
+[2026-06-10T18:36:42Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T18:36:42Z]   [ERROR] Iteration 20 failed: '<' not supported between instances of 'NoneType' and 'str'
+[2026-06-10T18:36:42Z] Traceback (most recent call last):
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 814, in evolve
+    proposal = generate_proposal(
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/user/BIO_Compliance_IRT/autoevolve.py", line 399, in generate_proposal
+    for ct, si, mdl in sorted(blacklist)
+                       ^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'str'
+
+[2026-06-10T18:36:42Z] 
+======================================================================
+[2026-06-10T18:36:42Z] autoevolve complete.
+[2026-06-10T18:36:42Z]   Adopted 4/154 proposals
+[2026-06-10T18:36:42Z]   θ trajectory: 2.5353 → 1.197
+[2026-06-10T18:36:42Z] ======================================================================

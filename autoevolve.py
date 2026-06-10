@@ -396,7 +396,7 @@ def generate_proposal(
         bl_lines = [
             f"  step_model / step={si} / model={mdl}"
             if ct == "step_model" else f"  {ct} / step={si}"
-            for ct, si, mdl in sorted(blacklist)
+            for ct, si, mdl in sorted(blacklist, key=lambda x: (x[0] or "", str(x[1] or ""), x[2] or ""))
         ]
         blacklist_str = "\n".join(bl_lines) or "  (none yet)"
     else:
