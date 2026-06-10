@@ -31,9 +31,9 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "zero_shot",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.07009345794392523,
+      "theta": -3.2791721485803937,
       "is_baseline": false
     },
     {
@@ -42,9 +42,9 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "retrieval",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.1394080996884735,
+      "theta": -2.208315265172663,
       "is_baseline": false
     },
     {
@@ -53,9 +53,9 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "critic",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.6666666666666666,
-      "theta": 1.4990354906844512,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.35669781931464173,
+      "theta": 0.16722524041575573,
       "is_baseline": false
     },
     {
@@ -64,9 +64,9 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "step_decomp",
-      "n_items_scored": 3,
-      "raw_pass_rate": 1.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.4914330218068536,
+      "theta": 1.2742321021361027,
       "is_baseline": false
     },
     {
@@ -75,9 +75,9 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "zero_shot",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.6666666666666666,
-      "theta": 1.499035490684507,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.5778816199376947,
+      "theta": 1.8963236151971525,
       "is_baseline": false
     },
     {
@@ -86,9 +86,9 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "retrieval",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.5358255451713395,
+      "theta": 1.5982519491688663,
       "is_baseline": false
     },
     {
@@ -97,9 +97,9 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "critic",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.4501557632398754,
+      "theta": 0.9589558210020964,
       "is_baseline": false
     },
     {
@@ -108,9 +108,9 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "step_decomp",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.5062305295950156,
+      "theta": 1.3836721952951416,
       "is_baseline": false
     },
     {
@@ -119,9 +119,9 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "zero_shot",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.26791277258566976,
+      "theta": -0.715944930042309,
       "is_baseline": false
     },
     {
@@ -130,9 +130,9 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "retrieval",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273590141,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3014018691588785,
+      "theta": -0.36749351487278614,
       "is_baseline": false
     },
     {
@@ -141,9 +141,9 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "critic",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.26479750778816197,
+      "theta": -0.7492113531821948,
       "is_baseline": false
     },
     {
@@ -152,9 +152,9 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "step_decomp",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3317757009345794,
+      "theta": -0.06724747608572217,
       "is_baseline": false
     },
     {
@@ -163,9 +163,9 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "zero_shot",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.4431464174454829,
+      "theta": 0.9036853298532482,
       "is_baseline": false
     },
     {
@@ -174,9 +174,9 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "retrieval",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.6666666666666666,
-      "theta": 1.4990354906844512,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.45482866043613707,
+      "theta": 0.9954960932368938,
       "is_baseline": false
     },
     {
@@ -185,9 +185,9 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "critic",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3644859813084112,
+      "theta": 0.23831092731297876,
       "is_baseline": false
     },
     {
@@ -196,9 +196,9 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "step_decomp",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3691588785046729,
+      "theta": 0.2804725768432694,
       "is_baseline": false
     }
   ],
@@ -209,11 +209,11 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "retrieval",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.1394080996884735,
+      "theta": -2.208315265172663,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": 0.0
+      "delta_theta_vs_zero_shot": 1.0708568834077306
     },
     {
       "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_e62b0cf8",
@@ -221,11 +221,11 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "critic",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.6666666666666666,
-      "theta": 1.4990354906844512,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.35669781931464173,
+      "theta": 0.16722524041575573,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": 2.307465018042093
+      "delta_theta_vs_zero_shot": 3.4463973889961497
     },
     {
       "examinee_id": "llama_3.3_70b_versatile_t0.40_snone_89bc17a8",
@@ -233,11 +233,11 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "step_decomp",
-      "n_items_scored": 3,
-      "raw_pass_rate": 1.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.4914330218068536,
+      "theta": 1.2742321021361027,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": NaN
+      "delta_theta_vs_zero_shot": 4.553404250716497
     },
     {
       "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_a0cc4ea4",
@@ -245,11 +245,11 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "retrieval",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.5358255451713395,
+      "theta": 1.5982519491688663,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": -2.3074650180421488
+      "delta_theta_vs_zero_shot": -0.2980716660282863
     },
     {
       "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_a5051cb5",
@@ -257,11 +257,11 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "critic",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.4501557632398754,
+      "theta": 0.9589558210020964,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": NaN
+      "delta_theta_vs_zero_shot": -0.9373677941950561
     },
     {
       "examinee_id": "llama_3.3_70b_versatile_t0.40_sstrict_b5a464e5",
@@ -269,11 +269,11 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "step_decomp",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.5062305295950156,
+      "theta": 1.3836721952951416,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": -2.3074650180421488
+      "delta_theta_vs_zero_shot": -0.5126514199020109
     },
     {
       "examinee_id": "llama_3.1_8b_instant_t0.40_snone_6d925337",
@@ -281,11 +281,11 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "retrieval",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273590141,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3014018691588785,
+      "theta": -0.36749351487278614,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": -1.3722356584366935e-12
+      "delta_theta_vs_zero_shot": 0.3484514151695228
     },
     {
       "examinee_id": "llama_3.1_8b_instant_t0.40_snone_52c138aa",
@@ -293,11 +293,11 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "critic",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.26479750778816197,
+      "theta": -0.7492113531821948,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": 0.0
+      "delta_theta_vs_zero_shot": -0.033266423139885815
     },
     {
       "examinee_id": "llama_3.1_8b_instant_t0.40_snone_c0585a24",
@@ -305,11 +305,11 @@
       "temperature": 0.4,
       "strictness": "none",
       "agent_type": "step_decomp",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.3333333333333333,
-      "theta": -0.8084295273576418,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3317757009345794,
+      "theta": -0.06724747608572217,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": 0.0
+      "delta_theta_vs_zero_shot": 0.6486974539565868
     },
     {
       "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_bd1f056f",
@@ -317,11 +317,11 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "retrieval",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.6666666666666666,
-      "theta": 1.4990354906844512,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.45482866043613707,
+      "theta": 0.9954960932368938,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": NaN
+      "delta_theta_vs_zero_shot": 0.09181076338364558
     },
     {
       "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_924ff89d",
@@ -329,11 +329,11 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "critic",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3644859813084112,
+      "theta": 0.23831092731297876,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": NaN
+      "delta_theta_vs_zero_shot": -0.6653744025402695
     },
     {
       "examinee_id": "llama_3.1_8b_instant_t0.40_sstrict_89e93c91",
@@ -341,11 +341,11 @@
       "temperature": 0.4,
       "strictness": "strict",
       "agent_type": "step_decomp",
-      "n_items_scored": 3,
-      "raw_pass_rate": 0.0,
-      "theta": NaN,
+      "n_items_scored": 1284,
+      "raw_pass_rate": 0.3691588785046729,
+      "theta": 0.2804725768432694,
       "is_baseline": false,
-      "delta_theta_vs_zero_shot": NaN
+      "delta_theta_vs_zero_shot": -0.6232127530099788
     }
   ]
 }
