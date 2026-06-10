@@ -4021,3 +4021,18 @@ ValueError: invalid literal for int() with base 10: 'null'
 [2026-06-10T13:56:17Z]   [Test] θ_current=-0.2116  θ_proposed=0.3263
 [2026-06-10T13:56:17Z]   [Test] Δθ = +0.5379  (threshold: +0.5000)
 [2026-06-10T13:56:17Z]   [Decision] ADOPTED (Δθ=+0.5379 ≥ 0.5)
+[2026-06-10T13:56:19Z]   [Git] Committed and pushed iter 002 → origin/main.
+[2026-06-10T13:56:19Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T13:56:19Z] ITERATION 3/20
+[2026-06-10T13:56:19Z] ────────────────────────────────────────────────────────────
+[2026-06-10T13:56:19Z]   Current θ_augmented = 1.1114
+[2026-06-10T13:56:19Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T13:56:19Z]   Champion domain pass rates (last test): {'21cfr11': 0.364, 'informed_consent': 0.167, 'gmp_deviation': 0.2, 'promo_review': 0.333, 'gcp_deviation': 0.25}
+[2026-06-10T13:56:19Z]   Blacklist size: 1
+[2026-06-10T13:56:19Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T13:56:20Z]   [Proposer] Hypothesis  : The current failures are likely due to inadequate citation and analysis of regulatory sections in the context of GCP deviation scenarios, which has the lowest pass rate among the champion domains.
+[2026-06-10T13:56:20Z]   [Proposer] Change type : step_model  step=1
+[2026-06-10T13:56:20Z]   [Proposer] Description : Update the Step 1 model to qwen-qwq-32b to potentially improve performance on tasks that require rigorous and structured regulatory analysis of specific sections and obligations, particularly for GCP deviation scenarios.
+[2026-06-10T13:56:20Z]   [Proposer] Self-critique: The proposal might be wrong if the qwen-qwq-32b model's strengths in structured analysis do not translate to the specific regulatory analysis tasks required in Step 1, particularly for GCP deviation scenarios.
+[2026-06-10T13:56:20Z]   [Test] Testing on 40 items…
