@@ -3980,3 +3980,22 @@ ValueError: invalid literal for int() with base 10: 'null'
 [2026-06-10T12:15:11Z]   Adopted 2/141 proposals
 [2026-06-10T12:15:11Z]   θ trajectory: 2.5353 → 0.0716
 [2026-06-10T12:15:11Z] ======================================================================
+[2026-06-10T13:49:06Z] [bank] Loaded frozen bank: 1284 items ← /home/user/BIO_Compliance_IRT/evaluator/output/phase2_frozen_bank.jsonl
+[2026-06-10T13:49:06Z] [bank] Item difficulties sourced from Phase 2 frozen bank (QC-validated, Phase-1-anchored).
+[2026-06-10T13:49:06Z] ======================================================================
+[2026-06-10T13:49:06Z] autoevolve started: 20 iterations, test_items=40, min_delta=0.5
+[2026-06-10T13:49:06Z] ======================================================================
+[2026-06-10T13:49:06Z] 
+────────────────────────────────────────────────────────────
+[2026-06-10T13:49:06Z] ITERATION 1/20
+[2026-06-10T13:49:06Z] ────────────────────────────────────────────────────────────
+[2026-06-10T13:49:06Z]   Current θ_augmented = 1.1114
+[2026-06-10T13:49:06Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-10T13:49:06Z]   Champion domain pass rates (last test): not yet measured
+[2026-06-10T13:49:06Z]   Blacklist size: 0
+[2026-06-10T13:49:06Z]   [Proposer] Generating improvement proposal…
+[2026-06-10T13:49:09Z]   [Proposer] Hypothesis  : The current pipeline is failing to accurately identify and analyze suspicious elements in the context of informed consent scenarios, leading to a high failure rate in this domain.
+[2026-06-10T13:49:09Z]   [Proposer] Change type : step_model  step=0
+[2026-06-10T13:49:09Z]   [Proposer] Description : Update the Step 0 model to deepseek-r1-distill-llama-70b, a reasoning model with strong multi-step analysis capabilities, to improve the accuracy of triage output, particularly in identifying Red Herrings and suspicious elements in informed consent scenarios.
+[2026-06-10T13:49:09Z]   [Proposer] Self-critique: This proposal assumes that the issue lies in the triage step and that a different model will improve performance, but it may be that the issue is with the prompts or templates, or that the model is not the primary cause of the failures.
+[2026-06-10T13:49:09Z]   [Test] Testing on 40 items…
