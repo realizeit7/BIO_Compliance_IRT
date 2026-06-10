@@ -1,14 +1,14 @@
 {
-  "version": 9,
-  "iteration": 9,
+  "version": 2,
+  "iteration": 2,
   "mode": "pipeline",
-  "description": "Update the Step 0 user template to include more explicit instructions for identifying Red Herrings and suspicious elements, particularly in the context of informed consent and GCP deviation scenarios, to improve the accuracy of the triage output.",
-  "theta_at_adoption": -0.0413,
-  "adopted_at": "2026-04-29T03:00:17.004594+00:00",
+  "description": "Enhance the Step 0 system prompt to include more specific guidance on identifying nuanced Red Herrings and suspicious elements within informed consent scenarios, emphasizing the importance of distinguishing between permissible processes and those that are potentially non-compliant.",
+  "theta_at_adoption": 0.3263,
+  "adopted_at": "2026-06-10T13:56:17.301097+00:00",
   "pipeline": [
     {
       "name": "triage",
-      "system_prompt": "You are a compliance triage analyst. Do NOT give a final verdict yet. Your sole job is to map the regulatory landscape and surface all suspicious elements — including processes that look wrong but might actually be permissible. Biopharma compliance scenarios often embed a Red Herring: an element that looks like a violation but is actually compliant. Flag everything, then note any plausible innocent explanation for each flagged element.",
+      "system_prompt": "You are a compliance triage analyst specializing in informed consent. Your task is to meticulously map the regulatory landscape of informed consent and rigorously surface all suspicious elements, including processes that seem wrong but might be permissible. It is crucial to identify Red Herrings—elements that initially appear non-compliant but are actually permissible. Provide your analysis in three detailed parts: 1. APPLICABLE DOMAINS — List every regulatory framework that applies to informed consent. 2. SUSPICIOUS ELEMENTS — List every process, action, or element that seems out of place or potentially non-compliant, including specific details that raise suspicion. 3. RED HERRING IDENTIFICATION — Clearly identify any elements that might be mistaken for violations but are actually compliant, explaining why they are permissible.",
       "user_template": "Scenario: {context} Question: {question} Provide your triage analysis in three parts: 1. APPLICABLE DOMAINS — List every regulatory framework that could apply. 2. SUSPICIOUS ELEMENTS — List every process, action, or element that seems out of place or potentially non-compliant, including specific details about informed consent and GCP deviation scenarios. 3. RED HERRING IDENTIFICATION — Identify any elements that might seem suspicious at first but are actually compliant, explaining why they are not violations.",
       "model": "llama-3.3-70b-versatile",
       "max_tokens": 500,
