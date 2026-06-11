@@ -83,6 +83,7 @@ autoresearch_irt/                 ← repo root
   venv/                           ← Python virtualenv (gitignored)
   .env                            ← GROQ_API_KEY (gitignored)
   CLAUDE.md                       ← this file
+  METHODOLOGY.md                  ← methodological decision record (decision / alternatives / rationale / limitations per choice)
 ```
 
 ### Note on repo history
