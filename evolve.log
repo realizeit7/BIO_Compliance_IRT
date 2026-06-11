@@ -4822,3 +4822,22 @@ TypeError: '<' not supported between instances of 'NoneType' and 'str'
 [2026-06-10T23:26:17Z]   [Proposer] Description : Update the Step 0 system prompt to include more detailed guidance on identifying nuanced Red Herrings and suspicious elements within informed consent scenarios, with a focus on distinguishing between permissible processes and those that are potentially non-compliant.
 [2026-06-10T23:26:17Z]   [Proposer] Self-critique: This proposal may not address the root cause of the issue if the problem lies in the analysis or verdict steps, rather than the triage step.
 [2026-06-10T23:26:17Z]   [Test] Testing on 40 items…
+[2026-06-11T01:06:59Z] [bank] Loaded frozen bank: 1284 items ← /home/user/BIO_Compliance_IRT/evaluator/output/phase2_frozen_bank.jsonl
+[2026-06-11T01:06:59Z] [bank] Item difficulties sourced from Phase 2 frozen bank (QC-validated, Phase-1-anchored).
+[2026-06-11T01:06:59Z] ======================================================================
+[2026-06-11T01:06:59Z] autoevolve started: 20 iterations, test_items=40, min_delta=0.5
+[2026-06-11T01:06:59Z] ======================================================================
+[2026-06-11T01:06:59Z] 
+────────────────────────────────────────────────────────────
+[2026-06-11T01:06:59Z] ITERATION 1/20
+[2026-06-11T01:06:59Z] ────────────────────────────────────────────────────────────
+[2026-06-11T01:06:59Z]   Current θ_augmented = 1.1114
+[2026-06-11T01:06:59Z]   Population domain failure rates: {'21cfr11': 0.161, 'gmp_deviation': 0.375, 'promo_review': 0.258, 'gcp_deviation': 0.516, 'informed_consent': 0.572}
+[2026-06-11T01:06:59Z]   Champion domain pass rates (last test): not yet measured
+[2026-06-11T01:06:59Z]   Blacklist size: 0
+[2026-06-11T01:06:59Z]   [Proposer] Generating improvement proposal…
+[2026-06-11T01:07:02Z]   [Proposer] Hypothesis  : The current pipeline is failing primarily due to issues with informed consent, which suggests a problem with identifying and analyzing suspicious elements, likely tied to the triage step.
+[2026-06-11T01:07:02Z]   [Proposer] Change type : step_prompt  step=0
+[2026-06-11T01:07:02Z]   [Proposer] Description : Update the Step 0 system prompt to include more detailed guidance on identifying nuanced Red Herrings and suspicious elements within informed consent scenarios, with a focus on distinguishing between permissible processes and those that are potentially non-compliant.
+[2026-06-11T01:07:02Z]   [Proposer] Self-critique: This proposal assumes that the primary issue lies in the initial triage step, which might not be the case if the failures are more complex and multifaceted, requiring adjustments in later steps.
+[2026-06-11T01:07:02Z]   [Test] Testing on 40 items…
