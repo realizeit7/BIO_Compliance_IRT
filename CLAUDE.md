@@ -72,6 +72,18 @@ autoresearch_irt/                 ← repo root
   evaluator/output/phase3b_agent_deltatheta.json       ← Phase 3b Δθ per agent type (after run)
   evaluator/pyirt_fit.py          ← py-irt 1PL fit with posterior SD (b_se) — uncertainty path
 
+  # --- Judge calibration audit (IRT judge vs DeepEval/RAGAS) ----------
+  judge_audit/                    ← standalone audit module (no restructure of main pipeline)
+    __init__.py
+    backends.py                   ← GroqDeepEvalLLM (DeepEvalBaseLLM subclass) + make_ragas_llm
+    sample.py                     ← AuditRow dataclass + build_audit_set (Phase 3b responses join)
+    metrics.py                    ← run_metrics(): 4 metrics, ThreadPoolExecutor, resumable JSONL
+    analysis.py                   ← 4 analyses → judge_audit_report.json + printed table
+  run_judge_audit.py              ← CLI: --smoke / --n-items / --parallelism / --analyze-only
+  evaluator/output/judge_audit_scores.jsonl       ← (metric, examinee_id, task_id) scored rows
+  evaluator/output/judge_audit_report.json        ← AUC, Spearman, slopes, disagreement counts
+  evaluator/output/judge_audit_disagreements.jsonl ← top-20 high-score-but-FAIL + low-score-but-PASS
+
   # --- arXiv paper scaffold (offline; reads existing outputs only) -----
   paper/main.tex                  ← document root (article class)
   paper/sections/00..09_*.tex     ← per-section .tex (Part 1 instrument, Part 2 Δθ)
@@ -469,6 +481,16 @@ python3 autoevolve.py --iterations 10 --test-items 40 --min-delta 0.50  # uses f
 - 15 solver calls + 15 judge calls = 30 API calls per task — significantly slower than the 4-call 2-profile design; mitigated by Groq's fast inference
 - fda_importer.py still uses the 2-profile Calibrator interface (backward compat shim in place)
 - Red Herring quality not graded — items are generated with the Red Herring mandate but no automated check verifies a Red Herring was actually embedded
+
+### Judge calibration audit module (2026-06-12)
+`judge_audit/` compares the project's IRT-based strict/lenient judge against DeepEval G-Eval and RAGAS on the same Phase 3b zero-shot responses. Smoke test passed (12 scores, no errors beyond one transient connection timeout). Full run pending.
+
+- **Data**: 100 frozen-bank items × 4 zero-shot cells = 400 responses from `logs/arena_runs/phase3b_variants/responses.jsonl` (zero new solver calls)
+- **Metrics**: `geval_strict` (citation-requiring rubric), `geval_lenient` (conclusion-only), `ragas_faithfulness` (groundedness to context), `ragas_answer_correctness` (weights=[1,0], no embeddings)
+- **Backend**: `GroqDeepEvalLLM` (subclass of `DeepEvalBaseLLM`) + `make_ragas_llm` (langchain `ChatOpenAI` → `LangchainLLMWrapper`) — both pointed at Groq `llama-3.3-70b-versatile`; same grader family as project judge controls for model capability
+- **Grader dependencies**: deepeval 4.0.6, ragas 0.4.3, langchain<1/langchain-community<0.4/langchain-openai<1 (ragas 0.4 requires langchain 0.3.x — langchain 1.x breaks the import path)
+- **Analyses** (in `judge_audit/analysis.py`): AUC (Mann-Whitney U/n₁n₂) + point-biserial vs IRT binary verdict; per-cell mean score vs Rasch θ (Spearman); difficulty-confounded leniency slope (score on b within PASS/FAIL); disagreement mining (top-20 high-geval-but-FAIL + low-geval-but-PASS)
+- **CLI**: `python3 run_judge_audit.py --smoke` / `--n-items N` / `--analyze-only`
 
 ### Gaps
 - No promotional material real items retained yet (0 in real bank)
