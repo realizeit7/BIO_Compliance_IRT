@@ -95,6 +95,7 @@ autoresearch_irt/                 ← repo root
   venv/                           ← Python virtualenv (gitignored)
   .env                            ← GROQ_API_KEY (gitignored)
   CLAUDE.md                       ← this file
+  METHODOLOGY.md                  ← methodological decision record (decision / alternatives / rationale / limitations per choice)
 ```
 
 ### Note on repo history
@@ -563,7 +564,7 @@ This section documents an objective, critical evaluation of what has been built 
 
 ### To make academic contribution credible
 - ~~**Add solver profiles**~~ ✓ Done — 15 synthetic profiles spanning layperson → senior FDA auditor (legacy pipeline); 45-cell grid spans 3 base models × 5 temps × 3 strictness levels (Phase 1 pipeline)
-- **Human expert review** — have 2–3 compliance professionals label a random sample (50 items) correct/incorrect to validate LLM gold standards and provide external anchor for the difficulty scale
+- **Human expert review — IN PROGRESS (2026-06-11)** — 50-item stratified sample exported via `scripts/export_expert_sample.py` to `expert_review/` (reviewer CSV + held-back answer key + instructions). Sample: 10 per hard domain, QC-filtered (pb ≥ 0.3, infit ≤ 1.3, outfit ≤ 1.5), b in P20–P80 band [0.83, 2.43], seed=42. Verdict balance: 38 VIOLATION / 12 COMPLIANT — a true 25/25 split is impossible because the High-Subtlety template makes hard items violation-by-design (only 16 COMPLIANT-verdict items exist in the entire QC'd hard-domain pool; all are band-exempt and 12 fit under the 10-per-domain cap). **Design lesson for bank regeneration: mandate ~50% compliant-scenario hard items.** Awaiting labels from 2–3 compliance professionals; two-step protocol (own verdict first, then grade the gold standard) yields both inter-rater agreement and gold-standard error rate.
 - **Mann-Whitney U test** — formally test the real vs. synthetic b-distribution difference; currently only a descriptive comparison
 - **Cross-model profiles** — Phase 1 already includes 3 model families; expand if Phase 2 QC reveals high within-family correlation
 

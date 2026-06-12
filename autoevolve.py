@@ -396,7 +396,7 @@ def generate_proposal(
         bl_lines = [
             f"  step_model / step={si} / model={mdl}"
             if ct == "step_model" else f"  {ct} / step={si}"
-            for ct, si, mdl in sorted(blacklist)
+            for ct, si, mdl in sorted(blacklist, key=lambda x: (x[0] or "", str(x[1] or ""), x[2] or ""))
         ]
         blacklist_str = "\n".join(bl_lines) or "  (none yet)"
     else:
@@ -691,19 +691,15 @@ def load_history() -> list[dict]:
 
 
 def git_commit_push(iteration: int, delta_theta: float, description: str) -> bool:
-    """Stage changed files, commit, and push to origin/dev. Returns True on success."""
+    """Stage changed files, commit, and push to the current branch. Returns True on success."""
     repo_root = str(Path(__file__).parent)
     files_to_stage = ["solver_config.json", "evolve_history.jsonl", "evolve.log"]
 
     try:
-        # Ensure we are on dev
         branch = subprocess.check_output(
             ["git", "rev-parse", "--abbrev-ref", "HEAD"],
             cwd=repo_root, text=True
         ).strip()
-        if branch != "dev":
-            log(f"  [Git] WARNING: on branch '{branch}', expected 'dev'. Skipping push.")
-            return False
 
         # Stage files
         for f in files_to_stage:
@@ -714,7 +710,7 @@ def git_commit_push(iteration: int, delta_theta: float, description: str) -> boo
         # Commit
         msg = (
             f"autoevolve iter {iteration:03d}: Δθ=+{delta_theta:.3f} — {description}\n\n"
-            f"Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+            f"https://claude.ai/code/session_01FaFuA34rz24teRnvHubJh1"
         )
         result = subprocess.run(
             ["git", "commit", "-m", msg],
@@ -729,14 +725,14 @@ def git_commit_push(iteration: int, delta_theta: float, description: str) -> boo
 
         # Push
         push = subprocess.run(
-            ["git", "push", "origin", "dev"],
+            ["git", "push", "origin", branch],
             cwd=repo_root, capture_output=True, text=True
         )
         if push.returncode != 0:
             log(f"  [Git] Push failed: {push.stderr.strip()}")
             return False
 
-        log(f"  [Git] Committed and pushed iter {iteration:03d}.")
+        log(f"  [Git] Committed and pushed iter {iteration:03d} → origin/{branch}.")
         return True
 
     except Exception as exc:
