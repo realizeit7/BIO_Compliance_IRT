@@ -482,8 +482,8 @@ python3 autoevolve.py --iterations 10 --test-items 40 --min-delta 0.50  # uses f
 - fda_importer.py still uses the 2-profile Calibrator interface (backward compat shim in place)
 - Red Herring quality not graded — items are generated with the Red Herring mandate but no automated check verifies a Red Herring was actually embedded
 
-### Judge calibration audit module (2026-06-12)
-`judge_audit/` compares the project's IRT-based strict/lenient judge against DeepEval G-Eval and RAGAS on the same Phase 3b zero-shot responses. Smoke test passed (12 scores, no errors beyond one transient connection timeout). Full run pending.
+### Judge calibration audit module (2026-06-12, complete)
+`judge_audit/` compares the project's IRT-based strict/lenient judge against DeepEval G-Eval and RAGAS on 400 Phase 3b zero-shot responses (100 frozen-bank items × 4 cells). Full run complete: 1,600 scores, 93 errors excluded (5.8%, mostly transient connection timeouts — resumable).
 
 - **Data**: 100 frozen-bank items × 4 zero-shot cells = 400 responses from `logs/arena_runs/phase3b_variants/responses.jsonl` (zero new solver calls)
 - **Metrics**: `geval_strict` (citation-requiring rubric), `geval_lenient` (conclusion-only), `ragas_faithfulness` (groundedness to context), `ragas_answer_correctness` (weights=[1,0], no embeddings)
@@ -491,6 +491,22 @@ python3 autoevolve.py --iterations 10 --test-items 40 --min-delta 0.50  # uses f
 - **Grader dependencies**: deepeval 4.0.6, ragas 0.4.3, langchain<1/langchain-community<0.4/langchain-openai<1 (ragas 0.4 requires langchain 0.3.x — langchain 1.x breaks the import path)
 - **Analyses** (in `judge_audit/analysis.py`): AUC (Mann-Whitney U/n₁n₂) + point-biserial vs IRT binary verdict; per-cell mean score vs Rasch θ (Spearman); difficulty-confounded leniency slope (score on b within PASS/FAIL); disagreement mining (top-20 high-geval-but-FAIL + low-geval-but-PASS)
 - **CLI**: `python3 run_judge_audit.py --smoke` / `--n-items N` / `--analyze-only`
+
+**Full-run results (2026-06-12):**
+
+| metric | n | AUC vs IRT | r_pb | rho_θ | slope\|PASS | slope\|FAIL |
+|---|---|---|---|---|---|---|
+| geval_strict | 400 | **0.838** | 0.570 | 1.000 | +0.015 | −0.019 |
+| geval_lenient | 400 | 0.731 | 0.381 | 1.000 | −0.015 | −0.052 |
+| ragas_faithfulness | 363 | 0.530 | 0.057 | −0.800 | −0.073 | −0.056 |
+| ragas_answer_correctness | 344 | 0.693 | 0.315 | 0.800 | −0.003 | −0.017 |
+
+**Interpretation:**
+- `geval_strict` AUC=0.838 confirms the citation-requiring G-Eval rubric is the best external proxy for our IRT judge — both penalize missing section-level citations.
+- `ragas_faithfulness` AUC≈0.530 (near chance) validates the design choice to include it as a *contrast* metric: a response can be perfectly grounded in the scenario context and still wrong on compliance — faithfulness is not correctness.
+- `rho_θ=1.000` for both G-Eval metrics (n=4 cells only — not statistically meaningful alone) suggests G-Eval ranks the 4 zero-shot cells in the same ability order as Rasch θ.
+- Difficulty slopes are near zero conditional on verdict for all metrics — none of the external tools confound item difficulty with response quality to a meaningful degree. IRT's separation of b and θ is not replicated but also not strongly violated by G-Eval.
+- `ragas_faithfulness` negative `rho_θ=-0.800`: higher-ability cells (70b) may give more citation-heavy responses that diverge further from the flat context, paradoxically reducing faithfulness scores.
 
 ### Gaps
 - No promotional material real items retained yet (0 in real bank)
