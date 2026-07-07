@@ -54,7 +54,7 @@ strictness levels (none, strict) $\times$ four agent types (zero\_shot,
 retrieval, critic, step\_decomp), yielding 16 examinee cells.  Every
 cell is administered the full frozen 1,284-item bank, anchored to the
 Phase 1 baseline ($\theta = 0$) using the same re-anchoring procedure
-as Phase 3a (Section~\ref{sec:delta_theta}).
+as Phase 3a (Section~\ref{sec:deltatheta}).
 
 \subsection{Results}
 
@@ -90,7 +90,7 @@ and explicit step scaffolding---substantially improves the model's
 compliance \emph{reasoning}.
 
 However, the picture inverts under strict (citation-requiring) scoring.
-All three agents *reduce* 70b's $\theta$ (retrieval −0.30, critic −0.94,
+All three agents \emph{reduce} 70b's $\theta$ (retrieval −0.30, critic −0.94,
 step-decomp −0.51). A plausible explanation: in the strict judge's regime,
 citation format becomes the binding constraint. Architectural interventions
 are optimized for reasoning improvement, not for satisfying the judge's
@@ -103,7 +103,7 @@ negative returns under both conditions. This suggests the 8b model has less
 capacity to leverage the architectural support or to compose multi-step
 reasoning into a coherent citation.
 
-Overall, Phase 3b corroborates Phase 3a's central finding: **strict citation
-requirements dominate the measurement scale**. When the judge enforces
+Overall, Phase 3b corroborates Phase 3a's central finding: \textbf{strict citation
+requirements dominate the measurement scale}. When the judge enforces
 section-level citations, architectural reasoning improvements become
 secondary to format-compliance pressure, even on a model as large as 70b.

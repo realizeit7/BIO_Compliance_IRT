@@ -239,18 +239,24 @@ assign_2pl_parameters      = assign_rasch_parameters
 
 def p_correct(theta: float, a: float, b: float) -> float:
     """
-    2PL probability of a correct response.
+    Logistic probability of a correct response.
 
     P(θ) = 1 / (1 + exp(−a * (θ − b)))
+
+    This is the general two-parameter form; the project fixes a = RASCH_A = 1.0,
+    which reduces it to the Rasch (1PL) model P(θ) = 1 / (1 + exp(−(θ − b))).
     """
     return 1.0 / (1.0 + math.exp(-a * (theta - b)))
 
 
 def item_information(theta: float, a: float, b: float) -> float:
     """
-    Fisher information for the 2PL at ability level θ.
+    Fisher information at ability level θ.
 
     I(θ) = a² · P(θ) · (1 − P(θ))
+
+    General two-parameter form; with the project's fixed a = 1.0 this is the
+    Rasch item information I(θ) = P(θ) · (1 − P(θ)).
     """
     p = p_correct(theta, a, b)
     return a**2 * p * (1.0 - p)

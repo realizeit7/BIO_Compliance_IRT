@@ -1,7 +1,11 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "autoresearch-irt"
+name = "bio-compliance-irt"
 version = "0.1.0"
-description = "Autonomous bio-compliance IRT item bank builder"
+description = "Automated bio-compliance IRT item bank builder and LLM evaluation framework"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -17,3 +21,39 @@ dependencies = [
     "tqdm>=4.60",
     "sentence-transformers>=2.2.0",
 ]
+
+[project.optional-dependencies]
+# Judge calibration audit (judge_audit/) — external eval frameworks.
+# ragas 0.4.x requires langchain 0.3.x; langchain 1.x breaks the import path.
+judge_audit = [
+    "deepeval>=4.0,<5",
+    "ragas>=0.4,<0.5",
+    "langchain<1",
+    "langchain-community<0.4",
+    "langchain-openai<1",
+]
+
+[tool.setuptools]
+# Flat layout: explicit package + module lists so setuptools does not error on
+# multi-top-level-package auto-discovery.
+packages = ["agents", "arena", "evaluator", "harness", "judge_audit"]
+py-modules = [
+    "autoevolve",
+    "calibrator",
+    "database",
+    "fda_importer",
+    "irt_parameters",
+    "legacy_evaluator",
+    "main",
+    "task_generator",
+    "run_phase1",
+    "run_phase2",
+    "run_phase3",
+    "run_phase3_rejudge_lenient",
+    "run_phase3b",
+    "run_judge_audit",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

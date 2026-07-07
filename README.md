@@ -1,8 +1,19 @@
 # BIO_Compliance_IRT
 
+[![CI](https://github.com/realizeit7/bio_compliance_irt/actions/workflows/ci.yml/badge.svg)](https://github.com/realizeit7/bio_compliance_irt/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 Automated bio-compliance IRT item bank builder and LLM evaluation framework. Generates
 biopharma regulatory compliance scenarios, calibrates item difficulty with Rasch IRT, and
 uses calibrated ability θ as an optimization metric for evaluating LLMs.
+
+> **Why it matters:** Standard LLM benchmarks report a single accuracy number and cannot
+> tell a genuinely hard question apart from a model that happens to be weak. Item Response
+> Theory separates *item difficulty* (`b`) from *model ability* (`θ`) on the same scale — so
+> a benchmark stays meaningful as models improve, and "this model is better" becomes a
+> measurable, difficulty-controlled claim. This project builds such a calibrated benchmark
+> for a domain where correctness genuinely matters: FDA/biopharma regulatory compliance.
 
 ## What it does
 
@@ -30,6 +41,8 @@ Two parallel pipelines share a SQLite item bank:
 python3 -m venv venv
 source venv/bin/activate
 pip install -e .
+# For the judge calibration audit (DeepEval / RAGAS), also install its extras:
+#   pip install -e ".[judge_audit]"
 
 # Set Groq API key
 export GROQ_API_KEY=gsk_...
@@ -69,7 +82,7 @@ python3 run_judge_audit.py --analyze-only  # recompute report from existing scor
 main.py                         — CLI entry point
 task_generator.py               — LLM generates compliance scenarios (5 hard + 5 easy domains)
 calibrator.py                   — 15 solver profiles + judge → pass rate → logit b
-evaluator.py                    — LLM-as-judge (strict and lenient modes)
+legacy_evaluator.py             — LLM-as-judge (strict and lenient modes)
 irt_parameters.py               — Rasch math, outcome classification, theta MLE
 database.py                     — SQLite persistence
 fda_importer.py                 — Real FDA warning letter ingestion
@@ -136,6 +149,11 @@ METHODOLOGY.md                  — methodological decision record (13 decisions
 Healthy-bank medians: b = +1.65, point-biserial = +0.42, infit = 0.87, outfit = 0.66.
 
 ## Key results
+
+![Δθ from system-prompt strictness, per model](paper/figures/fig3_delta_theta.png)
+
+*Ability shift (Δθ) induced by system-prompt strictness, per model, on the frozen
+1,284-item bank. Regenerable from committed data via `paper/figures/gen_fig3_delta_theta.py`.*
 
 **Phase 3a — prompt strictness effect (Δθ, strict judge):**
 
