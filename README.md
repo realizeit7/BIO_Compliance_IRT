@@ -21,6 +21,11 @@ uses calibrated ability θ as an optimization metric for evaluating LLMs.
 > findings in the browser with zero setup and zero Groq calls. The full pipelines are
 > reproducible from scratch with a key; the *findings* are inspectable without one.
 
+> **Preprint in preparation.** A companion write-up (IRT bank construction + the Δθ
+> strictness/architecture analyses) is drafted on the
+> [`paper`](https://github.com/realizeit7/BIO_Compliance_IRT/tree/paper) branch. It is kept
+> off `main` so the default branch stays focused on code and reproducible results.
+
 ## What it does
 
 Two parallel pipelines share a SQLite item bank:
