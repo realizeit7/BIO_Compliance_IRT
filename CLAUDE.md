@@ -84,13 +84,14 @@ BIO_Compliance_IRT/               ← repo root
   evaluator/output/judge_audit_report.json        ← AUC, Spearman, slopes, disagreement counts
   evaluator/output/judge_audit_disagreements.jsonl ← top-20 high-score-but-FAIL + low-score-but-PASS
 
-  # --- arXiv paper scaffold (offline; reads existing outputs only) -----
-  paper/main.tex                  ← document root (article class)
-  paper/sections/00..09_*.tex     ← per-section .tex (Part 1 instrument, Part 2 Δθ)
-  paper/sections/07b_phase3b.tex  ← Phase 3b agent-variant section (Table 2 pending run)
-  paper/references.bib            ← BibTeX stubs (verify before submission)
-  paper/figures/gen_fig1..4_*.py  ← matplotlib scripts → fig{1..4}.pdf/png (no API calls)
-  paper/figures/_common.py        ← shared loaders + analytic SE = 1/√(N·P(1−P))
+  # --- arXiv paper scaffold: NOT in main; lives on the `paper` branch -----
+  # The full preprint (main.tex, sections/, figures/gen_*.py + PDFs, references.bib)
+  # was removed from main to keep the default branch focused on code + results.
+  # It is preserved on the `paper` branch (git checkout paper). Paths below are
+  # relative to that branch, not main.
+  #   paper/main.tex, paper/sections/00..09_*.tex, paper/sections/07b_phase3b.tex,
+  #   paper/references.bib, paper/figures/gen_fig1..4_*.py, paper/figures/_common.py
+  # The README's Δθ figure was relocated to assets/delta_theta.png (in main).
 
   venv/                           ← Python virtualenv (gitignored)
   .env                            ← GROQ_API_KEY (gitignored)
@@ -338,7 +339,7 @@ In the 15-profile architecture, θ MLE is still computed for the layperson (prof
 ### Parameter uncertainty: analytic SE now, py-irt posterior SD later (2026-06-09)
 `girth.rasch_mml` returns **point estimates only** — no standard errors. Two uncertainty paths exist:
 
-- **Analytic SE (interim, zero API calls)**: `SE(b) = 1/√(N·P(1−P))` with N=45 and `P = σ(−b)` recovered from each frozen-bank b. Standard delta-method SE for a one-item logit difficulty. Implemented in `paper/figures/_common.py::analytic_se_b`; this is what the paper reports today.
+- **Analytic SE (interim, zero API calls)**: `SE(b) = 1/√(N·P(1−P))` with N=45 and `P = σ(−b)` recovered from each frozen-bank b. Standard delta-method SE for a one-item logit difficulty. Implemented in `paper/figures/_common.py::analytic_se_b` (on the `paper` branch); this is what the paper reports today.
 - **py-irt posterior SD (intended final)**: `evaluator/pyirt_fit.py` fits the same 1PL via py-irt (Pyro BBVI) and exposes `loc_diff → b_mean`, `scale_diff → b_se` (per-item posterior SD). Baseline anchoring mirrors `evaluator/rasch.py` exactly (shift b by −θ_baseline; b_se invariant). **Blocked on data**: needs the raw `logs/arena_runs/phase1_baseline/responses.jsonl`, which is gitignored and absent in fresh clones — regenerate via `run_phase1.py` (~164k Groq calls) before py-irt can run on the real bank. Recovery verified on synthetic data (r≈0.93). py-irt b has a wider scale than girth (vague priors, 45 examinees) — wider posterior SDs are the honest uncertainty, not a defect.
 
 ### Phase 3a Δθ from prompt strictness (offline + lenient rejudge)
@@ -434,7 +435,7 @@ Pre-refactor DB rows have `b` values sampled from Uniform bands. Post-refactor r
 Headline: under the strict (citation-requiring) judge, prompt strictness moves all three models. But the lenient judge — which scores conclusion + reasoning only — flattens that effect for everything except 70b. Implication: **system-prompt strictness primarily teaches the model to satisfy the citation-format requirement, not to reason better about compliance.** Only the 70b shows a non-trivial reasoning gain (≈ +2.5 logits) on top of the format-unlock effect.
 
 ### Phase 3b agent variants (complete, merged 2026-06-10)
-- Full 16-cell run done; results in `evaluator/output/phase3b_agent_deltatheta.json`; Table 2 filled in `paper/sections/07b_phase3b.tex`.
+- Full 16-cell run done; results in `evaluator/output/phase3b_agent_deltatheta.json`; Table 2 filled in `paper/sections/07b_phase3b.tex` (on the `paper` branch).
 - Key finding: architectural interventions (retrieval +1.07, critic +3.45, step_decomp +4.55) boost 70b θ under lenient scoring, but all three reduce θ under strict citation-requiring scoring — same pattern as Phase 3a.
 
 ### autoevolve.py — frozen bank fitness function (2026-06-10)

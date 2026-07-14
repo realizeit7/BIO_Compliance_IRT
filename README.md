@@ -128,12 +128,6 @@ scripts/build_cfr_index.py      — one-time eCFR download + embedding index
 judge_audit/                    — backends, sample builder, metric runner, analysis
 run_judge_audit.py              — CLI entry point
 
-# Paper scaffold
-paper/main.tex                  — arXiv preprint root
-paper/sections/                 — per-section .tex files
-paper/figures/                  — matplotlib figure scripts + generated PDFs
-paper/references.bib            — BibTeX entries
-
 # Key outputs
 compliance_bank.db                                          — shared SQLite item bank
 evaluator/output/phase2_frozen_bank.jsonl                   — 1,284 healthy items (b, pb, infit, outfit)
@@ -172,10 +166,10 @@ Healthy-bank medians: b = +1.65, point-biserial = +0.42, infit = 0.87, outfit = 
 
 ## Key results
 
-![Δθ from system-prompt strictness, per model](paper/figures/fig3_delta_theta.png)
+![Δθ from system-prompt strictness, per model](assets/delta_theta.png)
 
 *Ability shift (Δθ) induced by system-prompt strictness, per model, on the frozen
-1,284-item bank. Regenerable from committed data via `paper/figures/gen_fig3_delta_theta.py`.*
+1,284-item bank — derived entirely from committed data in `evaluator/output/`.*
 
 **Phase 3a — prompt strictness effect (Δθ, strict judge):**
 
