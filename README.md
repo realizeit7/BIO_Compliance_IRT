@@ -16,10 +16,12 @@ uses calibrated ability θ as an optimization metric for evaluating LLMs.
 > for a domain where correctness genuinely matters: FDA/biopharma regulatory compliance.
 
 > **No API key? Nothing to run.** Every result below is committed to the repo. Open
-> [`analysis.html`](analysis.html) (or [`analysis.ipynb`](analysis.ipynb)) to see each figure
-> regenerate from committed data — bank composition, item-difficulty fit, Δθ tables, and the
-> judge-audit AUCs — with zero Groq calls. The full pipelines are reproducible from scratch
-> with a key; the *findings* are inspectable without one.
+> **[`analysis.ipynb`](analysis.ipynb)** — GitHub renders it inline with all figures baked in
+> (bank composition, item-difficulty fit, Δθ tables, judge-audit AUCs), so you can read the
+> findings in the browser with zero setup and zero Groq calls. ([`analysis.html`](analysis.html)
+> is the same notebook as a standalone page — download and open it locally, or view it via
+> GitHub Pages; GitHub shows raw source for `.html` in the repo view.) The full pipelines are
+> reproducible from scratch with a key; the *findings* are inspectable without one.
 
 ## What it does
 
