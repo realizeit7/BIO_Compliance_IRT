@@ -1,0 +1,62 @@
+% ============================================================================
+% Calibrated Benchmarking of LLMs in Regulated Domains
+% An Automated IRT Framework for Biopharma Compliance
+%
+% Generic arXiv preprint scaffold. Compile:
+%   pdflatex main && bibtex main && pdflatex main && pdflatex main
+% Figures are produced by paper/figures/gen_fig*.py (matplotlib, no LaTeX dep).
+% ============================================================================
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\graphicspath{{figures/}}
+
+% Convenience macros.
+% \todo notes are private reminders kept in the source; they render nothing in
+% the compiled PDF. Set \draftmode to true to surface them in red while editing.
+\newif\ifdraftmode
+\draftmodefalse
+\newcommand{\todo}[1]{\ifdraftmode\textcolor{red}{[TODO: #1]}\fi}
+
+\title{Calibrated Benchmarking of Large Language Models in Regulated
+Domains: An Automated Item-Response-Theory Framework for Biopharma
+Compliance}
+
+\author{%
+  Seo Wook Choi \\
+  Independent Researcher \\
+  \texttt{seowookchoi@gmail.com}
+}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\input{sections/01_intro}
+\input{sections/02_related_work}
+\input{sections/03_item_gen}
+\input{sections/04_calibration}
+\input{sections/05_irt_pipeline}
+\input{sections/06_results}
+\input{sections/07_delta_theta}
+\input{sections/07b_phase3b}
+\input{sections/08_discussion}
+\input{sections/09_conclusion}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

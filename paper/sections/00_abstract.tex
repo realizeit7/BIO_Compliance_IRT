@@ -1,0 +1,27 @@
+% Abstract — Part 1 focus (the instrument), with a one-line pointer to Part 2.
+Evaluating large language models (LLMs) in regulated domains such as
+biopharmaceutical compliance demands more than an aggregate accuracy
+score: stakeholders need to know \emph{how hard} each question is and
+\emph{where} a given system sits on a difficulty scale. We present an
+automated pipeline that constructs a difficulty-calibrated question bank
+for biopharma regulatory knowledge (FDA 21~CFR~Part~11, GCP, GMP,
+promotional review, and informed consent) and calibrates it with
+item-response theory (IRT). The pipeline (i)~generates compliance
+scenarios under a ``Red Herring + subtle violation'' mandate that forces
+genuine difficulty, (ii)~administers each item to a population of
+synthetic AI examinees spanning models, sampling temperatures, and
+system-prompt strictness, (iii)~grades responses with a dual-mode
+LLM-as-judge, and (iv)~fits a Rasch (1PL) model, anchored to a fixed
+baseline examinee, with classical item-fit quality control. Starting from
+1{,}823 candidate items we freeze a healthy bank of
+\textbf{1{,}284} items with calibrated difficulties spanning roughly
+$\pm 4$ logits. A parallel track grounded in real FDA warning letters
+confirms that enforced violations are systematically harder than
+synthetic ones. In a second part, we treat the calibrated ability
+$\theta$ as an \emph{optimization metric} and show that system-prompt
+``strictness'' decomposes into a citation-\emph{format} effect and a
+genuine \emph{reasoning} effect, which we separate with a strict/lenient
+dual-judge design. We discuss the limits of a closed,
+LLM-generated-and-judged evaluation loop and outline what external
+validation would require. \todo{Tighten final numbers once py-irt
+posterior SEs are wired in.}

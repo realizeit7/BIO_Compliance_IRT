@@ -1,0 +1,91 @@
+\section{The Frozen Bank}
+\label{sec:results}
+
+\subsection{Bank composition and quality}
+Quality control reduces the $1{,}823$ input items to a frozen healthy
+bank of \textbf{1{,}284} items (Table~\ref{tab:qc}). The four drop
+reasons account for 539 removed items; zero-variance and non-positive
+point-biserial dominate, with relatively few items failing the fit
+bounds.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+stage / reason & items \\
+\midrule
+input items                 & $1{,}823$ \\
+\quad dropped: zero-variance        & 308 \\
+\quad dropped: point-biserial $\le 0$ & 155 \\
+\quad dropped: infit $> 1.5$        & 14 \\
+\quad dropped: outfit $> 2.0$       & 62 \\
+\midrule
+\textbf{frozen (healthy)}   & \textbf{1{,}284} \\
+\bottomrule
+\end{tabular}
+\caption{Phase~2 quality-control funnel. Retention $\approx 70\%$.}
+\label{tab:qc}
+\end{table}
+
+The healthy bank has median difficulty $b = +1.65$, median point-biserial
+$+0.42$, median infit $0.87$, and median outfit $0.66$
+(Table~\ref{tab:quality}). Difficulty spans roughly $\pm 4$ logits
+(Figure~\ref{fig:bhist}); the item-fit cloud sits comfortably inside the
+QC bounds (Figure~\ref{fig:itemfit}).
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & $b$ & point-biserial & infit & outfit \\
+\midrule
+median (healthy bank) & $+1.65$ & $+0.42$ & $0.87$ & $0.66$ \\
+\bottomrule
+\end{tabular}
+\caption{Healthy-bank summary statistics ($n = 1{,}284$).}
+\label{tab:quality}
+\end{table}
+
+\paragraph{Difficulty with uncertainty.}
+We report difficulty as $b \pm \mathrm{SE}$. The standard error shown
+here is the analytic delta-method value for a single-item logit
+difficulty,
+$\mathrm{SE}(b) = 1/\sqrt{N\,P(1-P)}$ with $N = 45$ and
+$P = \sigma(-b)$. This is an interim estimate; the posterior standard
+deviation from a variational Rasch fit (\texttt{py-irt}) is the intended
+final uncertainty and is wired into the pipeline
+(\texttt{evaluator/pyirt\_fit.py}) but requires regenerating the raw
+response matrix. \todo{Replace analytic SE with py-irt posterior SD once
+\texttt{responses.jsonl} is regenerated; report the median SE here.}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\linewidth]{fig1_b_hist.pdf}
+\caption{Difficulty distribution of the frozen bank ($n = 1{,}284$),
+baseline-anchored to $\theta = 0$. Median $b = +1.65$.}
+\label{fig:bhist}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\linewidth]{fig2_item_fit.pdf}
+\caption{Item fit (infit vs.\ outfit) for the frozen bank. Dashed lines
+are the QC upper bounds (infit $1.5$, outfit $2.0$); dotted lines mark
+the ideal Rasch value of $1.0$.}
+\label{fig:itemfit}
+\end{figure}
+
+\subsection{Real-vs-synthetic difficulty gap}
+Items extracted from FDA warning letters are systematically harder than
+synthetic items on the frozen bank: $n = 93$ real items with mean
+$b = +1.98$ versus $n = 1{,}191$ synthetic with mean $b = +1.04$, a gap
+of $+0.94$ logits (Mann--Whitney $U = 66{,}516$, one-sided $p = 0.0006$).
+No real item falls below $b = 0$, consistent with the intuition that
+enforcement does not produce easy questions. On the full Phase~1 pre-QC
+set ($n = 105$ real, $n = 1{,}718$ synthetic) the mean gap is
+$+0.49$ logits ($p = 0.070$, one-sided), suggesting QC preferentially
+removes easy-or-inverted synthetic items and thus sharpens the
+real-vs-synthetic separation. A formal two-sample test and the effect of
+QC on this gap are discussed in Section~\ref{sec:discussion}.
