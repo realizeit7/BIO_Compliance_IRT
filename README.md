@@ -1,6 +1,6 @@
 # BIO_Compliance_IRT
 
-[![CI](https://github.com/realizeit7/bio_compliance_irt/actions/workflows/ci.yml/badge.svg)](https://github.com/realizeit7/bio_compliance_irt/actions/workflows/ci.yml)
+[![CI](https://github.com/realizeit7/BIO_Compliance_IRT/actions/workflows/ci.yml/badge.svg)](https://github.com/realizeit7/BIO_Compliance_IRT/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -14,6 +14,12 @@ uses calibrated ability θ as an optimization metric for evaluating LLMs.
 > a benchmark stays meaningful as models improve, and "this model is better" becomes a
 > measurable, difficulty-controlled claim. This project builds such a calibrated benchmark
 > for a domain where correctness genuinely matters: FDA/biopharma regulatory compliance.
+
+> **No API key? Nothing to run.** Every result below is committed to the repo. Open
+> [`analysis.html`](analysis.html) (or [`analysis.ipynb`](analysis.ipynb)) to see each figure
+> regenerate from committed data — bank composition, item-difficulty fit, Δθ tables, and the
+> judge-audit AUCs — with zero Groq calls. The full pipelines are reproducible from scratch
+> with a key; the *findings* are inspectable without one.
 
 ## What it does
 
@@ -31,6 +37,22 @@ Two parallel pipelines share a SQLite item bank:
 3. **Judge calibration audit** — compares the IRT judge against DeepEval G-Eval and RAGAS
    on 400 Phase 3b responses. G-Eval strict AUC=0.838 vs IRT verdict; RAGAS faithfulness
    AUC≈0.530 (near chance — groundedness ≠ correctness).
+
+## Pipeline at a glance
+
+```mermaid
+flowchart LR
+    GEN["Item generation<br/>15 solver profiles + FDA letters"] --> DB[("compliance_bank.db")]
+    DB --> P1["Phase 1<br/>45-cell grid → Rasch fit + anchor"]
+    P1 --> P2["Phase 2<br/>classical item-fit QC"]
+    P2 --> FROZEN[("Frozen bank<br/>1,284 healthy items")]
+    FROZEN --> P3A["Phase 3a<br/>Δθ from prompt strictness<br/>(format-unlock vs. reasoning)"]
+    FROZEN --> P3B["Phase 3b<br/>Δθ from agent architecture<br/>(retrieval / critic / decomp)"]
+    FROZEN --> AUDIT["Judge audit<br/>IRT judge vs. G-Eval / RAGAS"]
+```
+
+Every stage is resumable and writes committed JSONL/JSON outputs, so any downstream analysis
+can be re-run offline from the frozen artifacts.
 
 ## Quick start
 
@@ -184,6 +206,34 @@ Architectural interventions boost θ under lenient scoring but *reduce* θ under
 | G-Eval lenient (conclusion rubric) | 0.731 | Weaker without citation penalty |
 | RAGAS answer_correctness | 0.693 | Reasonable, lower than G-Eval |
 | RAGAS faithfulness | 0.530 | Near chance — groundedness ≠ correctness |
+
+## What this is — and isn't
+
+Stated plainly, because a benchmark you can't trust the limits of is a benchmark you can't use.
+
+**This is** a reproducible, difficulty-controlled evaluation harness: it separates item
+difficulty (`b`) from model ability (`θ`) on one scale, applies real psychometric QC
+(point-biserial, infit/outfit) to drop broken items, and cross-checks its own LLM judge
+against two independent frameworks (G-Eval, RAGAS) instead of trusting it blindly. The
+engineering — resumable 45-cell grids, backward-compatible arena plumbing, committed
+artifacts at every stage — is production-shaped.
+
+**This is not** a psychometrically certified instrument. Known limits, by design:
+
+- **Closed loop.** The same model family generates, solves, and judges items. The judge audit
+  defends *"is the judge internally sane"* (G-Eval strict AUC=0.838), but not external validity.
+- **No human ground truth yet.** Gold standards are LLM-authored. A 50-item stratified sample
+  is scaffolded in `expert_review/` for compliance-professional labeling; labels are pending.
+  This is the single highest-value next step.
+- **15 profiles ≠ 15 independent examinees.** They share a base model, so they are correlated;
+  real IRT calibration wants hundreds of independent test-takers. `b` values are informative
+  but currently lack posterior standard errors on the real bank (the py-irt path in
+  `evaluator/pyirt_fit.py` is wired but needs a `responses.jsonl` regeneration to run).
+- **Domain coverage is uneven.** Promotional-review real items are absent (OPDP letters use a
+  different URL structure); the hard-item template skews violation-by-design.
+
+See [`METHODOLOGY.md`](METHODOLOGY.md) for the full decision record and [`CLAUDE.md`](CLAUDE.md)
+§8 for the unabridged self-assessment.
 
 ## License
 

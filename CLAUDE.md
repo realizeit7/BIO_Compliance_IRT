@@ -1,4 +1,4 @@
-# CLAUDE.md — autoresearch_IRT
+# CLAUDE.md — BIO_Compliance_IRT
 
 Persistent context for Claude Code sessions. Update this file when significant decisions change.
 
@@ -38,7 +38,7 @@ There are now **two parallel pipelines** in this repo:
 ### Repo layout
 
 ```
-autoresearch_irt/                 ← repo root
+BIO_Compliance_IRT/               ← repo root
   # --- Legacy bank pipeline (still the item generator) -----------------
   main.py                         ← CLI entry point for legacy pipeline
   task_generator.py               ← Stage 1: LLM generates compliance tasks
