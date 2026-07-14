@@ -1,4 +1,4 @@
-# CLAUDE.md — autoresearch_IRT
+# CLAUDE.md — BIO_Compliance_IRT
 
 Persistent context for Claude Code sessions. Update this file when significant decisions change.
 
@@ -38,7 +38,7 @@ There are now **two parallel pipelines** in this repo:
 ### Repo layout
 
 ```
-autoresearch_irt/                 ← repo root
+BIO_Compliance_IRT/               ← repo root
   # --- Legacy bank pipeline (still the item generator) -----------------
   main.py                         ← CLI entry point for legacy pipeline
   task_generator.py               ← Stage 1: LLM generates compliance tasks
@@ -71,6 +71,18 @@ autoresearch_irt/                 ← repo root
   evaluator/output/phase3a_strictness_deltatheta.json  ← Phase 3a Δθ tables (strict + lenient)
   evaluator/output/phase3b_agent_deltatheta.json       ← Phase 3b Δθ per agent type (after run)
   evaluator/pyirt_fit.py          ← py-irt 1PL fit with posterior SD (b_se) — uncertainty path
+
+  # --- Judge calibration audit (IRT judge vs DeepEval/RAGAS) ----------
+  judge_audit/                    ← standalone audit module (no restructure of main pipeline)
+    __init__.py
+    backends.py                   ← GroqDeepEvalLLM (DeepEvalBaseLLM subclass) + make_ragas_llm
+    sample.py                     ← AuditRow dataclass + build_audit_set (Phase 3b responses join)
+    metrics.py                    ← run_metrics(): 4 metrics, ThreadPoolExecutor, resumable JSONL
+    analysis.py                   ← 4 analyses → judge_audit_report.json + printed table
+  run_judge_audit.py              ← CLI: --smoke / --n-items / --parallelism / --analyze-only
+  evaluator/output/judge_audit_scores.jsonl       ← (metric, examinee_id, task_id) scored rows
+  evaluator/output/judge_audit_report.json        ← AUC, Spearman, slopes, disagreement counts
+  evaluator/output/judge_audit_disagreements.jsonl ← top-20 high-score-but-FAIL + low-score-but-PASS
 
   # --- arXiv paper scaffold (offline; reads existing outputs only) -----
   paper/main.tex                  ← document root (article class)
@@ -470,6 +482,32 @@ python3 autoevolve.py --iterations 10 --test-items 40 --min-delta 0.50  # uses f
 - 15 solver calls + 15 judge calls = 30 API calls per task — significantly slower than the 4-call 2-profile design; mitigated by Groq's fast inference
 - fda_importer.py still uses the 2-profile Calibrator interface (backward compat shim in place)
 - Red Herring quality not graded — items are generated with the Red Herring mandate but no automated check verifies a Red Herring was actually embedded
+
+### Judge calibration audit module (2026-06-12, complete)
+`judge_audit/` compares the project's IRT-based strict/lenient judge against DeepEval G-Eval and RAGAS on 400 Phase 3b zero-shot responses (100 frozen-bank items × 4 cells). Full run complete: 1,600 scores, 93 errors excluded (5.8%, mostly transient connection timeouts — resumable).
+
+- **Data**: 100 frozen-bank items × 4 zero-shot cells = 400 responses from `logs/arena_runs/phase3b_variants/responses.jsonl` (zero new solver calls)
+- **Metrics**: `geval_strict` (citation-requiring rubric), `geval_lenient` (conclusion-only), `ragas_faithfulness` (groundedness to context), `ragas_answer_correctness` (weights=[1,0], no embeddings)
+- **Backend**: `GroqDeepEvalLLM` (subclass of `DeepEvalBaseLLM`) + `make_ragas_llm` (langchain `ChatOpenAI` → `LangchainLLMWrapper`) — both pointed at Groq `llama-3.3-70b-versatile`; same grader family as project judge controls for model capability
+- **Grader dependencies**: deepeval 4.0.6, ragas 0.4.3, langchain<1/langchain-community<0.4/langchain-openai<1 (ragas 0.4 requires langchain 0.3.x — langchain 1.x breaks the import path)
+- **Analyses** (in `judge_audit/analysis.py`): AUC (Mann-Whitney U/n₁n₂) + point-biserial vs IRT binary verdict; per-cell mean score vs Rasch θ (Spearman); difficulty-confounded leniency slope (score on b within PASS/FAIL); disagreement mining (top-20 high-geval-but-FAIL + low-geval-but-PASS)
+- **CLI**: `python3 run_judge_audit.py --smoke` / `--n-items N` / `--analyze-only`
+
+**Full-run results (2026-06-12):**
+
+| metric | n | AUC vs IRT | r_pb | rho_θ | slope\|PASS | slope\|FAIL |
+|---|---|---|---|---|---|---|
+| geval_strict | 400 | **0.838** | 0.570 | 1.000 | +0.015 | −0.019 |
+| geval_lenient | 400 | 0.731 | 0.381 | 1.000 | −0.015 | −0.052 |
+| ragas_faithfulness | 363 | 0.530 | 0.057 | −0.800 | −0.073 | −0.056 |
+| ragas_answer_correctness | 344 | 0.693 | 0.315 | 0.800 | −0.003 | −0.017 |
+
+**Interpretation:**
+- `geval_strict` AUC=0.838 confirms the citation-requiring G-Eval rubric is the best external proxy for our IRT judge — both penalize missing section-level citations.
+- `ragas_faithfulness` AUC≈0.530 (near chance) validates the design choice to include it as a *contrast* metric: a response can be perfectly grounded in the scenario context and still wrong on compliance — faithfulness is not correctness.
+- `rho_θ=1.000` for both G-Eval metrics (n=4 cells only — not statistically meaningful alone) suggests G-Eval ranks the 4 zero-shot cells in the same ability order as Rasch θ.
+- Difficulty slopes are near zero conditional on verdict for all metrics — none of the external tools confound item difficulty with response quality to a meaningful degree. IRT's separation of b and θ is not replicated but also not strongly violated by G-Eval.
+- `ragas_faithfulness` negative `rho_θ=-0.800`: higher-ability cells (70b) may give more citation-heavy responses that diverge further from the flat context, paradoxically reducing faithfulness scores.
 
 ### Gaps
 - No promotional material real items retained yet (0 in real bank)

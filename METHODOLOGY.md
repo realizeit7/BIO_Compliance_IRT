@@ -420,3 +420,61 @@ Stated once, applying to everything above:
    adoption delta (0.5), and the expert-sample band (P20–P80) were all chosen
    by reasoning, not by simulation or pilot data. Each is documented with its
    rationale above, which is the honest substitute available.
+
+---
+
+## I. Judge Calibration Audit
+
+### I1. External metric comparison: DeepEval G-Eval and RAGAS on Phase 3b zero-shot responses
+
+**Decision.** Compare the project's IRT binary judge against four continuous external
+metrics — DeepEval G-Eval (two rubric variants) and RAGAS (faithfulness and
+answer_correctness) — on 400 Phase 3b zero-shot responses (100 frozen-bank items × 4
+zero-shot cells). All external metrics routed through Groq `llama-3.3-70b-versatile` to
+hold grader capability constant; no new solver calls (reuses existing
+`logs/arena_runs/phase3b_variants/responses.jsonl`). Analyses: response-level AUC vs IRT
+verdict (Mann-Whitney U/n₁n₂), per-cell Spearman ρ vs Rasch θ, difficulty-confounded
+leniency slope (metric score regressed on b within PASS / within FAIL groups), and top-40
+disagreement cases for qualitative inspection.
+
+**Alternatives.** (a) GPT-4o or Claude as grader — rejected because no OpenAI/Anthropic API key
+exists in this project, and mixing grader families would conflate framework differences with
+capability differences. (b) Skip G-Eval/RAGAS — rejected because the paper's related-work
+argument needs empirical evidence that generic metrics miss what IRT captures. (c) Use new
+solver calls — unnecessary given Phase 3b responses already cover the same items and cells.
+
+**Rationale.** Holding grader model constant (Groq llama-3.3-70b) isolates the *framework*
+difference (rubric design, aggregation logic, score scale) rather than capability. The two
+G-Eval rubrics were written to match the project's strict judge (citation-requiring) and
+lenient judge (conclusion-only) respectively, so the AUC comparison is a direct rubric-equivalence
+test. RAGAS `faithfulness` was included *as a contrast*: it scores groundedness to context, not
+correctness — predicting near-chance AUC is the hypothesis, not a failure mode. Using
+`AnswerCorrectness(weights=[1.0, 0.0])` disables the embedding component entirely, making the
+metric LLM-only and reproducible without sentence-transformers.
+
+**Results (2026-06-12, n=400 responses, 93/1600 scoring errors excluded):**
+
+| metric | AUC vs IRT | r_pb | rho_θ | slope\|PASS | slope\|FAIL |
+|---|---|---|---|---|---|
+| geval_strict | **0.838** | 0.570 | 1.000 | +0.015 | −0.019 |
+| geval_lenient | 0.731 | 0.381 | 1.000 | −0.015 | −0.052 |
+| ragas_faithfulness | 0.530 | 0.057 | −0.800 | −0.073 | −0.056 |
+| ragas_answer_correctness | 0.693 | 0.315 | 0.800 | −0.003 | −0.017 |
+
+`geval_strict` AUC=0.838 confirms that a citation-requiring rubric is a good proxy for the
+IRT judge. `ragas_faithfulness` AUC≈0.530 (near chance) confirms the contrast hypothesis:
+groundedness is a different construct from compliance correctness. Difficulty slopes near zero
+conditional on verdict indicate none of the external metrics strongly confound item difficulty
+with response quality — though they also do not separate b from θ by design the way IRT does.
+`rho_θ=1.000` for G-Eval (n=4 cells) is directionally consistent with IRT's cell ordering
+but statistically uninformative at n=4.
+
+**Limitations.** (a) Same-family grader means we cannot separate "G-Eval agrees with IRT"
+from "llama-3.3-70b agrees with itself" — the AUC is a rubric-design test, not a
+model-independence test. (b) n=4 cells makes all Spearman ρ values uninterpretable as
+significance tests. (c) 5.8% scoring errors (connection timeouts) are handled by the
+resumable skip-if-done pattern but reduce effective n for RAGAS metrics (363 and 344
+respectively). (d) The audit covers zero-shot responses only; agent-variant responses may
+show different patterns (retrieval, critic, and step-decomp agents all boost G-Eval under
+lenient judging but drop under strict judging — same direction as the Phase 3a finding).
+

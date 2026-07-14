@@ -19,17 +19,21 @@
 
 \graphicspath{{figures/}}
 
-% Convenience macros
-\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+% Convenience macros.
+% \todo notes are private reminders kept in the source; they render nothing in
+% the compiled PDF. Set \draftmode to true to surface them in red while editing.
+\newif\ifdraftmode
+\draftmodefalse
+\newcommand{\todo}[1]{\ifdraftmode\textcolor{red}{[TODO: #1]}\fi}
 
 \title{Calibrated Benchmarking of Large Language Models in Regulated
 Domains: An Automated Item-Response-Theory Framework for Biopharma
 Compliance}
 
 \author{%
-  \todo{Author Name(s)} \\
-  \todo{Affiliation} \\
-  \texttt{\todo{email}}
+  Seo Wook Choi \\
+  Independent Researcher \\
+  \texttt{seowookchoi@gmail.com}
 }
 
 \date{\today}
