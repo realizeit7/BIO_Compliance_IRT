@@ -38,7 +38,10 @@ def main() -> None:
     ax.set_xlabel("infit (information-weighted MSR)")
     ax.set_ylabel("outfit (unweighted MSR)")
     ax.set_title(f"Item fit, frozen bank ($n={len(rows)}$)")
-    ax.legend(loc="upper left")
+    # Opaque frame: the scatter reaches into the upper-left corner, and
+    # without it a point sits behind the legend text.
+    ax.legend(loc="upper left", frameon=True, framealpha=0.92,
+              facecolor="white", edgecolor="0.8").set_zorder(10)
 
     out = Path(__file__).resolve().parent / "fig2_item_fit"
     fig.savefig(out.with_suffix(".pdf"))
