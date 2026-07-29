@@ -62,14 +62,184 @@
 }
 
 @inproceedings{zheng2023judge,
-  title     = {Judging {LLM}-as-a-Judge with {MT-Bench} and {Chatbot Arena}},
+  title     = {Judging {LLM}-as-a-Judge with {MT}-Bench and Chatbot Arena},
   author    = {Zheng, Lianmin and Chiang, Wei-Lin and Sheng, Ying and
                Zhuang, Siyuan and Wu, Zhanghao and Zhuang, Yonghao and
-               Lin, Zi and Li, Zhuohan and Li, Dacheng and Xing, Eric P. and
-               Zhang, Hao and Gonzalez, Joseph E. and Stoica, Ion},
+               Lin, Zi and Li, Zhuohan and Li, Dacheng and Xing, Eric and
+               Zhang, Hao and Gonzalez, Joseph and Stoica, Ion},
   year      = {2023},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {36},
+  pages     = {46595--46623},
+  publisher = {Curran Associates, Inc.},
   note      = {Datasets and Benchmarks Track}
+}
+
+% ---------------------------------------------------------------------------
+% Judge-audit comparators (Section: Auditing the Judge)
+% ---------------------------------------------------------------------------
+
+@inproceedings{liu2023geval,
+  title     = {{G}-Eval: {NLG} Evaluation using {GPT}-4 with Better Human Alignment},
+  author    = {Liu, Yang and Iter, Dan and Xu, Yichong and Wang, Shuohang and
+               Xu, Ruochen and Zhu, Chenguang},
+  booktitle = {Proceedings of the 2023 Conference on Empirical Methods in
+               Natural Language Processing},
+  month     = dec,
+  year      = {2023},
+  address   = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  pages     = {2511--2522},
+  doi       = {10.18653/v1/2023.emnlp-main.153},
+  url       = {https://aclanthology.org/2023.emnlp-main.153/}
+}
+
+@inproceedings{es2024ragas,
+  title     = {{RAGA}s: Automated Evaluation of Retrieval Augmented Generation},
+  author    = {Es, Shahul and James, Jithin and Espinosa Anke, Luis and
+               Schockaert, Steven},
+  booktitle = {Proceedings of the 18th Conference of the European Chapter of the
+               Association for Computational Linguistics: System Demonstrations},
+  month     = mar,
+  year      = {2024},
+  address   = {St. Julians, Malta},
+  publisher = {Association for Computational Linguistics},
+  pages     = {150--158},
+  doi       = {10.18653/v1/2024.eacl-demo.16},
+  url       = {https://aclanthology.org/2024.eacl-demo.16/}
+}
+
+% ---------------------------------------------------------------------------
+% Rasch fit statistics
+% ---------------------------------------------------------------------------
+
+@article{linacre2002infit,
+  title   = {What do Infit and Outfit, Mean-square and Standardized mean?},
+  author  = {Linacre, John M.},
+  journal = {Rasch Measurement Transactions},
+  volume  = {16},
+  number  = {2},
+  pages   = {878},
+  year    = {2002},
+  url     = {https://www.rasch.org/rmt/rmt162f.htm}
+}
+
+% ---------------------------------------------------------------------------
+% IRT applied to NLP / LLM evaluation
+% ---------------------------------------------------------------------------
+
+@inproceedings{lalor2016building,
+  title     = {Building an Evaluation Scale using Item Response Theory},
+  author    = {Lalor, John P. and Wu, Hao and Yu, Hong},
+  booktitle = {Proceedings of the 2016 Conference on Empirical Methods in
+               Natural Language Processing},
+  month     = nov,
+  year      = {2016},
+  address   = {Austin, Texas},
+  publisher = {Association for Computational Linguistics},
+  pages     = {648--657},
+  doi       = {10.18653/v1/D16-1062},
+  url       = {https://aclanthology.org/D16-1062/}
+}
+
+@inproceedings{vania2021comparing,
+  title     = {Comparing Test Sets with Item Response Theory},
+  author    = {Vania, Clara and Htut, Phu Mon and Huang, William and
+               Mungra, Dhara and Pang, Richard Yuanzhe and Phang, Jason and
+               Liu, Haokun and Cho, Kyunghyun and Bowman, Samuel R.},
+  booktitle = {Proceedings of the 59th Annual Meeting of the Association for
+               Computational Linguistics and the 11th International Joint
+               Conference on Natural Language Processing (Volume 1: Long Papers)},
+  month     = aug,
+  year      = {2021},
+  publisher = {Association for Computational Linguistics},
+  pages     = {1141--1158},
+  doi       = {10.18653/v1/2021.acl-long.92},
+  url       = {https://aclanthology.org/2021.acl-long.92/}
+}
+
+@inproceedings{rodriguez2021evaluation,
+  title     = {Evaluation Examples are not Equally Informative: How should that
+               change {NLP} Leaderboards?},
+  author    = {Rodriguez, Pedro and Barrow, Joe and Hoyle, Alexander and
+               Lalor, John P. and Jia, Robin and Boyd-Graber, Jordan},
+  booktitle = {Proceedings of the 59th Annual Meeting of the Association for
+               Computational Linguistics and the 11th International Joint
+               Conference on Natural Language Processing (Volume 1: Long Papers)},
+  month     = aug,
+  year      = {2021},
+  publisher = {Association for Computational Linguistics},
+  pages     = {4486--4503},
+  doi       = {10.18653/v1/2021.acl-long.346},
+  url       = {https://aclanthology.org/2021.acl-long.346/}
+}
+
+@inproceedings{maiapolo2024tinybenchmarks,
+  title     = {tiny{B}enchmarks: evaluating {LLM}s with fewer examples},
+  author    = {Maia Polo, Felipe and Weber, Lucas and Choshen, Leshem and
+               Sun, Yuekai and Xu, Gongjun and Yurochkin, Mikhail},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning},
+  volume    = {235},
+  series    = {Proceedings of Machine Learning Research},
+  pages     = {34303--34326},
+  year      = {2024},
+  publisher = {PMLR},
+  url       = {https://proceedings.mlr.press/v235/maia-polo24a.html}
+}
+
+% ---------------------------------------------------------------------------
+% Expert-domain QA benchmarks (contrast cases)
+% ---------------------------------------------------------------------------
+
+@article{jin2021medqa,
+  title   = {What Disease Does This Patient Have? A Large-Scale Open Domain
+             Question Answering Dataset from Medical Exams},
+  author  = {Jin, Di and Pan, Eileen and Oufattole, Nassim and Weng, Wei-Hung and
+             Fang, Hanyi and Szolovits, Peter},
+  journal = {Applied Sciences},
+  volume  = {11},
+  number  = {14},
+  pages   = {6421},
+  year    = {2021},
+  doi     = {10.3390/app11146421}
+}
+
+@inproceedings{jin2019pubmedqa,
+  title     = {{P}ub{M}ed{QA}: A Dataset for Biomedical Research Question Answering},
+  author    = {Jin, Qiao and Dhingra, Bhuwan and Liu, Zhengping and
+               Cohen, William and Lu, Xinghua},
+  booktitle = {Proceedings of the 2019 Conference on Empirical Methods in Natural
+               Language Processing and the 9th International Joint Conference on
+               Natural Language Processing (EMNLP-IJCNLP)},
+  month     = nov,
+  year      = {2019},
+  address   = {Hong Kong, China},
+  publisher = {Association for Computational Linguistics},
+  pages     = {2567--2577},
+  doi       = {10.18653/v1/D19-1259},
+  url       = {https://aclanthology.org/D19-1259/}
+}
+
+@article{singhal2023clinical,
+  title   = {Large language models encode clinical knowledge},
+  author  = {Singhal, Karan and Azizi, Shekoofeh and Tu, Tao and
+             Mahdavi, S. Sara and Wei, Jason and Chung, Hyung Won and
+             Scales, Nathan and Tanwani, Ajay and Cole-Lewis, Heather and
+             Pfohl, Stephen and Payne, Perry and Seneviratne, Martin and
+             Gamble, Paul and Kelly, Chris and Babiker, Abubakr and
+             Sch{\"a}rli, Nathanael and Chowdhery, Aakanksha and
+             Mansfield, Philip and Demner-Fushman, Dina and
+             Ag{\"u}era y Arcas, Blaise and Webster, Dale and
+             Corrado, Greg S. and Matias, Yossi and Chou, Katherine and
+             Gottweis, Juraj and Tomasev, Nenad and Liu, Yun and
+             Rajkomar, Alvin and Barral, Joelle and Semturs, Christopher and
+             Karthikesalingam, Alan and Natarajan, Vivek},
+  journal = {Nature},
+  volume  = {620},
+  number  = {7972},
+  pages   = {172--180},
+  year    = {2023},
+  doi     = {10.1038/s41586-023-06291-2}
 }
 
 @misc{fda21cfr11,

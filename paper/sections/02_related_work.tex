@@ -7,19 +7,44 @@ HellaSwag \citep{zellers2019hellaswag}, and BIG-Bench
 \citep{srivastava2023bigbench} report aggregate accuracy over large,
 static item sets. They are invaluable for coarse ranking but do not
 provide per-item difficulty parameters, standard errors, or a latent
-scale on which to compare interventions. \todo{Add 1--2 domain-specific
-medical/regulatory benchmarks for contrast.}
+scale on which to compare interventions. Expert-domain benchmarks narrow
+the topic but keep the format: MedQA \citep{jin2021medqa} and PubMedQA
+\citep{jin2019pubmedqa} draw on medical licensing exams and biomedical
+literature, and MultiMedQA \citep{singhal2023clinical} assembles several
+such sets with clinician-graded answers. These are closer to our setting
+--- a high-stakes domain where a wrong answer has consequences --- but
+they inherit items written and calibrated for \emph{human} examinees,
+and they still report accuracy rather than a latent scale. To our
+knowledge no comparable instrument exists for pharmaceutical regulatory
+compliance, where the governing text is a body of enforceable regulation
+rather than a clinical literature.
 
 \paragraph{IRT for evaluating machines.}
 A growing line of work applies item-response theory to model evaluation,
 using IRT to identify informative items, to weight benchmark scores, and
 to compare systems on a latent ability scale
-\citep[e.g.][]{lalor2019pyirt}. \todo{Cite the specific
-``IRT-for-NLP-evaluation'' papers you want to position against; note
-whether they reuse human exams vs. build machine-native instruments.}
-Our work differs in that the items are \emph{generated and calibrated for
-machine examinees} in a domain with no human calibration pool, and the
-difficulty mandate is built into generation.
+\citep{lalor2016building,vania2021comparing,rodriguez2021evaluation,maiapolo2024tinybenchmarks}.
+\citet{lalor2016building} first fit IRT to NLP test items to build an
+evaluation scale; \citet{vania2021comparing} use IRT to compare existing
+test sets; \citet{rodriguez2021evaluation} show that leaderboard examples
+differ sharply in informativeness and argue for weighting them
+accordingly; and \citet{maiapolo2024tinybenchmarks} exploit the same
+structure to compress LLM benchmarks to a fraction of their items. The
+common thread is that IRT is applied \emph{post hoc} to item sets that
+already exist --- typically assembled for human examinees or scraped for
+another purpose --- and the analysis selects or reweights within them.
+
+Our work inverts that order. The items are generated \emph{for} machine
+examinees in a domain with no human calibration pool to inherit from, the
+difficulty mandate is built into generation rather than discovered after
+the fact, and the resulting scale is used prospectively --- as an
+optimization target for comparing prompts and agent architectures
+(Sections~\ref{sec:deltatheta} and~\ref{sec:phase3b}) --- rather than
+retrospectively to prune a benchmark. The cost of that inversion is that
+we cannot borrow an existing calibration as ground truth, which is why
+judge auditing (Section~\ref{sec:judgeaudit}) and expert review
+(Section~\ref{sec:expertreview}) carry more weight here than they would
+in a reuse setting.
 
 \paragraph{IRT in educational measurement.}
 The Rasch (1PL) model \citep{rasch1960} and the broader IRT family

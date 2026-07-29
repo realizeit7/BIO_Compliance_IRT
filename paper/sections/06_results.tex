@@ -57,8 +57,8 @@ $P = \sigma(-b)$. This is an interim estimate; the posterior standard
 deviation from a variational Rasch fit (\texttt{py-irt}) is the intended
 final uncertainty and is wired into the pipeline
 (\texttt{evaluator/pyirt\_fit.py}) but requires regenerating the raw
-response matrix. \todo{Replace analytic SE with py-irt posterior SD once
-\texttt{responses.jsonl} is regenerated; report the median SE here.}
+response matrix; we report the analytic value here and treat the
+posterior comparison as future work (Section~\ref{sec:discussion}).
 
 \begin{figure}[t]
 \centering
@@ -81,11 +81,20 @@ the ideal Rasch value of $1.0$.}
 Items extracted from FDA warning letters are systematically harder than
 synthetic items on the frozen bank: $n = 93$ real items with mean
 $b = +1.98$ versus $n = 1{,}191$ synthetic with mean $b = +1.04$, a gap
-of $+0.94$ logits (Mann--Whitney $U = 66{,}516$, one-sided $p = 0.0006$).
-No real item falls below $b = 0$, consistent with the intuition that
-enforcement does not produce easy questions. On the full Phase~1 pre-QC
-set ($n = 105$ real, $n = 1{,}718$ synthetic) the mean gap is
-$+0.49$ logits ($p = 0.070$, one-sided), suggesting QC preferentially
-removes easy-or-inverted synthetic items and thus sharpens the
-real-vs-synthetic separation. A formal two-sample test and the effect of
-QC on this gap are discussed in Section~\ref{sec:discussion}.
+of $+0.94$ logits. A tie-corrected Mann--Whitney $U$ test confirms the
+shift is not attributable to chance ($U = 66{,}516$, $z = -3.24$,
+two-sided $p = 0.0012$). The effect is real but modest in magnitude:
+Cliff's $\delta = +0.20$, i.e.\ a randomly drawn real item is harder than
+a randomly drawn synthetic one about $60\%$ of the time. The difference
+is better described as a shift in the \emph{lower tail} than a wholesale
+separation: only $5$ of $93$ real items ($5.4\%$) fall below $b = 0$,
+against $372$ of $1{,}191$ synthetic items ($31.2\%$), and the easiest
+real item ($b = -2.00$) is still far above the easiest synthetic one
+($b = -4.25$). Enforcement, in other words, rarely produces easy
+questions --- but it does not produce exclusively hard ones either.
+
+On the full Phase~1 pre-QC set ($n = 105$ real, $n = 1{,}718$ synthetic)
+the mean gap is $+0.49$ logits, suggesting QC preferentially removes
+easy-or-inverted synthetic items and thus sharpens the real-vs-synthetic
+separation. The test is reproducible from the committed frozen bank with
+no API calls via \texttt{scripts/real\_vs\_synthetic\_test.py}.

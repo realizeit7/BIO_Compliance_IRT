@@ -1,0 +1,130 @@
+\section{Auditing the Judge Against Independent Frameworks}
+\label{sec:judgeaudit}
+
+Every result so far rests on a single measurement device: an LLM judge
+that maps a free-text response to a binary verdict. If that judge is
+idiosyncratic, the entire difficulty scale inherits its idiosyncrasy.
+Section~\ref{sec:discussion} concedes that the loop is closed; this
+section asks how far the closure actually bites, by scoring the same
+responses with two evaluation frameworks we did not write.
+
+\subsection{Design}
+We sampled $400$ responses from the Phase~3b log --- $100$ frozen-bank
+items $\times$ $4$ zero-shot cells (two models $\times$ two strictness
+levels) --- and re-scored each with four continuous metrics from two
+external libraries. No new solver calls were required; the audit reuses
+responses already collected.
+
+\begin{itemize}[nosep,leftmargin=1.4em]
+  \item \textbf{G-Eval strict} \citep{liu2023geval}: a chain-of-thought
+        rubric that, like our judge, requires a section-level regulatory
+        citation.
+  \item \textbf{G-Eval lenient}: the same rubric with the citation
+        requirement removed, scoring conclusion and reasoning only.
+  \item \textbf{RAGAS faithfulness} \citep{es2024ragas}: groundedness of
+        the response in the supplied scenario context.
+  \item \textbf{RAGAS answer correctness}: agreement with the gold
+        standard (factual component only; no embedding similarity term).
+\end{itemize}
+
+All four run on the same base model as our judge
+(\texttt{llama-3.3-70b-versatile}). This is deliberate: holding the
+grader's raw capability fixed isolates the effect of the \emph{rubric}
+from the effect of the \emph{model}. It also bounds the claim --- what
+follows is a test of rubric convergence, not an independent oracle
+(Section~\ref{sec:judgeaudit-limits}).
+
+We treat the IRT judge's binary verdict as the reference and ask how well
+each continuous metric separates \textsc{pass} from \textsc{fail},
+reporting the area under the ROC curve (AUC) and the point-biserial
+correlation. Of $1{,}600$ scoring calls, $93$ ($5.8\%$) failed on
+transient errors and are excluded pairwise; the RAGAS metrics therefore
+have smaller $n$.
+
+\subsection{Results}
+
+\begin{table}[h]
+\centering
+\caption{External metrics versus the IRT judge's binary verdict on $400$
+         Phase~3b zero-shot responses. AUC is the probability that a
+         randomly chosen \textsc{pass} response scores above a randomly
+         chosen \textsc{fail} response; $0.5$ is chance.}
+\label{tab:judgeaudit}
+\begin{tabular}{lccc}
+\toprule
+Metric & $n$ & AUC vs.\ IRT verdict & $r_{pb}$ \\
+\midrule
+G-Eval strict (citation rubric)   & 400 & \textbf{0.838} & $+0.570$ \\
+G-Eval lenient (conclusion only)  & 400 & 0.731 & $+0.381$ \\
+RAGAS answer correctness          & 344 & 0.693 & $+0.315$ \\
+RAGAS faithfulness (groundedness) & 363 & 0.530 & $+0.057$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:judgeaudit} shows a clean ordering, and it is the
+ordering the design predicts.
+
+\paragraph{Convergent validity.}
+The citation-requiring G-Eval rubric tracks our judge most closely
+($\mathrm{AUC} = 0.838$). Two rubrics written independently, sharing only
+the stipulation that a compliance answer must cite the governing
+provision, agree on which responses pass roughly five times out of six.
+Removing the citation clause from that same rubric drops agreement to
+$0.731$ --- direct evidence that the citation requirement, not some
+incidental stylistic preference, is what our judge is enforcing.
+
+\paragraph{Discriminant validity.}
+RAGAS faithfulness sits essentially at chance ($\mathrm{AUC} = 0.530$,
+$r_{pb} = +0.06$). This is the most informative number in the table. A
+response can be perfectly grounded in the scenario it was given ---
+inventing no facts, contradicting nothing --- and still reach the wrong
+compliance conclusion. Groundedness and correctness are different
+constructs, and a metric that measures the former carries almost no
+information about the latter. That a widely used RAG metric fails to
+recover compliance correctness is a caution about metric selection in
+regulated domains, not a defect of RAGAS: it is measuring what it claims
+to measure.
+
+\paragraph{Difficulty is not confounded with quality.}
+A leniency artifact would show up as external scores drifting with item
+difficulty \emph{within} a verdict class. Regressing each metric's score
+on $b$ separately within \textsc{pass} and \textsc{fail} responses gives
+slopes near zero for G-Eval strict ($+0.015$, $p = 0.18$ within
+\textsc{pass}; $-0.019$, $p = 0.03$ within \textsc{fail}). The remaining
+metrics show small but significant negative slopes within \textsc{fail}
+(steepest: RAGAS faithfulness, $-0.073$, $p < 10^{-7}$), i.e.\ failing
+responses to harder items are scored slightly lower still. The IRT
+separation of $b$ from response quality is therefore not perfectly
+reproduced by the external tools, but neither is it strongly violated.
+
+\paragraph{Cell-level ordering.}
+Averaging each metric within the four examinee cells and ranking against
+the Rasch $\theta$ for those cells, both G-Eval variants reproduce the
+$\theta$ ordering exactly (Spearman $\rho = 1.00$) and RAGAS faithfulness
+inverts it ($\rho = -0.80$). With only four cells this is descriptive,
+not inferential --- any monotone metric has a one-in-twelve chance of
+perfect agreement --- and we report it as a consistency check rather than
+evidence.
+
+\subsection{What the audit does and does not establish}
+\label{sec:judgeaudit-limits}
+The audit rules out one specific failure mode: that our judge's verdicts
+are arbitrary, or that they encode a preference unrelated to the stated
+rubric. An independently authored citation-aware rubric recovers those
+verdicts at $\mathrm{AUC} = 0.838$, and a groundedness metric ---
+correctly --- does not.
+
+It does not establish that the verdicts are \emph{right}. All four
+metrics run on the same base model, and all four consume the same
+LLM-authored gold standards. A shared blind spot in the underlying model
+family, or an error in a gold standard, is invisible to every metric in
+Table~\ref{tab:judgeaudit}. Convergence among rubrics that share a
+substrate is weaker evidence than convergence across substrates, and
+weaker still than agreement with a human expert. That is the gap
+Section~\ref{sec:expertreview} is designed to close.
+
+To make the residual disagreement inspectable rather than merely
+acknowledged, we release the $40$ strongest conflicts --- responses
+scoring high on G-Eval strict but judged \textsc{fail}, and the converse
+--- in \texttt{judge\_audit\_disagreements.jsonl}.

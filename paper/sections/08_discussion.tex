@@ -40,10 +40,11 @@ needed to quantify judge bias as opposed to judge variance.
 \paragraph{What would make this credible as measurement.}
 Three things, in priority order: (i)~\emph{human expert validation} of a
 stratified sample of gold standards and verdicts, providing an external
-anchor for the difficulty scale; (ii)~a formal \emph{real-vs-synthetic}
-test (Mann--Whitney~$U$) on the difficulty gap reported descriptively in
-Section~\ref{sec:results}; and (iii)~\emph{cross-model} examinee
-expansion to reduce within-family correlation. The Red Herring mandate is
+anchor for the difficulty scale (Section~\ref{sec:expertreview} describes
+the protocol now in the field); (ii)~\emph{posterior} rather than
+analytic uncertainty on $b$, via the variational Rasch fit already
+implemented; and (iii)~\emph{cross-model} examinee expansion to reduce
+within-family correlation. The Red Herring mandate is
 enforced at generation but not audited---no automated check verifies that
 a genuine Red Herring is present and correctly explained in the gold
 standard.
