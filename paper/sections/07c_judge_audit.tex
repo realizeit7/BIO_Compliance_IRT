@@ -44,7 +44,7 @@ are excluded pairwise, so the RAGAS metrics have a smaller $n$.
 
 \subsection{Results}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \small
 \caption{External metrics against the judge's binary verdict on 400
@@ -117,6 +117,19 @@ verdicts might be arbitrary, or that they might encode a preference
 unrelated to the stated rubric. An independently written citation-aware
 rubric recovers those verdicts at $\mathrm{AUC} = 0.838$, and a
 groundedness metric correctly does not.
+
+The audit also covers a narrow slice of the configurations whose results
+it is being used to support. The 400 responses come from 4 cells: two
+models, two strictness levels, and zero-shot agents only. There is no
+\texttt{neutral} strictness cell, no \texttt{gpt-oss-20b}, and no agent
+variant. Sections~\ref{sec:deltatheta} and~\ref{sec:phase3b} report
+results across three models, three strictness levels, and four agent
+types, so the audit's coverage is a subset of the ground it is asked to
+underwrite. The agent variants are the least covered and arguably the
+most in need of coverage, because the critic and step-decomposition
+agents produce longer and more structured answers than the zero-shot
+cells the audit actually scored, and answer length is a documented
+confound for LLM judges \citep{zheng2023judge}.
 
 The audit does not establish that the verdicts are \emph{right}. All four
 metrics run on the same base model, and all four consume the same

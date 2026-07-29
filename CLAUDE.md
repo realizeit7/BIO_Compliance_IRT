@@ -487,6 +487,14 @@ python3 autoevolve.py --iterations 10 --test-items 40 --min-delta 0.50  # uses f
 - Background build scripts: `build_bank.sh`, `build_real.sh`
 
 ### Known issues
+
+**Phase 3b anchoring never applied (found 2026-07-29).** `configs/phase3b_variants.yaml` declares the baseline examinee at `temperature: 0.1`, but the Phase 3b grid runs only `temperature: 0.4`. The baseline cell is therefore never administered in that run, `baseline_theta_raw` comes out `nan`, and `anchor_shift` falls back to `0.0` — see `evaluator/output/phase3b_agent_deltatheta.json`. Consequences:
+- Absolute θ values in `phase3b_agent_deltatheta.json` are **raw, not anchored**, and are NOT comparable to Phase 1 / Phase 3a θ values.
+- All **reported** Phase 3b results are `delta_theta_vs_zero_shot` within a fixed (model, strictness) pair, and those differences are invariant to a common additive shift, so the published Δθ numbers are unaffected.
+- The paper (`paper/sections/07b_phase3b.tex`) previously claimed the grid was anchored to the Phase 1 baseline; corrected 2026-07-29 to state the scale is unanchored.
+- To fix properly: add the baseline cell (8b, t=0.1, none, zero_shot) to the Phase 3b grid and re-run, or anchor post hoc against the Phase 1 log.
+
+**Real-item clustering not modelled.** The 105 real items come from only 31 FDA warning letters (up to 7 items per letter), so items are clustered and not independent. The Mann-Whitney U test in `scripts/real_vs_synthetic_test.py` treats them as independent, which makes p=0.0012 optimistic; effective n on the real side is nearer 31 than 93. Disclosed in the paper as of 2026-07-29. A letter-level or clustered analysis needs more source letters.
 - Legacy DB rows with `a != 1.0` from 2PL era; legacy rows also have band-sampled b, not logit b
 - Legacy rows calibrated with old thresholds (0.10/0.90) have stale `is_retained` flags — use `--recalibrate-all` to fix
 - Promo_review domain underrepresented in real items (OPDP letters use different URL structure)

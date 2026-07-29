@@ -9,6 +9,17 @@ related estimators. The first is a fast pass-rate logit used during item
 generation. The second is the full Rasch fit that produces the frozen
 bank, which I describe in Section~\ref{sec:pipeline}.
 
+To avoid any ambiguity about which one produced the results:
+\textbf{no difficulty value reported anywhere in this paper comes from
+the pass-rate logit of this section}. Equation~\eqref{eq:logitb} is a
+screening device, used at generation time to decide whether a candidate
+item is worth keeping at all. Every $b$ in Section~\ref{sec:results} and
+every $\theta$ in Sections~\ref{sec:deltatheta}
+and~\ref{sec:phase3b} comes from the Rasch fit on the 45-cell grid. I
+describe the screening estimator because it shapes which items reach the
+bank, and therefore what the bank contains, not because it contributes a
+number to any table.
+
 \subsection{Fifteen solver profiles and the pass-rate logit}
 During generation, each candidate item is administered to 15 synthetic
 solver profiles. The profiles span five expertise tiers (layperson,
@@ -37,7 +48,7 @@ Items are retained or discarded by pass rate, as shown in
 Table~\ref{tab:retention}. I widened the thresholds to $[0.05, 0.95]$ in
 order to capture items that are near the extremes but still informative.
 
-\begin{table}[t]
+\begin{table}[htbp]
 \centering
 \small
 \begin{tabular}{@{}llc@{}}

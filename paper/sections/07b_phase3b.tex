@@ -45,18 +45,30 @@ legal-analysis workflow, and it tests whether explicit chain-of-thought
 scaffolding improves compliance reasoning.
 
 \subsection{Experimental grid}
-The grid crosses two models (\texttt{llama-3.3-70b-versatile} and
-\texttt{llama-3.1-8b-instant}), one temperature ($0.4$), two strictness
-levels (\texttt{none} and \texttt{strict}), and four agent types
-(\texttt{zero\_shot}, \texttt{retrieval}, \texttt{critic}, and
-\texttt{step\_decomp}), which gives 16 examinee cells. Every cell is
-administered the full frozen $1{,}284$-item bank and anchored to the
-Phase~1 baseline ($\theta = 0$) using the same re-anchoring procedure as
-Section~\ref{sec:deltatheta}.
+The grid crosses two models, \texttt{llama-3.3-70b-versatile} and
+\texttt{llama-3.1-8b-instant}, at a single temperature ($0.4$), with two
+strictness levels (\texttt{none} and \texttt{strict}) and four agent
+types (\texttt{zero\_shot}, \texttt{retrieval}, \texttt{critic}, and
+\texttt{step\_decomp}). That gives 16 examinee cells, and every cell is
+administered the full frozen $1{,}284$-item bank.
+
+\paragraph{A note on the scale.}
+Unlike Section~\ref{sec:deltatheta}, this grid is \emph{not} anchored to
+the Phase~1 baseline. The baseline examinee is defined at $t = 0.1$,
+while this grid runs only at $t = 0.4$, so the baseline cell was never
+administered here and no anchoring shift could be computed. The absolute
+$\theta$ values from this run are therefore on their own scale and are
+not comparable to the values in
+Sections~\ref{sec:results}--\ref{sec:deltatheta}. Everything I report
+below is a difference $\Delta\theta$ between an agent variant and the
+zero-shot cell at the \emph{same} model and strictness, and such a
+difference is invariant to any common additive shift of the scale. So the
+comparisons stand, but they should be read as within-cell contrasts
+rather than as positions on the Part~1 difficulty scale.
 
 \subsection{Results}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \small
 \caption{$\Delta\theta$ by agent type relative to the zero-shot baseline

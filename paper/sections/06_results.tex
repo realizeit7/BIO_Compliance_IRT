@@ -8,7 +8,7 @@ drop reasons account for 539 removed items. Zero variance and
 non-positive point-biserial dominate, and relatively few items fail the
 fit bounds.
 
-\begin{table}[t]
+\begin{table}[htbp]
 \centering
 \small
 \begin{tabular}{@{}lr@{}}
@@ -34,7 +34,7 @@ $+0.42$, median infit $0.87$, and median outfit $0.66$
 (Figure~\ref{fig:bhist}), and the item-fit cloud sits comfortably inside
 the QC bounds (Figure~\ref{fig:itemfit}).
 
-\begin{table}[t]
+\begin{table}[htbp]
 \centering
 \small
 \begin{tabular}{@{}lcccc@{}}
@@ -61,7 +61,7 @@ regenerating the raw response matrix. So I report the analytic value
 here and treat the posterior comparison as future work
 (Section~\ref{sec:discussion}).
 
-\begin{figure}[t]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.78\linewidth]{fig1_b_hist.pdf}
 \caption{Difficulty distribution of the frozen bank ($n = 1{,}284$),
@@ -69,7 +69,7 @@ baseline-anchored to $\theta = 0$. Median $b = +1.65$.}
 \label{fig:bhist}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.62\linewidth]{fig2_item_fit.pdf}
 \caption{Item fit (infit against outfit) for the frozen bank. Dashed
@@ -102,3 +102,18 @@ that QC preferentially removes easy or inverted synthetic items, and
 therefore sharpens the difference between the two sources. The test is
 reproducible from the committed frozen bank with no API calls, using
 \texttt{scripts/real\_vs\_synthetic\_test.py}.
+
+\paragraph{The real items are clustered, and the test does not know it.}
+The 105 real items were extracted from only 31 warning letters, and as
+many as 7 items come from a single letter. Items drawn from the same
+letter share a facility, an inspection, and often a single underlying
+violation, so they are not independent observations. The Mann--Whitney
+$U$ test above treats all 93 frozen real items as independent, which
+means the reported $p$-value is optimistic: the effective sample size on
+the real side is closer to the 31 letters than to the 93 items. I report
+the test because the direction and the effect size are informative and
+because it is the standard comparison a reader will expect, but the
+$p$-value should be read as an upper bound on the evidence rather than as
+a calibrated error rate. A clustered or letter-level analysis would be
+the correct treatment, and it needs a larger set of source letters than
+this build has.

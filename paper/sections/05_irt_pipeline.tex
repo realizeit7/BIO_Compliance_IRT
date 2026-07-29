@@ -25,7 +25,8 @@ such as ``21~CFR~11.10(e)''. The \emph{lenient} judge, used for easy
 items, requires only the correct conclusion and consistent reasoning,
 with no citation. The lenient mode is necessary because without it the
 easy items would be failed by weak examinees that never cite sections,
-which would collapse the low-difficulty anchor. All judge errors are
+which would collapse the low-difficulty anchor. Both modes run
+\texttt{llama-3.3-70b-versatile} at temperature $0$. All judge errors are
 mapped to a failing score, so that no exception escapes the matrix.
 
 \subsection{Rasch fit and baseline anchoring}
@@ -39,6 +40,22 @@ $c = \hat{\theta}_{\text{base}}$, the MLE ability of a designated
 baseline examinee (\texttt{llama-3.1-8b-instant}, $t{=}0.1$, strictness
 \texttt{none}). The baseline then sits at $\theta = 0$ by construction,
 and all reported $b$ values are on that scale.
+
+\paragraph{What $\theta$ does and does not add over a pass rate.}
+One property of the Rasch model is worth stating, because it governs how
+the $\theta$ values in the rest of this paper should be read. The total
+score is a sufficient statistic for ability, so with the item
+difficulties held fixed, an examinee's MLE $\theta$ depends only on
+\emph{how many} items it passed, not on \emph{which} ones. Every
+$\theta$ I report is therefore a monotone transform of that cell's pass
+rate on the bank it was scored against. What the calibration buys is not
+extra within-bank information, but comparability: because $b$ is
+anchored, a $\theta$ computed on one subset of items is on the same scale
+as a $\theta$ computed on another, which raw accuracy is not. That is
+what makes the $\Delta\theta$ comparisons in
+Sections~\ref{sec:deltatheta} and~\ref{sec:phase3b} meaningful, and it is
+also why two cells that happen to pass the same number of items receive
+identical $\theta$.
 
 \subsection{Phase 2: classical item-fit quality control}
 Phase~2 refits Rasch on the Phase~1 matrix and drops any item that fails

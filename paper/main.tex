@@ -15,6 +15,12 @@
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage[numbers,sort&compress]{natbib}
+% Keep floats inside the section that discusses them. Without this the
+% Section 7 table and figures drifted forward into Section 8.
+\usepackage[section]{placeins}
+% Improves justification; also clears the one overfull line caused by the
+% long unbreakable \texttt model names.
+\usepackage{microtype}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 
 \graphicspath{{figures/}}
@@ -57,6 +63,7 @@ Compliance}
 \input{sections/07d_expert_review}
 \input{sections/08_discussion}
 \input{sections/09_conclusion}
+\input{sections/10_availability}
 
 \bibliographystyle{plainnat}
 \bibliography{references}

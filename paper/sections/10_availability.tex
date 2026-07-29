@@ -1,0 +1,46 @@
+\section*{Code and data availability}
+\addcontentsline{toc}{section}{Code and data availability}
+
+% This section is dense with URLs and file paths, which TeX cannot
+% hyphenate; \sloppy trades inter-word spacing for staying inside the
+% margin.
+\begingroup
+\sloppy
+
+The pipeline, the frozen bank, and every analysis output referenced in
+this paper are available at
+\url{https://github.com/realizeit7/BIO_Compliance_IRT} under the MIT
+licence. The frozen bank
+(\texttt{evaluator/output/phase2\_frozen\_bank.jsonl}, 1{,}284 items with
+$b$, point-biserial, infit, and outfit), the $\Delta\theta$ tables for
+Sections~\ref{sec:deltatheta} and~\ref{sec:phase3b}, and the judge-audit
+scores and report are committed to the repository, so every number in
+this paper can be recomputed without an API key. The two analyses that
+are pure post-processing, namely the real-versus-synthetic test
+(\texttt{scripts/real\_vs\_synthetic\_test.py}) and the figure scripts
+(\texttt{paper/figures/gen\_fig*.py}), run offline from those files.
+
+Two things are \emph{not} in the repository. The raw arena logs
+(\texttt{logs/arena\_runs/*/responses.jsonl}), which hold one row per
+examinee-item pair, are excluded for size. Regenerating them requires
+re-running the pipeline against the Groq API, which is also what the
+\texttt{py-irt} posterior standard deviations discussed in
+Section~\ref{sec:discussion} are waiting on. The CFR embedding index used
+by the retrieval agent is likewise rebuilt locally by
+\texttt{scripts/build\_cfr\_index.py} from public eCFR sources.
+
+\endgroup
+
+\section*{Intended use}
+\addcontentsline{toc}{section}{Intended use}
+
+This bank is a measurement instrument for evaluating language models. It
+is not regulatory guidance, and it should not be used as one. The gold
+standards were authored by a language model and, at the time of writing,
+have not been validated by a human regulatory professional
+(Section~\ref{sec:expertreview}). Section~\ref{sec:discussion} explains
+why an error rate in those reference answers is plausible rather than
+hypothetical. No item in this bank should be relied on to determine the
+compliance status of any real system, process, or submission, and a score
+on this instrument says nothing about whether a model is fit to be used
+in a GxP setting.
