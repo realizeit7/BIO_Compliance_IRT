@@ -1,76 +1,80 @@
 \section{The Calibration Pipeline}
 \label{sec:pipeline}
 
-The frozen bank is produced by a two-phase pipeline that reads the
-generated items, administers them to a grid of synthetic examinees, fits
-Rasch, and applies item-fit quality control.
+The frozen bank is produced by a two-phase pipeline. Phase~1 reads the
+generated items, administers them to a grid of synthetic examinees, and
+fits Rasch. Phase~2 refits and applies item-fit quality control.
 
 \subsection{Phase 1: the examinee grid}
 Phase~1 builds a $3 \times 5 \times 3 = 45$-cell grid of virtual
-examinees: three base models (\texttt{llama-3.3-70b-versatile},
-\texttt{openai/gpt-oss-20b}, \texttt{llama-3.1-8b-instant}), five sampling
-temperatures ($0.1, 0.4, 0.7, 1.0, 1.2$), and three system-prompt
-strictness levels (\texttt{none}, \texttt{neutral}, \texttt{strict}).
-Every (examinee~$\times$~item) pair is administered once and graded,
-yielding a binary response matrix. On $1{,}823$ items this is
-$82{,}035$ graded attempts. Each cell is a single
-zero-shot call; the run is resumable and records one audit row per pair.
+examinees. The three factors are base model
+(\texttt{llama-3.3-70b-versatile}, \texttt{openai/gpt-oss-20b}, and
+\texttt{llama-3.1-8b-instant}), sampling temperature
+($0.1, 0.4, 0.7, 1.0, 1.2$), and system-prompt strictness
+(\texttt{none}, \texttt{neutral}, \texttt{strict}). Every
+(examinee~$\times$~item) pair is administered once and graded, which
+yields a binary response matrix. On $1{,}823$ items this comes to
+$82{,}035$ graded attempts. Each cell is a single zero-shot call, the run
+is resumable, and one audit row is written per pair.
 
 \subsection{The dual-mode judge}
-Responses are graded by an LLM-as-judge in one of two modes. The
-\emph{strict} judge (hard and real items) requires the correct
-compliant/non-compliant conclusion \emph{and} a section-level citation
-(e.g.\ ``21~CFR~11.10(e)''). The \emph{lenient} judge (easy items)
-requires only the correct conclusion and consistent reasoning, no
-citation. Without the lenient mode, easy items would be failed by weak
-examinees that never cite sections, collapsing the low-difficulty anchor.
-All judge errors are mapped to a failing score so that no exception
-escapes the matrix.
+Responses are graded by an LLM judge in one of two modes. The
+\emph{strict} judge, used for hard and real items, requires the correct
+compliant or non-compliant conclusion \emph{and} a section-level citation
+such as ``21~CFR~11.10(e)''. The \emph{lenient} judge, used for easy
+items, requires only the correct conclusion and consistent reasoning,
+with no citation. The lenient mode is necessary because without it the
+easy items would be failed by weak examinees that never cite sections,
+which would collapse the low-difficulty anchor. All judge errors are
+mapped to a failing score, so that no exception escapes the matrix.
 
 \subsection{Rasch fit and baseline anchoring}
-We fit a 1PL Rasch model by marginal maximum likelihood
-(\texttt{girth.rasch\_mml}), fixing discrimination $a = 1$ for all items.
-Because difficulty is identified only up to an additive constant, we
-\emph{anchor} the scale: in the 1PL model
-$P(\text{correct}\mid\theta,b)=\sigma(\theta-b)$, so shifting every $b$ by
-a constant $c$ shifts every $\theta$ by $-c$. We choose
-$c = \hat{\theta}_{\text{base}}$, the MLE ability of a designated baseline
-examinee (\texttt{llama-3.1-8b-instant}, $t{=}0.1$, strictness
-\texttt{none}), so that the baseline sits at $\theta = 0$ by construction
-and all reported $b$ are on that scale.
+I fit a 1PL Rasch model by marginal maximum likelihood
+(\texttt{girth.rasch\_mml}; \citealp{girth}), with discrimination fixed
+at $a = 1$ for all items. Difficulty is identified only up to an additive constant, so the
+scale has to be anchored. In the 1PL model
+$P(\text{correct}\mid\theta,b)=\sigma(\theta-b)$, so shifting every $b$
+by a constant $c$ shifts every $\theta$ by $-c$. I choose
+$c = \hat{\theta}_{\text{base}}$, the MLE ability of a designated
+baseline examinee (\texttt{llama-3.1-8b-instant}, $t{=}0.1$, strictness
+\texttt{none}). The baseline then sits at $\theta = 0$ by construction,
+and all reported $b$ values are on that scale.
 
 \subsection{Phase 2: classical item-fit quality control}
-Phase~2 refits Rasch on the Phase~1 matrix and drops items failing any of
-four classical checks:
+Phase~2 refits Rasch on the Phase~1 matrix and drops any item that fails
+one of four classical checks.
+
 \begin{enumerate}[leftmargin=1.4em,topsep=2pt]
-  \item \textbf{Zero variance}: all-pass or all-fail items carry no
-  information and have an undefined difficulty at the bound---dropped
-  unconditionally.
-  \item \textbf{Point-biserial} (corrected, item vs.\ rest-of-total):
-  a non-positive correlation means stronger examinees do \emph{worse},
-  signalling a broken gold standard---dropped at $\le 0$.
-  \item \textbf{Infit} (information-weighted mean-square residual):
+  \item \textbf{Zero variance.} All-pass or all-fail items carry no
+  information and their difficulty is undefined at the bound. These are
+  dropped unconditionally.
+  \item \textbf{Point-biserial} (corrected, item versus rest-of-total).
+  A non-positive correlation means that stronger examinees do
+  \emph{worse} on the item, which signals a broken gold standard. These
+  are dropped at $\le 0$.
+  \item \textbf{Infit} (information-weighted mean-square residual),
   dropped above $1.5$.
-  \item \textbf{Outfit} (unweighted mean-square residual): dropped above
+  \item \textbf{Outfit} (unweighted mean-square residual), dropped above
   $2.0$.
 \end{enumerate}
-The fit thresholds are deliberately \emph{asymmetric}, with upper bounds
-only. Linacre's conventional bands \citep{linacre2002infit} treat
-mean-squares in $[0.5, 1.5]$ as productive for measurement, $1.5$--$2.0$
-as unproductive but not degrading, and $>2.0$ as degrading; that symmetric
-guidance is calibrated for thousands of examinees. On a 45-cell grid, an
-item with a very low mean-square is a \emph{clean separator} we want to
-keep, not a defect.
-Outfit gets the looser bound ($2.0$ vs.\ infit's $1.5$) because, being
-unweighted, a single anomalous cell at extreme $\theta$ inflates it
-disproportionately on a small grid.
+
+The fit thresholds are deliberately asymmetric, with upper bounds only.
+Linacre's conventional bands \citep{linacre2002infit} treat mean-squares
+in $[0.5, 1.5]$ as productive for measurement, $1.5$ to $2.0$ as
+unproductive but not degrading, and above $2.0$ as degrading. That
+symmetric guidance is calibrated for thousands of examinees. On a 45-cell
+grid, an item with a very low mean-square is a clean separator that I
+want to keep, not a defect. Outfit gets the looser bound ($2.0$ against
+infit's $1.5$) because it is unweighted, so a single anomalous cell at
+extreme $\theta$ inflates it disproportionately on a small grid.
 
 \paragraph{Why Rasch and not 2PL.}
-A 2PL model is not identifiable on a 45-examinee grid: marginal-MLE
-pinned every discrimination at the optimizer's upper bound, and
-joint-MLE---though it gives a real spread---is statistically inconsistent
-as the number of items grows with examinees fixed, which is exactly our
-regime. Rasch is identifiable, gives the specific objectivity we rely on
-for the $\Delta\theta$ comparisons in Section~\ref{sec:deltatheta}, and
-matches the model used during generation. The 2PL machinery is retained
-for a future re-evaluation once the examinee count grows.
+A 2PL model is not identifiable on a 45-examinee grid. Marginal MLE
+pinned every discrimination at the optimizer's upper bound, and joint
+MLE, although it gives a real spread, is statistically inconsistent as
+the number of items grows with the number of examinees held fixed. That
+is exactly the regime here. Rasch is identifiable, it gives the specific
+objectivity that the $\Delta\theta$ comparisons in
+Section~\ref{sec:deltatheta} rely on, and it matches the model used
+during generation. I retain the 2PL machinery for a future
+re-evaluation, once the examinee count grows.

@@ -1,32 +1,53 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-We presented an end-to-end pipeline that builds and IRT-calibrates a
+I presented an end-to-end pipeline that builds and IRT-calibrates a
 difficulty-graded question bank for biopharma regulatory compliance, and
-then uses that bank as a measuring instrument. The instrument
-(Part~1) generates hard items under a Red Herring + subtle-violation
-mandate, administers them to a synthetic examinee population, and freezes
-a healthy bank of 1{,}284 Rasch-calibrated items spanning roughly $\pm 4$
-logits, with a real-FDA track confirming that enforced violations are
-harder than synthetic ones. The experiment (Part~2) treats the calibrated
-ability $\theta$ as an optimization metric and, via a strict/lenient
-dual-judge decomposition, shows that system-prompt strictness primarily
-unlocks citation \emph{format} rather than compliance \emph{reasoning}---
-with only the largest model showing a genuine reasoning gain.
+that then uses the bank as a measuring instrument.
 
-The natural next steps follow the limitations: replace the analytic
-difficulty SE with \texttt{py-irt} posterior standard deviations, add
-human expert validation of a stratified subset, formally test the
-real-vs-synthetic difficulty gap, and expand the examinee population
-across model families to reduce correlation. Beyond measurement, the
-calibrated bank enables adaptive item selection (choosing the item whose
-difficulty best matches a system's current $\theta$) and a principled way
-to track whether agentic or retrieval interventions---not just prompt
-edits---move regulatory \emph{reasoning} on a stable scale. The
-$\Delta\theta$ decomposition in Part~2 constitutes the core empirical
-result of this phase: system-prompt strictness primarily buys citation
-format, not compliance reasoning, except for the largest model tested.
-Phase~3b will extend this framework to architectural interventions---
-knowledge retrieval, self-critique, and step decomposition---to test
-whether the bank can detect ability gains from structural reasoning
-support.
+Part~1 built the instrument. It generates hard items under a Red Herring
+plus subtle-violation mandate, administers them to a synthetic examinee
+population, and freezes a healthy bank of $1{,}284$ Rasch-calibrated
+items spanning roughly $\pm 4$ logits. A parallel track built from FDA
+warning letters gives items that are harder than the synthetic ones
+($+0.94$ logits, two-sided $p = 0.0012$), although the difference is a
+shift in the lower tail rather than a full separation.
+
+Part~2 ran two experiments on that instrument. Treating the calibrated
+ability $\theta$ as an optimization metric, and using a strict and a
+lenient judge on identical response text, I found that system-prompt
+strictness primarily unlocks citation \emph{format} rather than
+compliance \emph{reasoning}, with only the largest model showing a
+genuine reasoning gain. Architectural interventions, namely retrieval,
+self-critique, and step decomposition, showed the same pattern. All three
+raised $\theta$ under lenient scoring and lowered it under strict
+scoring. So the effect is not specific to prompt editing. When a judge
+enforces section-level citations, citation format dominates the
+measurement scale.
+
+Part~3 turned the question toward the instrument itself. An audit against
+two independent evaluation frameworks showed that a citation-requiring
+G-Eval rubric recovers my judge's verdicts at $\mathrm{AUC} = 0.838$,
+while a groundedness metric performs at chance. That is the pattern the
+design predicts, and it rules out the possibility that the verdicts are
+arbitrary. It does not show that they are correct, because every metric
+in the audit shares a base model with the judge. The expert-review
+protocol described in Section~\ref{sec:expertreview} is designed to close
+that gap, and its labels are being collected now.
+
+The remaining work follows from the limitations. The analytic difficulty
+SE should be replaced with \texttt{py-irt} posterior standard deviations,
+the examinee population should be expanded across model families to
+reduce correlation, and the Red Herring mandate should be audited rather
+than merely enforced. Beyond measurement, a calibrated bank enables
+adaptive item selection, meaning the choice of the item whose difficulty
+best matches a system's current $\theta$, and it gives a principled way
+to track whether an intervention moves regulatory reasoning on a stable
+scale.
+
+The broader point is methodological. A single accuracy number cannot
+distinguish a system that reasons better from one that has learned the
+grader's formatting preference. Separating item difficulty from examinee
+ability makes that distinction measurable, and in this domain the
+distinction turned out to matter more than the headline numbers
+suggested.

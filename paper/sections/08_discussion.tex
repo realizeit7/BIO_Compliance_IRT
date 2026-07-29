@@ -1,57 +1,82 @@
 \section{Discussion and Limitations}
 \label{sec:discussion}
 
-We are deliberately explicit about what this instrument is and is not.
+I want to be explicit about what this instrument is and what it is not.
 
 \paragraph{The evaluation loop is closed.}
-The same model family generates items, answers them, and judges the
-answers. Any systematic blind spot---a regulatory nuance the model
-family consistently misreads---is invisible to the loop and can poison
-both the gold standard and its grading. The real-FDA track partly
-mitigates this by injecting externally authored content, but the judge is
-still an LLM. External validity against human expert judgment is unproven.
+The same model family generates the items, answers them, and judges the
+answers. Any systematic blind spot, meaning a regulatory nuance that the
+model family consistently misreads, is invisible to the loop and can
+poison both the gold standard and its grading. The real-FDA track partly
+mitigates this by injecting externally authored content, and the audit in
+Section~\ref{sec:judgeaudit} shows that the judge's verdicts are
+recoverable by an independently written rubric. However, that rubric runs
+on the same base model, so external validity against human expert
+judgment remains unproven until the labels described in
+Section~\ref{sec:expertreview} arrive.
 
 \paragraph{Synthetic examinees are correlated, not independent.}
-Classical IRT calibration assumes many independent test-takers
-(hundreds to thousands). Our 45-cell grid is three base models under
-prompt and temperature variation; cells sharing a base model are highly
+Classical IRT calibration assumes many independent test-takers, typically
+hundreds to thousands. My 45-cell grid is three base models under prompt
+and temperature variation, and cells that share a base model are highly
 correlated. This makes the difficulty estimates more informative than a
-two-profile design but less trustworthy than the examinee count alone
-would suggest. Standard errors should be read in that light.
+two-profile design would give, but less trustworthy than the examinee
+count alone would suggest. The standard errors should be read in that
+light.
 
 \paragraph{Difficulty uncertainty is currently analytic.}
-The $b \pm \mathrm{SE}$ reported in Section~\ref{sec:results} uses an
-analytic single-item logit SE. The intended final uncertainty is the
+The $b \pm \mathrm{SE}$ values reported in Section~\ref{sec:results} use
+an analytic single-item logit SE. The intended final measure is the
 posterior standard deviation from a variational Rasch fit
 (\texttt{py-irt}), which is implemented but requires regenerating the raw
-response matrix. We expect the posterior SDs to be \emph{wider} than the
-analytic values, given only 45 examinees---which is the honest message,
-not a defect to hide. We defer this comparison to future work pending
-regeneration of the full response matrix; the analytic SE is conservative
-(it ignores item-parameter covariance) and serves as an upper bound on
-per-item uncertainty.
+response matrix. I expect the posterior SDs to be \emph{wider} than the
+analytic values, given only 45 examinees. That is the honest message
+rather than a defect to hide. I defer the comparison to future work
+pending regeneration of the full response matrix. The analytic SE is
+conservative, in that it ignores item-parameter covariance, and it serves
+as an upper bound on per-item uncertainty.
+
+\paragraph{The lenient judge is not a clean reasoning measure.}
+The format-versus-reasoning decomposition in
+Sections~\ref{sec:deltatheta} and~\ref{sec:phase3b} rests on the lenient
+judge standing in for reasoning quality. The lenient judge does remove
+the citation requirement, but it still rewards a coherent, well-organized
+answer that reaches the correct conclusion. So the quantity I call a
+reasoning gain is better described as everything the strict judge
+measures apart from citation format. The decomposition is still
+informative, because the two judges score identical response text and
+differ only in the citation clause, but the label should not be read as a
+validated construct.
 
 \paragraph{Judge error is real and measured.}
-Re-grading introduced a measurable judge-error rate (failed judge calls
-mapped to a failing score). We treat this as part of the measurement
-noise rather than assuming it away, but a human-validated subset would be
-needed to quantify judge bias as opposed to judge variance.
+Re-grading introduced a measurable judge-error rate, since failed judge
+calls are mapped to a failing score. I treat this as part of the
+measurement noise rather than assuming it away. Quantifying judge bias,
+as opposed to judge variance, still requires a human-validated subset.
+
+\paragraph{The Red Herring mandate is enforced but not audited.}
+Generation requires a Red Herring in every hard item, and the gold
+standard is required to explain why it is not the violation. No automated
+check verifies that a genuine Red Herring is actually present, or that
+the explanation is correct. The expert review in
+Section~\ref{sec:expertreview} is the first mechanism that will test
+this.
 
 \paragraph{What would make this credible as measurement.}
-Three things, in priority order: (i)~\emph{human expert validation} of a
-stratified sample of gold standards and verdicts, providing an external
-anchor for the difficulty scale (Section~\ref{sec:expertreview} describes
-the protocol now in the field); (ii)~\emph{posterior} rather than
-analytic uncertainty on $b$, via the variational Rasch fit already
-implemented; and (iii)~\emph{cross-model} examinee expansion to reduce
-within-family correlation. The Red Herring mandate is
-enforced at generation but not audited---no automated check verifies that
-a genuine Red Herring is present and correctly explained in the gold
-standard.
+Three things, in priority order. First, \emph{human expert validation} of
+a stratified sample of gold standards and verdicts, which would provide
+an external anchor for the difficulty scale. Second, \emph{posterior}
+rather than analytic uncertainty on $b$, using the variational fit that
+is already implemented. Third, \emph{cross-model} examinee expansion, in
+order to reduce the within-family correlation described above.
 
 \paragraph{Honest framing of the contribution.}
 This is a pipeline and an instrument, not a psychometric certification.
-The $\Delta\theta$ decomposition (Section~\ref{sec:deltatheta}) is the
-most defensible empirical result: it is a within-model comparison that is
-invariant to the scale's absolute anchoring, and it delivers a concrete,
-falsifiable claim---system-prompt strictness mostly buys citation format.
+The $\Delta\theta$ decomposition is the most defensible empirical result
+in the paper. It is a within-model comparison, it is invariant to the
+absolute anchoring of the scale, and it delivers a concrete and
+falsifiable claim, which is that system-prompt strictness mostly buys
+citation format. Section~\ref{sec:phase3b} shows that the same pattern
+holds for architectural interventions, which suggests the finding is a
+property of the measurement regime rather than of prompt editing in
+particular.

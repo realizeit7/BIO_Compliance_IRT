@@ -3,62 +3,76 @@
 
 % Motivation: why calibrated difficulty (not accuracy %) matters in GxP.
 Large language models are increasingly proposed as assistants in
-GxP-regulated environments---drug manufacturing, clinical trials, and
-regulatory submissions---where an incorrect compliance determination
-carries legal and patient-safety consequences. Yet the dominant way we
-measure LLM competence, a single accuracy percentage on a fixed test set,
-is poorly suited to this setting. Accuracy conflates easy and hard items,
-gives no per-item difficulty, and cannot place a new system on a stable
-scale for comparison across time or across interventions.
+GxP-regulated environments such as drug manufacturing, clinical trials,
+and regulatory submissions. In these settings an incorrect compliance
+determination carries legal and patient-safety consequences. However, the
+dominant way we measure LLM competence is a single accuracy percentage on
+a fixed test set, and that measure is poorly suited to this setting.
+Accuracy conflates easy and hard items, it gives no per-item difficulty,
+and it cannot place a new system on a stable scale for comparison across
+time or across interventions.
 
 % Gap.
 Educational measurement solved an analogous problem decades ago with
-\emph{item-response theory} (IRT), which separates item difficulty
-($b$) from examinee ability ($\theta$) on a common latent scale
+\emph{item response theory} (IRT), which separates item difficulty ($b$)
+from examinee ability ($\theta$) on a common latent scale
 \citep{lord1980,rasch1960}. IRT is standard for human high-stakes
-testing but is rarely applied to LLM evaluation, and---where it is---the
-items are typically repurposed human exams rather than instruments built
-for, and calibrated on, machine examinees. In a specialized regulatory
-domain there is no large pool of human test-takers to calibrate against,
-and crowd-sourced items lack the domain subtlety that makes compliance
-hard.
+testing, but it is rarely applied to LLM evaluation. Where it is applied,
+the usual approach is to fit IRT to an item set that already exists,
+either a repurposed human exam or an established NLP benchmark. That
+approach is not available here. In a specialized regulatory domain there
+is no large pool of human test-takers to calibrate against, and
+crowd-sourced items lack the domain subtlety that makes compliance
+questions hard.
 
 % Contributions.
-This paper builds a difficulty-calibrated compliance item bank
-\emph{end to end} and then uses it as a measuring instrument. Our
-contributions are:
+This paper builds a difficulty-calibrated compliance item bank end to
+end, uses it as a measuring instrument, and then tests the instrument
+itself. The contributions are the following.
 
 \begin{enumerate}[leftmargin=1.4em]
   \item \textbf{Automated item generation with a difficulty mandate.}
-  We generate compliance scenarios under an explicit ``Red Herring +
-  subtle violation'' construction (Section~\ref{sec:itemgen}): every hard
+  I generate compliance scenarios under an explicit ``Red Herring plus
+  subtle violation'' construction (Section~\ref{sec:itemgen}). Every hard
   item must contain a compliant-but-suspicious element designed to
   mislead, and the true violation must be a procedural or data-integrity
   subtlety rather than an obvious lapse. A parallel track converts real
-  FDA warning letters into items to ground the synthetic bank in actual
-  enforcement.
+  FDA warning letters into items, which grounds the synthetic bank in
+  actual enforcement.
 
   \item \textbf{IRT calibration with a synthetic examinee population.}
-  Lacking human test-takers, we administer each item to a population of
+  Lacking human test-takers, I administer each item to a population of
   synthetic AI examinees and estimate difficulty from their response
-  pattern (Sections~\ref{sec:calibration}--\ref{sec:pipeline}). We fit a
+  pattern (Sections~\ref{sec:calibration}--\ref{sec:pipeline}). I fit a
   Rasch (1PL) model, anchor it to a fixed baseline examinee, and apply
   classical item-fit quality control to freeze a healthy bank of
   \textbf{1{,}284} items.
 
   \item \textbf{$\theta$ as an optimization metric, with a
-  format-vs-reasoning decomposition.} Treating the calibrated bank as a
-  fixed instrument, we measure how much a system-prompt intervention
-  moves a model's ability $\theta$ (Section~\ref{sec:deltatheta}). A
-  strict/lenient dual-judge design separates the portion of the gain
-  attributable to \emph{citation format} from the portion reflecting
-  genuine \emph{compliance reasoning}.
+  format-versus-reasoning decomposition.} Treating the calibrated bank as
+  a fixed instrument, I measure how far two kinds of intervention move a
+  model's ability: system-prompt strictness
+  (Section~\ref{sec:deltatheta}) and agent architecture, including
+  retrieval, self-critique, and step decomposition
+  (Section~\ref{sec:phase3b}). Grading the same responses with a strict
+  judge and a lenient judge separates the gain that comes from
+  \emph{citation format} from the gain that reflects genuine
+  \emph{compliance reasoning}.
+
+  \item \textbf{Validation of the instrument.} Because every result rests
+  on an LLM judge, I audit that judge against two independent evaluation
+  frameworks (Section~\ref{sec:judgeaudit}), and I document the
+  human expert-review protocol now collecting labels
+  (Section~\ref{sec:expertreview}).
 \end{enumerate}
 
-We frame the work in two parts. Part~1
-(Sections~\ref{sec:itemgen}--\ref{sec:results}) is about the
-\emph{instrument}: how the calibrated bank is built and what it looks
-like. Part~2 (Section~\ref{sec:deltatheta}) is an \emph{experiment} run
-on that instrument. We are deliberately explicit about the limitations of
-a closed loop in which the same model family generates, answers, and
-judges (Section~\ref{sec:discussion}).
+The paper has three parts. Part~1
+(Sections~\ref{sec:itemgen}--\ref{sec:results}) builds the
+\emph{instrument} and describes what the calibrated bank looks like.
+Part~2 (Sections~\ref{sec:deltatheta}--\ref{sec:phase3b}) runs two
+\emph{experiments} on that instrument. Part~3
+(Sections~\ref{sec:judgeaudit}--\ref{sec:expertreview}) turns the
+question around and asks how far the instrument itself can be trusted.
+The loop is closed, in that the same model family generates, answers, and
+judges the items, and I return to what that costs in
+Section~\ref{sec:discussion}.

@@ -1,51 +1,53 @@
-\section{Part 2 --- $\theta$ as an Optimization Metric}
+\section{System-Prompt Strictness and \texorpdfstring{$\theta$}{Theta}}
 \label{sec:deltatheta}
 
 % The engineering arc: use the frozen instrument to measure interventions.
-Part~1 produced a fixed, calibrated instrument. We now use it to ask an
-engineering question: \emph{when a system-prompt intervention appears to
-make a model ``better'' at compliance, what exactly improved?} Because
-the bank is Rasch-calibrated, we can read each configuration's ability
-$\theta$ on a common scale and compare interventions as differences
-$\Delta\theta$.
+Part~1 produced a fixed, calibrated instrument. I now use it to ask an
+engineering question. When a system-prompt intervention appears to make a
+model better at compliance, what exactly improved? Because the bank is
+Rasch-calibrated, I can read each configuration's ability $\theta$ on a
+common scale and compare interventions as differences $\Delta\theta$.
 
 \subsection{Setup}
-We hold the bank fixed at the 1{,}284 frozen items and score nine subject
-configurations: three models
-(\texttt{llama-3.3-70b-versatile}, \texttt{openai/gpt-oss-20b},
+I hold the bank fixed at the $1{,}284$ frozen items and score nine
+subject configurations. These are three models
+(\texttt{llama-3.3-70b-versatile}, \texttt{openai/gpt-oss-20b}, and
 \texttt{llama-3.1-8b-instant}) at a single temperature ($t = 0.4$) under
 three system-prompt strictness levels (\texttt{none}, \texttt{neutral},
-\texttt{strict}). Restricting the bank to the healthy subset shifts the
-baseline's ability, so we re-anchor inside the analysis so that absolute
-$\theta$ values remain honest; $\Delta\theta$ comparisons within a model
-are invariant to this shift.
+and \texttt{strict}). Restricting the bank to the healthy subset shifts
+the baseline's ability, so I re-anchor inside the analysis in order to
+keep the absolute $\theta$ values honest. The $\Delta\theta$ comparisons
+within a model are invariant to this shift.
 
 \subsection{The dual-judge decomposition}
-The strict judge requires section-level citations, so a measured
-``prompt effect'' can mean two very different things: the prompt taught
-the model to \emph{cite} (a format unlock), or it taught the model to
-\emph{reason} better about compliance. To separate them, we re-grade the
-same saved responses with the lenient judge (conclusion + reasoning, no
-citation) and define, per model,
+The strict judge requires section-level citations. So a measured prompt
+effect can mean two very different things. Either the prompt taught the
+model to \emph{cite}, which is a format unlock, or it taught the model to
+\emph{reason} better about compliance. To separate the two, I re-grade
+the same saved responses with the lenient judge, which scores the
+conclusion and reasoning but requires no citation, and define per model
+
 \begin{align}
 \text{reasoning gain} &= \Delta\theta_{\text{lenient}}
   \quad(\text{none}\!\to\!\text{strict}),\\
 \text{format unlock}  &= \Delta\theta_{\text{strict}}
   - \Delta\theta_{\text{lenient}}.
 \end{align}
-The re-grade is offline---it reuses the response text already logged in
-Phase~1---so the decomposition adds judge calls but no new solver calls.
+
+The re-grade is offline, because it reuses the response text already
+logged in Phase~1. So the decomposition adds judge calls but no new
+solver calls.
 
 \subsection{Results}
 Under the strict judge, system-prompt strictness moves all three models,
-most dramatically the 70b (Table~\ref{tab:deltatheta},
-Figure~\ref{fig:deltatheta}). But the lenient judge flattens the effect
-for everything except the 70b: for \texttt{gpt-oss-20b} and the 8b, the
-lenient $\Delta\theta$ is essentially zero
-(Figure~\ref{fig:decompose}). The honest reading is that
-\textbf{system-prompt strictness primarily teaches citation format, not
-compliance reasoning}---only the 70b shows a non-trivial reasoning gain
-($\approx +2.5$ logits) on top of the format-unlock component.
+and it moves the 70b furthest (Table~\ref{tab:deltatheta},
+Figure~\ref{fig:deltatheta}). Under the lenient judge, however, the
+effect flattens for everything except the 70b. For
+\texttt{gpt-oss-20b} and the 8b the lenient $\Delta\theta$ is essentially
+zero (Figure~\ref{fig:decompose}). The reading I take from this is that
+\textbf{system-prompt strictness primarily teaches citation format rather
+than compliance reasoning}. Only the 70b shows a non-trivial reasoning
+gain, of about $+2.5$ logits, on top of the format-unlock component.
 
 \begin{table}[t]
 \centering
@@ -61,8 +63,8 @@ model & strict $\Delta\theta$ & lenient $\Delta\theta$
 \texttt{llama-3.1-8b}  & $+1.69$ & $+0.18$ & $+1.52$ & $\approx 0$ \\
 \bottomrule
 \end{tabular}
-\caption{Ability shift from system-prompt strictness, decomposed.
-Strict $\Delta\theta$ is the headline effect; the lenient re-grade
+\caption{Ability shift from system-prompt strictness, decomposed. The
+strict $\Delta\theta$ is the headline effect, and the lenient re-grade
 isolates the reasoning component.}
 \label{tab:deltatheta}
 \end{table}
@@ -79,8 +81,8 @@ strict judge, by model and strictness level.}
 \centering
 \includegraphics[width=0.86\linewidth]{fig4_decompose.pdf}
 \caption{Decomposition of the strict-prompt $\Delta\theta$ into a
-reasoning gain (lenient $\Delta\theta$) and a format-unlock component
-(strict $-$ lenient). Only \texttt{llama-3.3-70b} shows a substantial
+reasoning gain (the lenient $\Delta\theta$) and a format-unlock component
+(strict minus lenient). Only \texttt{llama-3.3-70b} shows a substantial
 reasoning component.}
 \label{fig:decompose}
 \end{figure}

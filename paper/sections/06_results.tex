@@ -3,10 +3,10 @@
 
 \subsection{Bank composition and quality}
 Quality control reduces the $1{,}823$ input items to a frozen healthy
-bank of \textbf{1{,}284} items (Table~\ref{tab:qc}). The four drop
-reasons account for 539 removed items; zero-variance and non-positive
-point-biserial dominate, with relatively few items failing the fit
-bounds.
+bank of \textbf{1{,}284} items, as shown in Table~\ref{tab:qc}. The four
+drop reasons account for 539 removed items. Zero variance and
+non-positive point-biserial dominate, and relatively few items fail the
+fit bounds.
 
 \begin{table}[t]
 \centering
@@ -24,15 +24,15 @@ input items                 & $1{,}823$ \\
 \textbf{frozen (healthy)}   & \textbf{1{,}284} \\
 \bottomrule
 \end{tabular}
-\caption{Phase~2 quality-control funnel. Retention $\approx 70\%$.}
+\caption{Phase~2 quality-control funnel. Retention is about $70\%$.}
 \label{tab:qc}
 \end{table}
 
 The healthy bank has median difficulty $b = +1.65$, median point-biserial
 $+0.42$, median infit $0.87$, and median outfit $0.66$
 (Table~\ref{tab:quality}). Difficulty spans roughly $\pm 4$ logits
-(Figure~\ref{fig:bhist}); the item-fit cloud sits comfortably inside the
-QC bounds (Figure~\ref{fig:itemfit}).
+(Figure~\ref{fig:bhist}), and the item-fit cloud sits comfortably inside
+the QC bounds (Figure~\ref{fig:itemfit}).
 
 \begin{table}[t]
 \centering
@@ -49,16 +49,17 @@ median (healthy bank) & $+1.65$ & $+0.42$ & $0.87$ & $0.66$ \\
 \end{table}
 
 \paragraph{Difficulty with uncertainty.}
-We report difficulty as $b \pm \mathrm{SE}$. The standard error shown
-here is the analytic delta-method value for a single-item logit
-difficulty,
+I report difficulty as $b \pm \mathrm{SE}$. The standard error shown here
+is the analytic delta-method value for a single-item logit difficulty,
 $\mathrm{SE}(b) = 1/\sqrt{N\,P(1-P)}$ with $N = 45$ and
-$P = \sigma(-b)$. This is an interim estimate; the posterior standard
-deviation from a variational Rasch fit (\texttt{py-irt}) is the intended
-final uncertainty and is wired into the pipeline
-(\texttt{evaluator/pyirt\_fit.py}) but requires regenerating the raw
-response matrix; we report the analytic value here and treat the
-posterior comparison as future work (Section~\ref{sec:discussion}).
+$P = \sigma(-b)$. This is an interim estimate. The posterior standard
+deviation from a variational Rasch fit
+(\texttt{py-irt}; \citealp{lalor2019pyirt}) is the intended final measure
+of uncertainty, and it is already wired into the pipeline
+(\texttt{evaluator/pyirt\_fit.py}), but computing it requires
+regenerating the raw response matrix. So I report the analytic value
+here and treat the posterior comparison as future work
+(Section~\ref{sec:discussion}).
 
 \begin{figure}[t]
 \centering
@@ -71,30 +72,33 @@ baseline-anchored to $\theta = 0$. Median $b = +1.65$.}
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.62\linewidth]{fig2_item_fit.pdf}
-\caption{Item fit (infit vs.\ outfit) for the frozen bank. Dashed lines
-are the QC upper bounds (infit $1.5$, outfit $2.0$); dotted lines mark
-the ideal Rasch value of $1.0$.}
+\caption{Item fit (infit against outfit) for the frozen bank. Dashed
+lines are the QC upper bounds (infit $1.5$, outfit $2.0$) and dotted
+lines mark the ideal Rasch value of $1.0$.}
 \label{fig:itemfit}
 \end{figure}
 
-\subsection{Real-vs-synthetic difficulty gap}
-Items extracted from FDA warning letters are systematically harder than
-synthetic items on the frozen bank: $n = 93$ real items with mean
-$b = +1.98$ versus $n = 1{,}191$ synthetic with mean $b = +1.04$, a gap
-of $+0.94$ logits. A tie-corrected Mann--Whitney $U$ test confirms the
-shift is not attributable to chance ($U = 66{,}516$, $z = -3.24$,
-two-sided $p = 0.0012$). The effect is real but modest in magnitude:
-Cliff's $\delta = +0.20$, i.e.\ a randomly drawn real item is harder than
-a randomly drawn synthetic one about $60\%$ of the time. The difference
-is better described as a shift in the \emph{lower tail} than a wholesale
-separation: only $5$ of $93$ real items ($5.4\%$) fall below $b = 0$,
-against $372$ of $1{,}191$ synthetic items ($31.2\%$), and the easiest
-real item ($b = -2.00$) is still far above the easiest synthetic one
-($b = -4.25$). Enforcement, in other words, rarely produces easy
-questions --- but it does not produce exclusively hard ones either.
+\subsection{Real and synthetic difficulty compared}
+Items extracted from FDA warning letters are harder than synthetic items
+on the frozen bank. The 93 real items have mean $b = +1.98$, and the
+$1{,}191$ synthetic items have mean $b = +1.04$, so the gap is $+0.94$
+logits. A tie-corrected Mann--Whitney $U$ test indicates that this shift
+is not attributable to chance ($U = 66{,}516$, $z = -3.24$, two-sided
+$p = 0.0012$).
 
-On the full Phase~1 pre-QC set ($n = 105$ real, $n = 1{,}718$ synthetic)
-the mean gap is $+0.49$ logits, suggesting QC preferentially removes
-easy-or-inverted synthetic items and thus sharpens the real-vs-synthetic
-separation. The test is reproducible from the committed frozen bank with
-no API calls via \texttt{scripts/real\_vs\_synthetic\_test.py}.
+The effect is clear but modest in size. Cliff's $\delta$ is $+0.20$,
+which means that a randomly drawn real item is harder than a randomly
+drawn synthetic one about $60\%$ of the time. The difference is better
+described as a shift in the lower tail than as a full separation. Only 5
+of the 93 real items ($5.4\%$) fall below $b = 0$, against 372 of the
+$1{,}191$ synthetic items ($31.2\%$), and the easiest real item
+($b = -2.00$) is still well above the easiest synthetic one
+($b = -4.25$). So enforcement rarely produces easy questions, but it does
+not produce exclusively hard ones either.
+
+On the full Phase~1 set before quality control ($n = 105$ real,
+$n = 1{,}718$ synthetic) the mean gap is $+0.49$ logits. This suggests
+that QC preferentially removes easy or inverted synthetic items, and
+therefore sharpens the difference between the two sources. The test is
+reproducible from the committed frozen bank with no API calls, using
+\texttt{scripts/real\_vs\_synthetic\_test.py}.

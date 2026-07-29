@@ -3,23 +3,23 @@
 
 % The 15-profile logit-b path (legacy bank pipeline), plus the bridge to
 % the 45-cell Phase 1 grid used for the frozen bank.
-With no human test-takers available, difficulty is estimated from the
-responses of a \emph{synthetic} examinee population. We describe two
-related estimators: a fast pass-rate logit used during item generation,
-and the full Rasch fit used to produce the frozen bank
-(Section~\ref{sec:pipeline}).
+With no human test-takers available, difficulty has to be estimated from
+the responses of a \emph{synthetic} examinee population. I use two
+related estimators. The first is a fast pass-rate logit used during item
+generation. The second is the full Rasch fit that produces the frozen
+bank, which I describe in Section~\ref{sec:pipeline}.
 
 \subsection{Fifteen solver profiles and the pass-rate logit}
 During generation, each candidate item is administered to 15 synthetic
-solver profiles spanning five expertise tiers (layperson, life-sciences
-professional, regulatory-affairs coordinator, regulatory-affairs
-specialist, senior FDA auditor) at three sampling temperatures each. Let
-$k_i$ be the number of profiles that pass item $i$ and
-$\hat{P}_i = k_i / 15$ the empirical pass rate. Under a Rasch model in
-which the profile population is centered at $\theta = 0$, the probability
-of a correct response to an item of difficulty $b$ is
-$\sigma(\theta - b)$, so at $\theta = 0$ we have
-$\hat{P}_i = \sigma(-b_i)$ and therefore
+solver profiles. The profiles span five expertise tiers (layperson,
+life-sciences professional, regulatory-affairs coordinator,
+regulatory-affairs specialist, and senior FDA auditor) at three sampling
+temperatures each. Let $k_i$ be the number of profiles that pass item $i$
+and let $\hat{P}_i = k_i / 15$ be the empirical pass rate. Under a Rasch
+model in which the profile population is centered at $\theta = 0$, the
+probability of a correct response to an item of difficulty $b$ is
+$\sigma(\theta - b)$. So at $\theta = 0$ we have
+$\hat{P}_i = \sigma(-b_i)$, and therefore
 
 \begin{equation}
 \hat{b}_i \;=\; \ln\!\left(\frac{1 - \hat{P}_i}{\hat{P}_i}\right),
@@ -27,14 +27,15 @@ $\hat{P}_i = \sigma(-b_i)$ and therefore
 \label{eq:logitb}
 \end{equation}
 
-with $\hat{P}_i$ clipped to keep $\hat{b}_i$ finite at the extremes.
-Equation~\eqref{eq:logitb} ranges from $b \approx +4.6$ (very hard,
-$\hat{P}=0.01$) to $b \approx -4.6$ (trivially easy, $\hat{P}=0.99$).
+where $\hat{P}_i$ is clipped to keep $\hat{b}_i$ finite at the extremes.
+Equation~\eqref{eq:logitb} ranges from $b \approx +4.6$ for a very hard
+item ($\hat{P}=0.01$) to $b \approx -4.6$ for a trivially easy one
+($\hat{P}=0.99$).
 
 \subsection{Retention thresholds}
-Items are retained or discarded by pass rate
-(Table~\ref{tab:retention}). The thresholds were widened to
-$[0.05, 0.95]$ to capture near-extreme but still informative items.
+Items are retained or discarded by pass rate, as shown in
+Table~\ref{tab:retention}. I widened the thresholds to $[0.05, 0.95]$ in
+order to capture items that are near the extremes but still informative.
 
 \begin{table}[t]
 \centering
@@ -50,18 +51,19 @@ $\hat{P} > 0.95$        & \texttt{retained\_easy}       & yes \\
 \end{tabular}
 \caption{Pass-rate retention rule. Difficulty $b$ from
 Eq.~\eqref{eq:logitb} is recorded for all items, including the
-too-hard ones, so they can still enter ability estimation as failures.}
+too-hard ones, so that they can still enter ability estimation as
+failures.}
 \label{tab:retention}
 \end{table}
 
 \subsection{Key assumption and its risk}
-Equation~\eqref{eq:logitb} assumes the synthetic population is centered
-at $\theta = 0$. If the profiles systematically lean expert
-($\bar{\theta} > 0$), $b$ is biased downward (items look easier than they
-are). The 15 profiles are also highly correlated---they are the same base
-model under different prompts and temperatures---so they are \emph{not}
-15 independent test-takers. The full Rasch fit in
-Section~\ref{sec:pipeline} relaxes the centered-population assumption by
-estimating examinee abilities jointly and anchoring to a fixed baseline;
-we discuss the residual independence problem in
-Section~\ref{sec:discussion}.
+Equation~\eqref{eq:logitb} assumes that the synthetic population is
+centered at $\theta = 0$. This assumption carries a risk. If the profiles
+lean expert on average ($\bar{\theta} > 0$), then $b$ is biased downward
+and the items look easier than they really are. Also, the 15 profiles are
+highly correlated. They are the same base model run under different
+prompts and temperatures, so they are not 15 independent test-takers. The
+full Rasch fit in Section~\ref{sec:pipeline} relaxes the
+centered-population assumption, because it estimates examinee abilities
+jointly and anchors them to a fixed baseline. The remaining independence
+problem is discussed in Section~\ref{sec:discussion}.
